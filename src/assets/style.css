@@ -1,0 +1,178 @@
+html, body {
+    margin: 0;
+}
+
+html {
+    height: 100%;
+}
+
+header {
+    text-align: center;
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    overflow-x: auto;
+    padding-top: 30px;
+}
+
+footer {
+    background-color: #333333;
+    bottom: 0;
+    color: white;
+    left: 0;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+
+a {
+    color: #00b33c;
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+table {
+    border-collapse: collapse;
+    max-width: 1000px;
+    width: 80%;
+}
+
+thead {
+    background-color: #00b33c;
+    border-bottom: 1px solid #ddd;
+    color: white;
+}
+
+th, td {
+    border-right: 1px solid #ddd;
+    padding: 12px 20px;
+    text-align: left;
+}
+
+th:last-child, td:last-child {
+    border-right: none;
+}
+
+tbody tr:hover {
+    background-color: #ddd;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+section {
+    width: 100%;
+}
+
+/* FORM */
+form {
+    border-radius: 10px;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto 100px;
+    max-width: 45%;
+    padding: 45px;
+}
+
+input[type=checkbox] {
+    cursor: pointer;
+}
+
+.form-group {
+    display: flex;
+    margin-bottom: 35px;
+}
+
+.form-group input, .form-group select {
+    background-color: #f2f2f2;
+    border: none;
+    border-radius: 10px;
+    flex: 10;
+    font-size: 14px;
+    outline: none;
+    padding: 15px;
+}
+
+.form-group label {
+    flex: 2;
+    padding: 15px 0;
+    text-align: left;
+}
+
+.form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("/static/icons/chevron-down.svg");
+    background-position: right center;
+    background-repeat: no-repeat;
+}
+
+/* Hide the default arrow in Internet Explorer 10 and Internet Explorer 11 */
+.form-group select::-ms-expand {
+    display: none;
+}
+
+.form-group.form-checkbox label {
+    cursor: pointer;
+}
+
+.form-group.form-checkbox .checkbox-container {
+    display: flex;
+    flex: 10;
+}
+
+.form-group.form-checkbox .checkbox-container input {
+    flex: 0;
+}
+
+.form-group.form-checkbox .checkbox-group-container {
+    display: grid;
+    flex: 10;
+    grid-gap: 15px 10px;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.form-group.read-only p {
+    flex: 10;
+}
+
+.form-group.read-only small {
+    padding: 15px;
+}
+
+.form-group.required label:after {
+    color: red;
+    content: ' *';
+    font-weight: bold;
+}
+/* END FORM */
+
+/* VIEW */
+#data-container {
+    border-radius: 10px;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    margin: 0 auto 100px;
+    max-width: 40%;
+    padding: 45px;
+}
+
+#data-container p {
+    margin: 0;
+    padding: 15px 10px;
+}
+
+#data-container p:nth-child(even) {
+    background-color: #f2f2f2;
+}
+/* END VIEW */
