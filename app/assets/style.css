@@ -7,7 +7,36 @@ html {
 }
 
 header {
-    text-align: center;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid black;
+}
+
+header > nav {
+    font-size: 18px;
+    padding: 15px 70px;
+}
+
+header > nav > ul {
+    align-items: center;
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#menu-logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-left: 0;
+    margin-right: auto;
+}
+
+#menu-logo > a {
+    color: black;
+}
+
+#menu-logo > a:hover {
+    color: #00b33c;
 }
 
 main {
@@ -28,6 +57,10 @@ footer {
     width: 100%;
 }
 
+section {
+    width: 80%;
+}
+
 a {
     color: #00b33c;
     cursor: pointer;
@@ -35,14 +68,19 @@ a {
     text-decoration: none;
 }
 
-a:hover {
-    text-decoration: underline;
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 30px;
 }
 
+/* TABLE */
 table {
     border-collapse: collapse;
-    max-width: 1000px;
-    width: 80%;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    margin: 0;
+    padding: 0;
+    width: 100%;
 }
 
 thead {
@@ -69,9 +107,11 @@ tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 
-section {
-    width: 100%;
+.table-action-cell {
+    width: 140px;
 }
+
+/* TABLE END */
 
 /* FORM */
 form {
@@ -86,6 +126,11 @@ form {
 
 input[type=checkbox] {
     cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-evenly;
 }
 
 .form-group {
@@ -156,6 +201,7 @@ input[type=checkbox] {
     content: ' *';
     font-weight: bold;
 }
+
 /* END FORM */
 
 /* VIEW */
@@ -163,7 +209,7 @@ input[type=checkbox] {
     border-radius: 10px;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
     margin: 0 auto 100px;
-    max-width: 40%;
+    max-width: 45%;
     padding: 45px;
 }
 
@@ -175,4 +221,78 @@ input[type=checkbox] {
 #data-container p:nth-child(even) {
     background-color: #f2f2f2;
 }
+
 /* END VIEW */
+
+/* FEATHER ICONS */
+.feather {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+
+/* END FEATHER ICONS */
+
+/* BUTTONS */
+.btn {
+    background: white;
+    border: 2px solid;
+    color: black;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.43;
+    margin-bottom: 0;
+    outline: none;
+    padding: 6px 12px;
+    text-align: center;
+    touch-action: manipulation;
+    user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.btn:hover {
+    background: #00b33c;
+    color: white;
+}
+
+.btn-icon {
+    background-color: transparent;
+    border: none;
+    border-radius: 7px;
+    font-size: revert;
+    line-height: 1.15;
+    padding: 6px 8px;
+}
+
+.btn-add:hover {
+    background: #96e174;
+}
+
+.btn-cancel:hover {
+    background: #ff2f30;
+}
+
+.btn-delete:hover {
+    background: #ff5f5b;
+}
+
+.btn-edit:hover {
+    background: #d7b800;
+}
+
+.btn-list:hover {
+    background: #8bc7ff;
+}
+
+.btn-view:hover {
+    background: gray;
+}
+
+/* END BUTTONS */

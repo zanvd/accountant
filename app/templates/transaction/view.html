@@ -1,0 +1,30 @@
+{{define "content"}}
+    <section>
+        <article>
+            <div class="actions">
+                <a class="btn btn-icon btn-edit" href="/transaction/edit/{{.Id}}">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#edit"/>
+                    </svg>
+                </a>
+                <a class="btn btn-icon btn-delete" href="/transaction/delete/{{.Id}}">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
+                    </svg>
+                </a>
+                <a class="btn btn-icon btn-list" href="/">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#list"/>
+                    </svg>
+                </a>
+            </div>
+        </article>
+        <article id="data-container">
+            <h1>{{.Name}}</h1>
+            <p><b>Category:</b> {{.Category}}</p>
+            <p><b>Amount:</b> {{.Amount}}</p>
+            <p><b>Transaction Date:</b> {{.TransactionDate | dbToDisplayDate}}</p>
+            <p><b>Summary:</b> {{.Summary}}</p>
+        </article>
+    </section>
+{{end}}

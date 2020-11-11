@@ -1,0 +1,75 @@
+version: "3.8"
+
+networks:
+  accountant_external:
+  accountant_internal:
+
+secrets:
+  accountant_db_database:
+    file: secrets/accountant_db_database.txt
+  accountant_db_password:
+    file: secrets/accountant_db_password.txt
+  accountant_db_root_password:
+    file: secrets/accountant_db_root_password.txt
+  accountant_db_user:
+    file: secrets/accountant_db_user.txt
+
+services:
+  # GO app
+  app:
+    build: ./app
+    container_name: accountant_app
+    # Despite this container depending on the DB it still produces dial up errors since it spins up faster.
+    # Just wait a bit until the DB container is up and running and the errors are going to stop.
+    # TODO: Find a way to eliminate these errors altogether.
+    depends_on:
+      - database
+    environment:
+      DB_NAME: /run/secrets/accountant_db_database
+      DB_PASSWORD: /run/secrets/accountant_db_password
+      DB_USER: /run/secrets/accountant_db_user
+    image: accountant_app
+    networks:
+      - accountant_external
+      - accountant_internal
+    secrets:
+      - accountant_db_database
+      - accountant_db_password
+      - accountant_db_user
+    restart: on-failure
+  # MySQL database
+  database:
+    container_name: accountant_database
+    environment:
+      MYSQL_DATABASE_FILE: /run/secrets/accountant_db_database
+      MYSQL_PASSWORD_FILE: /run/secrets/accountant_db_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/accountant_db_root_password
+      MYSQL_USER_FILE: /run/secrets/accountant_db_user
+    image: mysql
+    networks:
+      - accountant_internal
+    ports:
+      - "3306:3306"
+    restart: always
+    secrets:
+      - accountant_db_database
+      - accountant_db_password
+      - accountant_db_root_password
+      - accountant_db_user
+    volumes:
+      - accountant_db_vol:/var/lib/mysql
+  # Nginx reverse proxy
+  nginx:
+    build: ./nginx
+    container_name: accountant_nginx
+    depends_on:
+      - app
+    image: accountant_nginx
+    networks:
+      - accountant_external
+    ports:
+    - "80:80"
+    restart: always
+
+volumes:
+  accountant_db_vol:

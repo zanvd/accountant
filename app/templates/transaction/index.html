@@ -1,0 +1,56 @@
+{{define "content"}}
+    <section>
+        <article>
+            <div class="actions">
+                <a class="btn btn-icon btn-add" href="/transaction/add/">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#plus"/>
+                    </svg>
+                </a>
+            </div>
+        </article>
+        <article>
+            {{if not .}}
+                <p>No transactions.</p>
+            {{else}}
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Amount</th>
+                        <th>Category</th>
+                        <th>Transaction Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{range $transaction := .}}
+                        <tr>
+                            <td>{{$transaction.Name}}</td>
+                            <td>{{$transaction.Amount}}</td>
+                            <td>{{$transaction.Category}}</td>
+                            <td>{{$transaction.TransactionDate | dbToDisplayDate}}</td>
+                            <td class="table-action-cell">
+                                <a class="btn btn-icon btn-edit" href="/transaction/edit/{{$transaction.Id}}">
+                                    <svg class="feather">
+                                        <use xlink:href="/static/icons/feather-sprite.svg#edit"/>
+                                    </svg>
+                                </a>
+                                <a class="btn btn-icon btn-view" href="/transaction/view/{{$transaction.Id}}">
+                                    <svg class="feather">
+                                        <use xlink:href="/static/icons/feather-sprite.svg#search"/>
+                                    </svg>
+                                </a>
+                                <a class="btn btn-icon btn-delete" href="/transaction/delete/{{$transaction.Id}}">
+                                    <svg class="feather">
+                                        <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                    {{end}}
+                    </tbody>
+                </table>
+            {{end}}
+        </article>
+    </section>
+{{end}}
