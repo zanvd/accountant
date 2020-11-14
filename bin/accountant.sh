@@ -34,7 +34,7 @@ function create_secrets_folder() {
       esac
     done
   else
-    echo -e "$COLOR_YELLOW>> Creating the instance folder at 'api/instance'.$OUTPUT_RESET"
+    echo -e "$COLOR_YELLOW>> Creating the secrets folder.$OUTPUT_RESET"
     mkdir secrets
   fi
 
