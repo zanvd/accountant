@@ -4,10 +4,6 @@ server {
 
     server_name accountant.devexp.co;
 
-    location /.well-known/acme-challenge {
-        root /var/www/certbot;
-    }
-
     return 301 https://$server_name$request_uri;
 }
 
@@ -19,6 +15,10 @@ server {
 
     ssl_certificate /etc/letsencrypt/live/accountant.devexp.co/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/accountant.devexp.co/privkey.pem;
+
+    location /.well-known/acme-challenge {
+        root /var/www/cert;
+    }
 
     location / {
         auth_basic "Welcome to Accountant";
