@@ -273,7 +273,7 @@ secrets)
   create_secrets_folder $?
   ;;
 secure)
-#  include_production_compose
+  include_production_compose
   build_images
   secure_nginx_with_htpasswd
   ;;
