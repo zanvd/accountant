@@ -14,19 +14,32 @@
             <form action="/transaction/add/" method="post">
                 <div class="form-group">
                     <label for="name">Name:</label>
-                    <input id="name" name="name" placeholder="Name" type="text"/>
+                    <input id="name" name="name" placeholder="Name" required type="text"/>
                 </div>
                 <div class="form-group">
                     <label for="category">Category:</label>
-                    <input id="category" name="category" placeholder="Category" type="text"/>
+                    <select id="category" name="category" required>
+                        {{if not .}}
+                            <option></option>
+                        {{else}}
+                            {{range $category := .Categories}}
+                                <option value="{{$category.Id}}">{{$category.Name}}</option>
+                            {{end}}
+                        {{end}}
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="amount">Amount:</label>
-                    <input id="amount" name="amount" placeholder="Amount" type="number"/>
+                    <input id="amount" name="amount" placeholder="Amount" required type="number"/>
                 </div>
                 <div class="form-group">
                     <label for="transaction-date">Transaction Date:</label>
-                    <input id="transaction-date" name="transaction-date" placeholder="Transaction Date" type="text"/>
+                    <input id="transaction-date"
+                           name="transaction-date"
+                           placeholder="Transaction Date"
+                           required
+                           type="text"
+                    />
                 </div>
                 <div class="form-group">
                     <label for="summary">Summary:</label>

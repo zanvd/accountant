@@ -3,12 +3,12 @@
         <article>
             <h1>Transactions</h1>
             <div class="actions">
-                <a class="btn btn-icon btn-view" href="/transaction/view/{{.Id}}">
+                <a class="btn btn-icon btn-view" href="/transaction/view/{{.Transaction.Id}}">
                     <svg class="feather">
                         <use xlink:href="/static/icons/feather-sprite.svg#search"/>
                     </svg>
                 </a>
-                <a class="btn btn-icon btn-delete" href="/transaction/delete/{{.Id}}">
+                <a class="btn btn-icon btn-delete" href="/transaction/delete/{{.Transaction.Id}}">
                     <svg class="feather">
                         <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
                     </svg>
@@ -24,28 +24,52 @@
             <form action="/transaction/edit/{{.Id}}" method="post">
                 <div class="form-group">
                     <label for="name">Name:</label>
-                    <input id="name" name="name" placeholder="Name" type="text" value="{{.Name}}"/>
+                    <input id="name" name="name" placeholder="Name" required type="text" value="{{.Transaction.Name}}"/>
                 </div>
                 <div class="form-group">
                     <label for="category">Category:</label>
-                    <input id="category" name="category" placeholder="Category" type="text" value="{{.Category}}"/>
+                    <select id="category" name="category" required>
+                        {{if not .Categories}}
+                            <option></option>
+                        {{else}}
+                            {{range $category := .Categories}}
+                                {{if eq $category.Id $.Transaction.Category.Id}}
+                                    <option selected value="{{$category.Id}}">{{$category.Name}}</option>
+                                {{else}}
+                                    <option value="{{$category.Id}}">{{$category.Name}}</option>
+                                {{end}}
+                            {{end}}
+                        {{end}}
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="amount">Amount:</label>
-                    <input id="amount" name="amount" placeholder="Amount" type="number" value="{{.Amount}}"/>
+                    <input id="amount"
+                           name="amount"
+                           placeholder="Amount"
+                           required
+                           type="number"
+                           value="{{.Transaction.Amount}}"
+                    />
                 </div>
                 <div class="form-group">
                     <label for="transaction-date">Transaction Date:</label>
                     <input id="transaction-date"
                            name="transaction-date"
                            placeholder="Transaction Date"
+                           required
                            type="text"
-                           value="{{.TransactionDate | dbToDisplayDate}}"
+                           value="{{.Transaction.TransactionDate | dbToDisplayDate}}"
                     />
                 </div>
                 <div class="form-group">
                     <label for="summary">Summary:</label>
-                    <input id="summary" name="summary" placeholder="Summary" type="text" value="{{.Summary}}"/>
+                    <input id="summary"
+                           name="summary"
+                           placeholder="Summary"
+                           type="text"
+                           value="{{.Transaction.Summary}}"
+                    />
                 </div>
                 <div class="form-actions">
                     <button class="btn btn-icon" type="submit">

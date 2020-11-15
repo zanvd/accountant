@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"bitbucket.org/zanvd/accountant/category"
 	"database/sql"
 	"html/template"
 	"net/http"
@@ -28,7 +29,9 @@ func (ah AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if name := r.FormValue("name"); name != "" {
 			transaction.Name = name
 		}
-		transaction.Category = r.FormValue("category")
+		if categoryId, err := strconv.Atoi(r.FormValue("category")); err == nil {
+			transaction.Category = category.Category{Id: categoryId}
+		}
 		transaction.Summary = r.FormValue("summary")
 
 		if err := InsertTransaction(ah.Database, transaction); err != nil {
@@ -37,8 +40,18 @@ func (ah AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	}
 
+	categories, err := category.GetCategories(ah.Database)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	data := struct {
+		Categories []category.Category
+	}{
+		Categories: categories,
+	}
 	templates := prepareTemplates([]string{"templates/base.html", "templates/transaction/add.html"})
-	if err := templates.ExecuteTemplate(w, "base.html", new(struct{})); err != nil {
+	if err := templates.ExecuteTemplate(w, "base.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -87,7 +100,9 @@ func (eh EditHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if name := r.FormValue("name"); name != "" {
 			transaction.Name = name
 		}
-		transaction.Category = r.FormValue("category")
+		if categoryId, err := strconv.Atoi(r.FormValue("category")); err == nil {
+			transaction.Category = category.Category{Id: categoryId}
+		}
 		transaction.Summary = r.FormValue("summary")
 
 		if err := UpdateTransaction(eh.Database, transaction); err != nil {
@@ -96,8 +111,20 @@ func (eh EditHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	}
 
+	categories, err := category.GetCategories(eh.Database)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	data := struct {
+		Transaction
+		Categories []category.Category
+	}{
+		Transaction: transaction,
+		Categories:  categories,
+	}
 	templates := prepareTemplates([]string{"templates/base.html", "templates/transaction/edit.html"})
-	if err := templates.ExecuteTemplate(w, "base.html", transaction); err != nil {
+	if err := templates.ExecuteTemplate(w, "base.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

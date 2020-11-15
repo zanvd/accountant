@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"bitbucket.org/zanvd/accountant/category"
 	"database/sql"
 	"log"
 	"time"
@@ -14,7 +15,7 @@ const (
 type Transaction struct {
 	Id              int
 	Amount          float64
-	Category        string
+	Category        category.Category
 	Name            string
 	Summary         string
 	TransactionDate string
@@ -25,11 +26,15 @@ func CreateTransactionsTable(db *sql.DB) {
 		CREATE TABLE IF NOT EXISTS transactions (
 			id INT NOT NULL AUTO_INCREMENT,
 			amount DOUBLE(14, 4) NOT NULL,
-			category VARCHAR(100) DEFAULT '',
+			category_id INT DEFAULT NULL,
 			name VARCHAR(30) NOT NULL,
 			summary VARCHAR(200) DEFAULT '',
 			transaction_date DATE NOT NULL,
-			PRIMARY KEY (id)
+			PRIMARY KEY (id),
+			FOREIGN KEY category_id_idx (category_id)
+			    REFERENCES categories (id)
+			    ON DELETE RESTRICT
+				ON UPDATE NO ACTION
 		);
 	`
 	log.Println("Creating the transactions table.")
@@ -57,22 +62,37 @@ func DeleteTransaction(db *sql.DB, id int) (err error) {
 }
 
 func GetTransaction(db *sql.DB, id int) (transaction Transaction, err error) {
-	row := db.QueryRow("SELECT * FROM transactions WHERE id = ?;", id)
-	err = row.Scan(&transaction.Id, &transaction.Amount, &transaction.Category, &transaction.Name, &transaction.Summary,
-		&transaction.TransactionDate)
+	query := `
+		SELECT t.id, t.amount, t.name, t.summary, t.transaction_date,
+		       c.id, c.color, c.description, c.name, c.text_color
+		FROM transactions t
+		LEFT JOIN categories c ON c.id = t.category_id
+		WHERE t.id = ?;
+	`
+	row := db.QueryRow(query, id)
+	err = row.Scan(&transaction.Id, &transaction.Amount, &transaction.Name, &transaction.Summary,
+		&transaction.TransactionDate, &transaction.Category.Id, &transaction.Category.Color,
+		&transaction.Category.Description, &transaction.Category.Name, &transaction.Category.TextColor)
 	return
 }
 
 func GetTransactions(db *sql.DB) (transactions []Transaction, err error) {
-	rows, err := db.Query("SELECT * FROM transactions;")
+	query := `
+		SELECT t.id, t.amount, t.name, t.summary, t.transaction_date,
+		       c.id, c.color, c.description, c.name, c.text_color
+		FROM transactions t
+		LEFT JOIN categories c ON c.id = t.category_id;
+	`
+	rows, err := db.Query(query)
 	if err != nil {
 		return
 	}
 	defer rows.Close()
 	for rows.Next() {
 		transaction := Transaction{}
-		if err = rows.Scan(&transaction.Id, &transaction.Amount, &transaction.Category, &transaction.Name,
-			&transaction.Summary, &transaction.TransactionDate); err != nil {
+		if err = rows.Scan(&transaction.Id, &transaction.Amount, &transaction.Name, &transaction.Summary,
+			&transaction.TransactionDate, &transaction.Category.Id, &transaction.Category.Color,
+			&transaction.Category.Description, &transaction.Category.Name, &transaction.Category.TextColor); err != nil {
 			return
 		}
 		transactions = append(transactions, transaction)
@@ -84,12 +104,12 @@ func InsertTransaction(db *sql.DB, transaction Transaction) (err error) {
 	if len(transaction.TransactionDate) == 0 {
 		transaction.TransactionDate = time.Now().UTC().Format(dbDateFormat)
 	}
-	query := "INSERT INTO transactions(amount, category, name, summary, transaction_date) VALUES (?, ?, ?, ?, ?);"
+	query := "INSERT INTO transactions(amount, category_id, name, summary, transaction_date) VALUES (?, ?, ?, ?, ?);"
 	statement, err := db.Prepare(query)
 	if err != nil {
 		return
 	}
-	_, err = statement.Exec(transaction.Amount, transaction.Category, transaction.Name, transaction.Summary,
+	_, err = statement.Exec(transaction.Amount, transaction.Category.Id, transaction.Name, transaction.Summary,
 		transaction.TransactionDate)
 	return
 }
@@ -97,14 +117,14 @@ func InsertTransaction(db *sql.DB, transaction Transaction) (err error) {
 func UpdateTransaction(db *sql.DB, transaction Transaction) (err error) {
 	query := `
 		UPDATE transactions
-		SET amount = ?, category = ?, name = ?, summary = ?, transaction_date = ?
+		SET amount = ?, category_id = ?, name = ?, summary = ?, transaction_date = ?
 		WHERE id = ?;
 	`
 	statement, err := db.Prepare(query)
 	if err != nil {
 		return
 	}
-	_, err = statement.Exec(transaction.Amount, transaction.Category, transaction.Name, transaction.Summary,
+	_, err = statement.Exec(transaction.Amount, transaction.Category.Id, transaction.Name, transaction.Summary,
 		transaction.TransactionDate, transaction.Id)
 	return
 }

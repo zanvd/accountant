@@ -28,7 +28,13 @@
                         <tr class="acc-tr">
                             <td class="acc-td">{{$transaction.Name}}</td>
                             <td class="acc-td">{{$transaction.Amount}}</td>
-                            <td class="acc-td">{{$transaction.Category}}</td>
+                            <td class="acc-td">
+                                <span class="category-pill"
+                                      style="background-color: {{$transaction.Category.Color}}; color: {{$transaction.Category.TextColor}};"
+                                >
+                                    {{$transaction.Category.Name}}
+                                </span>
+                            </td>
                             <td class="acc-td">{{$transaction.TransactionDate | dbToDisplayDate}}</td>
                             <td class="acc-td table-action-cell">
                                 <a class="btn btn-icon btn-edit" href="/transaction/edit/{{$transaction.Id}}">

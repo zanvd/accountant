@@ -22,7 +22,13 @@
         </article>
         <article id="data-container">
             <h1>{{.Name}}</h1>
-            <p><b>Category:</b> {{.Category}}</p>
+            <p><b>Category:</b>
+                <span class="category-pill"
+                      style="background-color: {{.Category.Color}}; color: {{.Category.TextColor}};"
+                >
+                    {{.Category.Name}}
+                </span>
+            </p>
             <p><b>Amount:</b> {{.Amount}}</p>
             <p><b>Transaction Date:</b> {{.TransactionDate | dbToDisplayDate}}</p>
             <p><b>Summary:</b> {{.Summary}}</p>
