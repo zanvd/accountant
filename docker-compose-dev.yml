@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  app:
+    volumes:
+      - app_assets_vol:/app/assets
+      - app_templates_vol:/app/templates
+
+volumes:
+  app_assets_vol:
+    driver: local
+    driver_opts:
+      device: $PWD/app/assets
+      o: bind
+      type: none
+  app_templates_vol:
+    driver: local
+    driver_opts:
+      device: $PWD/app/templates
+      o: bind
+      type: none

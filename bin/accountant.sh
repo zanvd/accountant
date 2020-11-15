@@ -9,7 +9,7 @@ OUTPUT_RESET='\033[0m'
 LIVE_PATH=/etc/letsencrypt/live
 
 #### Variables.
-compose_cmd='docker-compose'
+compose_cmd='docker-compose -f docker-compose.yml -f docker-compose-dev.yml'
 
 #### Functions.
 function build_images() {
