@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bitbucket.org/zanvd/accountant/category"
 	"bitbucket.org/zanvd/accountant/transaction"
 	"database/sql"
 	"fmt"
@@ -19,6 +20,7 @@ func main() {
 	}
 	defer db.Close()
 
+	category.CreateCategoryTable(db)
 	transaction.CreateTransactionsTable(db)
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("assets"))))
@@ -28,6 +30,12 @@ func main() {
 	http.Handle("/transaction/delete/", transaction.DeleteHandler{Database: db})
 	http.Handle("/transaction/edit/", transaction.EditHandler{Database: db})
 	http.Handle("/transaction/view/", transaction.ViewHandler{Database: db})
+
+	http.Handle(category.BaseUrl, category.ListHandler{Database: db})
+	http.Handle(category.BaseUrl+"add/", category.AddHandler{Database: db})
+	http.Handle(category.BaseUrl+"delete/", category.DeleteHandler{Database: db})
+	http.Handle(category.BaseUrl+"edit/", category.EditHandler{Database: db})
+	http.Handle(category.BaseUrl+"view/", category.ViewHandler{Database: db})
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatalln(err.Error())

@@ -13,10 +13,10 @@ header {
 
 header > nav {
     font-size: 18px;
-    padding: 15px 70px;
+    padding: 20px 70px;
 }
 
-header > nav > ul {
+header > nav ul {
     align-items: center;
     display: flex;
     list-style: none;
@@ -24,7 +24,38 @@ header > nav > ul {
     padding: 0;
 }
 
+header > nav > ul > li {
+    flex: 3;
+}
+
+header > nav ul li {
+    display: inline-block;
+    margin-left: 30px;
+    position: relative;
+}
+
+header > nav ul li a {
+    color: black;
+    padding: 5px 0;
+}
+
+header > nav ul li a:hover {
+    color: #00b33c;
+    text-decoration: none;
+}
+
+#menu-items-container li {
+    background-color: white;
+    border-radius: 10px;
+    padding: 7px 12px;
+}
+
+#menu-items-container li:hover {
+    background-color: whitesmoke;
+}
+
 #menu-logo {
+    flex: 1;
     font-size: 24px;
     font-weight: bold;
     margin-left: 0;
@@ -72,6 +103,18 @@ a {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 30px;
+}
+
+.category-color-view {
+    display: inline-block;
+    height: 10px;
+    vertical-align: bottom;
+    width: 100px;
+}
+
+.category-pill {
+    border-radius: 10px;
+    padding: 10px;
 }
 
 /* TABLE */
@@ -128,6 +171,10 @@ input[type=checkbox] {
     cursor: pointer;
 }
 
+.color-input-container {
+    flex: 10;
+}
+
 .form-actions {
     display: flex;
     justify-content: space-evenly;
@@ -142,10 +189,19 @@ input[type=checkbox] {
     background-color: #f2f2f2;
     border: none;
     border-radius: 10px;
+    outline: none;
+}
+
+.form-group input:not([type="color"]), .form-group select {
     flex: 10;
     font-size: 14px;
-    outline: none;
     padding: 15px;
+}
+
+.form-group input[type="color"] {
+    height: 45px;
+    padding: 10px;
+    width: 100px;
 }
 
 .form-group label {

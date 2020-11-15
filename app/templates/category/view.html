@@ -1,0 +1,36 @@
+{{define "content"}}
+    <section>
+        <article>
+            <h1>Categories</h1>
+            <div class="actions">
+                <a class="btn btn-icon btn-edit" href="/category/edit/{{.Id}}">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#edit"/>
+                    </svg>
+                </a>
+                <a class="btn btn-icon btn-delete" href="/category/delete/{{.Id}}">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
+                    </svg>
+                </a>
+                <a class="btn btn-icon btn-list" href="/category/">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#list"/>
+                    </svg>
+                </a>
+            </div>
+        </article>
+        <article id="data-container">
+            <h1>{{.Name}}</h1>
+            <p>
+                <b>Color:</b>
+                <span class="category-color-view category-pill" style="background-color: {{.Color}};"></span>
+            </p>
+            <p>
+                <b>Text Color:</b>
+                <span class="category-color-view category-pill" style="background-color: {{.TextColor}};"></span>
+            </p>
+            <p><b>Description:</b> {{.Description}}</p>
+        </article>
+    </section>
+{{end}}

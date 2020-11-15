@@ -1,0 +1,65 @@
+{{define "content"}}
+    <section>
+        <article>
+            <h1>Categories</h1>
+            <div class="actions">
+                <a class="btn btn-icon btn-view" href="/category/view/{{.Id}}">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#search"/>
+                    </svg>
+                </a>
+                <a class="btn btn-icon btn-delete" href="/category/delete/{{.Id}}">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
+                    </svg>
+                </a>
+                <a class="btn btn-icon btn-list" href="/category/">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#list"/>
+                    </svg>
+                </a>
+            </div>
+        </article>
+        <article>
+            <form action="/category/edit/{{.Id}}" method="post">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input id="name" name="name" placeholder="Name" type="text" value="{{.Name}}"/>
+                </div>
+                <div class="form-group">
+                    <label for="color">Color:</label>
+                    <div class="color-input-container">
+                        <input id="color" name="color" type="color" value="{{.Color}}"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="text-color">Text Color:</label>
+                    <div class="color-input-container">
+                        <input id="text-color" name="text-color" type="color" value="{{.TextColor}}"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <input id="description"
+                           name="description"
+                           placeholder="Description"
+                           type="text"
+                           value="{{.Description}}"
+                    />
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-icon" type="submit">
+                        <svg class="feather">
+                            <use xlink:href="/static/icons/feather-sprite.svg#check"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-icon btn-cancel" type="button">
+                        <svg class="feather">
+                            <use xlink:href="/static/icons/feather-sprite.svg#x"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </article>
+    </section>
+{{end}}
