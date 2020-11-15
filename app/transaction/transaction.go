@@ -32,7 +32,7 @@ func CreateTransactionsTable(db *sql.DB) {
 			PRIMARY KEY (id)
 		);
 	`
-	log.Println("Creating transactions table.")
+	log.Println("Creating the transactions table.")
 	statement, err := db.Prepare(query)
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -52,7 +52,7 @@ func DisplayTimeToDb(displayDate string) string {
 }
 
 func DeleteTransaction(db *sql.DB, id int) (err error) {
-	_, err = db.Exec("DELETE FROM transactions WHERE id = ?", id)
+	_, err = db.Exec("DELETE FROM transactions WHERE id = ?;", id)
 	return
 }
 
@@ -60,9 +60,6 @@ func GetTransaction(db *sql.DB, id int) (transaction Transaction, err error) {
 	row := db.QueryRow("SELECT * FROM transactions WHERE id = ?;", id)
 	err = row.Scan(&transaction.Id, &transaction.Amount, &transaction.Category, &transaction.Name, &transaction.Summary,
 		&transaction.TransactionDate)
-	if err != nil {
-		return
-	}
 	return
 }
 
@@ -101,7 +98,7 @@ func UpdateTransaction(db *sql.DB, transaction Transaction) (err error) {
 	query := `
 		UPDATE transactions
 		SET amount = ?, category = ?, name = ?, summary = ?, transaction_date = ?
-		WHERE id = ?
+		WHERE id = ?;
 	`
 	statement, err := db.Prepare(query)
 	if err != nil {

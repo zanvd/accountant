@@ -3,7 +3,6 @@ package transaction
 import (
 	"database/sql"
 	"html/template"
-	"log"
 	"net/http"
 	"path"
 	"strconv"
@@ -55,7 +54,7 @@ func (dh DeleteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = DeleteTransaction(dh.Database, id); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
@@ -110,7 +109,7 @@ type ListHandler struct {
 func (lh ListHandler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
 	transactions, err := GetTransactions(lh.Database)
 	if err != nil {
-		log.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	templates := prepareTemplates([]string{"templates/base.html", "templates/transaction/index.html"})
 	if err := templates.ExecuteTemplate(w, "base.html", transactions); err != nil {
@@ -129,7 +128,7 @@ func (vh ViewHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	transaction, err := GetTransaction(vh.Database, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	templates := prepareTemplates([]string{"templates/base.html", "templates/transaction/view.html"})
 	if err := templates.ExecuteTemplate(w, "base.html", transaction); err != nil {
