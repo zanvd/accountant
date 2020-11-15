@@ -23,27 +23,28 @@
             <form action="/transaction/edit/{{.Id}}" method="post">
                 <div class="form-group">
                     <label for="name">Name:</label>
-                    <input id="name" name="name" type="text" value="{{.Name}}"/>
+                    <input id="name" name="name" placeholder="Name" type="text" value="{{.Name}}"/>
                 </div>
                 <div class="form-group">
                     <label for="category">Category:</label>
-                    <input id="category" name="category" type="text" value="{{.Category}}"/>
+                    <input id="category" name="category" placeholder="Category" type="text" value="{{.Category}}"/>
                 </div>
                 <div class="form-group">
                     <label for="amount">Amount:</label>
-                    <input id="amount" name="amount" type="number" value="{{.Amount}}"/>
+                    <input id="amount" name="amount" placeholder="Amount" type="number" value="{{.Amount}}"/>
                 </div>
                 <div class="form-group">
-                    <label for="transaction_date">Transaction Date:</label>
-                    <input id="transaction_date"
-                           name="transaction_date"
+                    <label for="transaction-date">Transaction Date:</label>
+                    <input id="transaction-date"
+                           name="transaction-date"
+                           placeholder="Transaction Date"
                            type="text"
                            value="{{.TransactionDate | dbToDisplayDate}}"
                     />
                 </div>
                 <div class="form-group">
                     <label for="summary">Summary:</label>
-                    <input id="summary" name="summary" type="text" value="{{.Summary}}"/>
+                    <input id="summary" name="summary" placeholder="Summary" type="text" value="{{.Summary}}"/>
                 </div>
                 <div class="form-actions">
                     <button class="btn btn-icon" type="submit">
@@ -58,6 +59,14 @@
                     </button>
                 </div>
             </form>
+            <script>
+                window.addEventListener('load', function () {
+                    new dtsel.DTS('input[id="transaction-date"]', {
+                        dateFormat: 'dd. mm. yyyy',
+                        direction: 'BOTTOM'
+                    });
+                });
+            </script>
         </article>
     </section>
 {{end}}

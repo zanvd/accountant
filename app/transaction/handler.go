@@ -21,7 +21,7 @@ func (ah AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				transaction.Amount = floatAmount
 			}
 		}
-		if transactionDate := r.FormValue("transaction_date"); transactionDate != "" {
+		if transactionDate := r.FormValue("transaction-date"); transactionDate != "" {
 			if dbDate := DisplayTimeToDb(transactionDate); dbDate != "" {
 				transaction.TransactionDate = dbDate
 			}
@@ -80,7 +80,7 @@ func (eh EditHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				transaction.Amount = floatAmount
 			}
 		}
-		if transactionDate := r.FormValue("transaction_date"); transactionDate != "" {
+		if transactionDate := r.FormValue("transaction-date"); transactionDate != "" {
 			if dbDate := DisplayTimeToDb(transactionDate); dbDate != "" {
 				transaction.TransactionDate = dbDate
 			}

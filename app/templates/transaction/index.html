@@ -13,23 +13,23 @@
             {{if not .}}
                 <p>No transactions.</p>
             {{else}}
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Amount</th>
-                        <th>Category</th>
-                        <th>Transaction Date</th>
+                <table class="acc-table">
+                    <thead class="acc-thead">
+                    <tr class="acc-tr">
+                        <th class="acc-th">Name</th>
+                        <th class="acc-th">Amount</th>
+                        <th class="acc-th">Category</th>
+                        <th class="acc-th">Transaction Date</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="acc-tbody">
                     {{range $transaction := .}}
-                        <tr>
-                            <td>{{$transaction.Name}}</td>
-                            <td>{{$transaction.Amount}}</td>
-                            <td>{{$transaction.Category}}</td>
-                            <td>{{$transaction.TransactionDate | dbToDisplayDate}}</td>
-                            <td class="table-action-cell">
+                        <tr class="acc-tr">
+                            <td class="acc-td">{{$transaction.Name}}</td>
+                            <td class="acc-td">{{$transaction.Amount}}</td>
+                            <td class="acc-td">{{$transaction.Category}}</td>
+                            <td class="acc-td">{{$transaction.TransactionDate | dbToDisplayDate}}</td>
+                            <td class="acc-td table-action-cell">
                                 <a class="btn btn-icon btn-edit" href="/transaction/edit/{{$transaction.Id}}">
                                     <svg class="feather">
                                         <use xlink:href="/static/icons/feather-sprite.svg#edit"/>
