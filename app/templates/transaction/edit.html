@@ -1,6 +1,6 @@
 {{define "content"}}
     <section>
-        <article>
+        <article class="page-title">
             <h1>Transactions</h1>
             <div class="actions">
                 <a class="btn btn-icon btn-view" href="/transaction/view/{{.Transaction.Id}}">
@@ -22,6 +22,7 @@
         </article>
         <article>
             <form action="/transaction/edit/{{.Id}}" method="post">
+                <h2>{{.Name}}</h2>
                 <div class="form-group">
                     <label for="name">Name:</label>
                     <input id="name" name="name" placeholder="Name" required type="text" value="{{.Transaction.Name}}"/>

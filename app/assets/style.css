@@ -1,95 +1,11 @@
-html, body {
-    margin: 0;
-}
-
 html {
     height: 100%;
 }
 
-header {
-    background-color: rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid black;
-}
-
-header > nav {
-    font-size: 18px;
-    padding: 20px 70px;
-}
-
-header > nav ul {
-    align-items: center;
+body {
     display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-header > nav > ul > li {
-    flex: 3;
-}
-
-header > nav ul li {
-    display: inline-block;
-    margin-left: 30px;
-    position: relative;
-}
-
-header > nav ul li a {
-    color: black;
-    padding: 5px 0;
-}
-
-header > nav ul li a:hover {
-    color: #00b33c;
-    text-decoration: none;
-}
-
-#menu-items-container li {
-    background-color: white;
-    border-radius: 10px;
-    padding: 7px 12px;
-}
-
-#menu-items-container li:hover {
-    background-color: whitesmoke;
-}
-
-#menu-logo {
-    flex: 1;
-    font-size: 24px;
-    font-weight: bold;
-    margin-left: 0;
-    margin-right: auto;
-}
-
-#menu-logo > a {
-    color: black;
-}
-
-#menu-logo > a:hover {
-    color: #00b33c;
-}
-
-main {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    overflow-x: auto;
-    padding-top: 30px;
-}
-
-footer {
-    background-color: #333333;
-    bottom: 0;
-    color: white;
-    left: 0;
-    position: absolute;
-    text-align: center;
-    width: 100%;
-}
-
-section {
-    width: 80%;
+    flex-direction: column;
+    height: 100%;
 }
 
 a {
@@ -99,200 +15,69 @@ a {
     text-decoration: none;
 }
 
-.actions {
+article {
     display: flex;
-    justify-content: flex-end;
-    margin-bottom: 30px;
 }
 
-.category-color-view {
-    display: inline-block;
-    height: 10px;
-    vertical-align: bottom;
-    width: 100px;
+main {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    margin-bottom: 20px;
 }
 
-.category-pill {
-    border-radius: 10px;
-    padding: 10px;
+section {
+    display: flex;
+    flex-direction: column;
 }
 
-/* TABLE */
-.acc-table {
-    border-collapse: collapse;
-    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+/* HEADER */
+header > nav {
+    background-color: white;
+    border-bottom: 1px solid black;
+    display: flex;
+    font-size: 18px;
+    height: 50px;
+    left: 0;
+    margin: 0;
+    padding: 20px 20px 0 20px;
+    position: fixed;
+    right: 0;
+    top: 0;
+}
+
+header > nav a {
+    color: black;
+}
+
+header > nav a:hover {
+    color: #00b33c;
+}
+
+header > nav ul {
+    list-style: none;
     margin: 0;
     padding: 0;
+}
+
+header > nav #menu-brand {
+    font-weight: bold;
+    font-size: 24px;
+    position: relative;
+    white-space: nowrap;
+}
+
+/* HEADER END */
+/* FOOTER */
+footer {
+    background-color: #333;
+    color: white;
+    flex-shrink: 0;
+    text-align: center;
     width: 100%;
 }
 
-.acc-thead {
-    background-color: #00b33c;
-    border-bottom: 1px solid #ddd;
-    color: white;
-}
-
-.acc-th, .acc-td {
-    border-right: 1px solid #ddd;
-    padding: 12px 20px;
-    text-align: left;
-}
-
-.acc-th:last-child, .acc-td:last-child {
-    border-right: none;
-}
-
-.acc-tbody .acc-tr:hover {
-    background-color: #ddd;
-}
-
-.acc-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-.table-action-cell {
-    width: 140px;
-}
-
-/* TABLE END */
-
-/* FORM */
-form {
-    border-radius: 10px;
-    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-    display: flex;
-    flex-direction: column;
-    margin: 0 auto 100px;
-    max-width: 45%;
-    padding: 45px;
-}
-
-input[type=checkbox] {
-    cursor: pointer;
-}
-
-.color-input-container {
-    flex: 10;
-}
-
-.form-actions {
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.form-group {
-    display: flex;
-    margin-bottom: 35px;
-}
-
-.form-group input, .form-group select {
-    background-color: #f2f2f2;
-    border: none;
-    border-radius: 10px;
-    outline: none;
-}
-
-.form-group input:not([type="color"]), .form-group select {
-    flex: 10;
-    font-size: 14px;
-    padding: 15px;
-}
-
-.form-group input[type="color"] {
-    height: 45px;
-    padding: 10px;
-    width: 100px;
-}
-
-.form-group label {
-    flex: 2;
-    padding: 15px 0;
-    text-align: left;
-}
-
-.form-group select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("/static/icons/chevron-down.svg");
-    background-position: right center;
-    background-repeat: no-repeat;
-}
-
-/* Hide the default arrow in Internet Explorer 10 and Internet Explorer 11 */
-.form-group select::-ms-expand {
-    display: none;
-}
-
-.form-group.form-checkbox label {
-    cursor: pointer;
-}
-
-.form-group.form-checkbox .checkbox-container {
-    display: flex;
-    flex: 10;
-}
-
-.form-group.form-checkbox .checkbox-container input {
-    flex: 0;
-}
-
-.form-group.form-checkbox .checkbox-group-container {
-    display: grid;
-    flex: 10;
-    grid-gap: 15px 10px;
-    grid-template-columns: 1fr 1fr 1fr;
-}
-
-.form-group.read-only p {
-    flex: 10;
-}
-
-.form-group.read-only small {
-    padding: 15px;
-}
-
-.form-group.required label:after {
-    color: red;
-    content: ' *';
-    font-weight: bold;
-}
-
-/* END FORM */
-
-/* VIEW */
-#data-container {
-    border-radius: 10px;
-    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-    margin: 0 auto 100px;
-    max-width: 45%;
-    padding: 45px;
-}
-
-#data-container p {
-    margin: 0;
-    padding: 15px 10px;
-}
-
-#data-container p:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-/* END VIEW */
-
-/* FEATHER ICONS */
-.feather {
-    width: 24px;
-    height: 24px;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    fill: none;
-}
-
-/* END FEATHER ICONS */
-
+/* FOOTER END */
 /* BUTTONS */
 .btn {
     background: white;
@@ -352,3 +137,133 @@ input[type=checkbox] {
 }
 
 /* END BUTTONS */
+/* FEATHER ICONS */
+.feather {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+
+/* END FEATHER ICONS */
+/* FORM */
+form {
+    border-radius: 10px;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+input[type=checkbox] {
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.form-group {
+    display: flex;
+}
+
+.form-group input, .form-group select {
+    background-color: #f2f2f2;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+}
+
+.form-group input:not([type="color"]), .form-group select {
+    font-size: 14px;
+    padding: 15px;
+}
+
+.form-group input[type="color"] {
+    cursor: pointer;
+    height: 45px;
+    padding: 10px;
+    width: 100px;
+}
+
+.form-group label {
+    cursor: pointer;
+}
+
+.form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("/static/icons/chevron-down.svg");
+    background-position: right center;
+    background-repeat: no-repeat;
+}
+
+/* Hide the default arrow in Internet Explorer 10 and Internet Explorer 11 */
+.form-group select::-ms-expand {
+    display: none;
+}
+
+.form-group.form-checkbox label {
+    cursor: pointer;
+}
+
+.form-group.form-checkbox .checkbox-container {
+    display: flex;
+    flex: 10;
+}
+
+.form-group.form-checkbox .checkbox-container input {
+    flex: 0;
+}
+
+.form-group.form-checkbox .checkbox-group-container {
+    display: grid;
+    flex: 10;
+    grid-gap: 15px 10px;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.form-group.read-only p {
+    flex: 10;
+}
+
+.form-group.read-only small {
+    padding: 15px;
+}
+
+.form-group.required label:after {
+    color: red;
+    content: ' *';
+    font-weight: bold;
+}
+
+/* END FORM */
+.category-color-view {
+    display: inline-block;
+    height: 20px;
+    vertical-align: bottom;
+}
+
+.category-pill {
+    border-radius: 10px;
+}
+
+.page-title > .actions {
+    display: flex;
+    justify-content: end;
+}
+
+.data-container {
+    border-radius: 10px;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+.data-container p {
+    margin: 0;
+}
+
+.data-container p:nth-child(even) {
+    background-color: #f2f2f2;
+}

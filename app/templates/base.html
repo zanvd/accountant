@@ -2,24 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Accountant</title>
+    <link href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" rel="stylesheet"/>
     <link href="/static/style.css" rel="stylesheet">
-    <link href="/static/dtsel-picker/dtsel.css" rel="stylesheet">
+    <link href="/static/desktop.css" media="screen and (min-width: 600px)" rel="stylesheet"/>
+    <link href="/static/mobile.css" media="screen and (max-width: 600px)" rel="stylesheet"/>
+    <link href="/static/dtsel-picker/dtsel.css" rel="stylesheet"/>
     <script src="/static/script.js" defer></script>
     <script src="/static/dtsel-picker/dtsel.js" defer></script>
 </head>
 <body>
 <header>
     <nav>
-        <ul>
-            <li id="menu-logo"><a href="/">Accountant</a></li>
-            <li>
-                <ul id="menu-items-container">
-                    <li><a href="/">Transactions</a></li>
-                    <li><a href="/category">Categories</a></li>
-                </ul>
-            </li>
-        </ul>
+        <div id="menu-brand">
+            <a href="/">Accountant</a>
+        </div>
+        <input id="menu-button" type="checkbox"/>
+        <label id="menu-burger" for="menu-button">
+            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                      d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"
+                />
+            </svg>
+        </label>
+        <div id="menu">
+        <a href="/">Transactions</a>
+        <a href="/category">Categories</a>
+        </div>
     </nav>
 </header>
 <main>

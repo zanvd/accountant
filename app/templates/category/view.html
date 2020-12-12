@@ -1,6 +1,6 @@
 {{define "content"}}
     <section>
-        <article>
+        <article class="page-title">
             <h1>Categories</h1>
             <div class="actions">
                 <a class="btn btn-icon btn-edit" href="/category/edit/{{.Id}}">
@@ -20,8 +20,8 @@
                 </a>
             </div>
         </article>
-        <article id="data-container">
-            <h1>{{.Name}}</h1>
+        <article class="data-container">
+            <h2>{{.Name}}</h2>
             <p>
                 <b>Color:</b>
                 <span class="category-color-view category-pill" style="background-color: {{.Color}};"></span>

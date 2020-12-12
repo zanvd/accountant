@@ -1,0 +1,133 @@
+main {
+    margin-top: 100px
+}
+
+section {
+    margin: 0 auto;
+    width: 80%;
+}
+
+/* HEADER */
+header > nav #menu-brand {
+    flex: 1;
+    margin-right: 30px;
+}
+
+header > nav #menu {
+    flex: 3;
+    line-height: 1.5;
+}
+
+header > nav #menu > a {
+    margin-right: 30px;
+}
+
+header > nav #menu > a:last-child {
+    margin-right: 0;
+}
+
+header > nav #menu-burger,
+header > nav #menu-button {
+    display: none;
+}
+
+/* HEADER END */
+/* TABLE */
+table {
+    border-collapse: collapse;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+thead {
+    background-color: #00b33c;
+    border-bottom: 1px solid #ddd;
+    color: white;
+}
+
+th, td {
+    border-right: 1px solid #ddd;
+    padding: 12px 20px;
+    text-align: left;
+}
+
+th:last-child, td:last-child {
+    border-right: none;
+}
+
+tbody tr:hover {
+    background-color: #ddd;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.table-action-cell {
+    width: 140px;
+}
+
+/* TABLE END */
+/* FORM */
+form {
+    margin: 0 auto;
+    min-width: 50%;
+    padding: 20px 45px;
+}
+
+.color-input-container {
+    flex: 10;
+}
+
+.form-group {
+    margin-bottom: 35px;
+}
+
+.form-group input:not([type="color"]), .form-group select {
+    flex: 10;
+}
+
+.form-group label {
+    flex: 2;
+    margin: auto 10px auto 0;
+    text-align: left;
+}
+
+/* END FORM */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 30px;
+}
+
+.category-pill {
+    padding: 10px;
+}
+
+.category-color-view {
+    padding: 0;
+    width: 100px;
+}
+
+.page-title {
+    justify-content: space-between;
+}
+
+.page-title > .actions {
+    /* Margin is determined as a double of the Normalize.css for H1. */
+    margin: 1.34em 0;
+}
+
+.data-container {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    min-width: 50%;
+    padding: 20px 45px 45px;
+}
+
+.data-container p {
+    padding: 20px 10px;
+}
