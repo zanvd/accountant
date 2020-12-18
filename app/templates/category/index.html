@@ -44,7 +44,11 @@
                                         <use xlink:href="/static/icons/feather-sprite.svg#search"/>
                                     </svg>
                                 </a>
-                                <a class="btn btn-icon btn-delete" href="/category/delete/{{$category.Id}}">
+                                <a class="btn btn-icon btn-delete confirm-deletion"
+                                   href="/category/delete/{{$category.Id}}"
+                                   data-deletion-name="{{$category.Name}}"
+                                   data-deletion-title="Category"
+                                >
                                     <svg class="feather">
                                         <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
                                     </svg>

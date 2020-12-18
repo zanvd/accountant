@@ -96,6 +96,12 @@ form {
 }
 
 /* END FORM */
+/* DELETION DIALOG */
+#deletion-dialog {
+    padding: 15px 50px;
+    width: 450px;
+}
+/* END DELETION DIALOG */
 .actions {
     display: flex;
     justify-content: flex-end;

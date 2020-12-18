@@ -240,6 +240,36 @@ input[type=checkbox] {
 }
 
 /* END FORM */
+/* DIALOG */
+.dialog-actions {
+    display: flex;
+    justify-content: space-evenly;
+}
+/* END DIALOG /*
+/* DELETION DIALOG */
+#deletion-dialog-container {
+    background-color: rgba(0, 0, 0, 0.7);
+    bottom: 0;
+    height: 100%;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 100%;
+    z-index: 200;
+}
+
+#deletion-dialog {
+    background-color: whitesmoke;
+    border-radius: 10px;
+    margin: 0 auto;
+    min-height: 150px;
+    position: relative;
+    text-align: center;
+    top: calc(50% - 150px);
+    z-index: 201;
+}
+/* END DELETION DIALOG */
 .category-color-view {
     display: inline-block;
     height: 20px;
@@ -266,4 +296,8 @@ input[type=checkbox] {
 
 .data-container p:nth-child(even) {
     background-color: #f2f2f2;
+}
+
+.hidden {
+    display: none;
 }

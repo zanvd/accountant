@@ -8,7 +8,11 @@
                         <use xlink:href="/static/icons/feather-sprite.svg#search"/>
                     </svg>
                 </a>
-                <a class="btn btn-icon btn-delete" href="/transaction/delete/{{.Transaction.Id}}">
+                <a class="btn btn-icon btn-delete confirm-deletion"
+                   href="/transaction/delete/{{.Transaction.Id}}"
+                   data-deletion-name="{{.Name}}"
+                   data-deletion-title="Transaction"
+                >
                     <svg class="feather">
                         <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
                     </svg>
@@ -78,7 +82,7 @@
                             <use xlink:href="/static/icons/feather-sprite.svg#check"/>
                         </svg>
                     </button>
-                    <button class="btn btn-icon btn-cancel" type="button">
+                    <button class="btn btn-icon btn-cancel go-back" type="button">
                         <svg class="feather">
                             <use xlink:href="/static/icons/feather-sprite.svg#x"/>
                         </svg>
