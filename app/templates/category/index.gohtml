@@ -14,26 +14,26 @@
             {{if not .}}
                 <p>No categories.</p>
             {{else}}
-                <table class="acc-table">
-                    <thead class="acc-thead">
-                    <tr class="acc-tr">
-                        <th class="acc-th">Name</th>
-                        <th class="acc-th">Description</th>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
                         <th></th>
                     </tr>
                     </thead>
-                    <tbody class="acc-tbody">
+                    <tbody>
                     {{range $category := .}}
-                        <tr class="acc-tr">
-                            <td class="acc-td">
+                        <tr>
+                            <td>
                                 <span class="category-pill"
                                       style="background-color: {{$category.Color}}; color: {{$category.TextColor}};"
                                 >
                                     {{$category.Name}}
                                 </span>
                             </td>
-                            <td class="acc-td">{{$category.Description}}</td>
-                            <td class="acc-td table-action-cell">
+                            <td>{{$category.Description}}</td>
+                            <td class="table-action-cell">
                                 <a class="btn btn-icon btn-edit" href="/category/edit/{{$category.Id}}">
                                     <svg class="feather">
                                         <use xlink:href="/static/icons/feather-sprite.svg#edit"/>

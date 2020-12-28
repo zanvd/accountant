@@ -39,8 +39,8 @@ func (ah AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
 	}
 
-	templates := template.Must(template.ParseFiles("templates/base.html", "templates/category/add.html"))
-	if err := templates.ExecuteTemplate(w, "base.html", new(struct{})); err != nil {
+	templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/category/add.gohtml"))
+	if err := templates.ExecuteTemplate(w, "base.gohtml", new(struct{})); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -95,8 +95,8 @@ func (eh EditHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
 	}
 
-	templates := template.Must(template.ParseFiles("templates/base.html", "templates/category/edit.html"))
-	if err := templates.ExecuteTemplate(w, "base.html", category); err != nil {
+	templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/category/edit.gohtml"))
+	if err := templates.ExecuteTemplate(w, "base.gohtml", category); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -105,13 +105,13 @@ type ListHandler struct {
 	Database *sql.DB
 }
 
-func (lh ListHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (lh ListHandler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
 	categories, err := GetCategories(lh.Database)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	templates := template.Must(template.ParseFiles("templates/base.html", "templates/category/index.html"))
-	if err := templates.ExecuteTemplate(w, "base.html", categories); err != nil {
+	templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/category/index.gohtml"))
+	if err := templates.ExecuteTemplate(w, "base.gohtml", categories); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -129,8 +129,8 @@ func (vh ViewHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	templates := template.Must(template.ParseFiles("templates/base.html", "templates/category/view.html"))
-	if err := templates.ExecuteTemplate(w, "base.html", category); err != nil {
+	templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/category/view.gohtml"))
+	if err := templates.ExecuteTemplate(w, "base.gohtml", category); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

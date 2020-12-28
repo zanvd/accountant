@@ -52,8 +52,8 @@ func (ah AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}{
 		Categories: categories,
 	}
-	templates := prepareTemplates([]string{"templates/base.html", "templates/transaction/add.html"})
-	if err := templates.ExecuteTemplate(w, "base.html", data); err != nil {
+	templates := prepareTemplates([]string{"templates/base.gohtml", "templates/transaction/add.gohtml"})
+	if err := templates.ExecuteTemplate(w, "base.gohtml", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -119,14 +119,14 @@ func (eh EditHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Transaction
-		Categories []category.Category
+		Transaction Transaction
+		Categories  []category.Category
 	}{
 		Transaction: transaction,
 		Categories:  categories,
 	}
-	templates := prepareTemplates([]string{"templates/base.html", "templates/transaction/edit.html"})
-	if err := templates.ExecuteTemplate(w, "base.html", data); err != nil {
+	templates := prepareTemplates([]string{"templates/base.gohtml", "templates/transaction/edit.gohtml"})
+	if err := templates.ExecuteTemplate(w, "base.gohtml", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -140,8 +140,8 @@ func (lh ListHandler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	templates := prepareTemplates([]string{"templates/base.html", "templates/transaction/index.html"})
-	if err := templates.ExecuteTemplate(w, "base.html", transactions); err != nil {
+	templates := prepareTemplates([]string{"templates/base.gohtml", "templates/transaction/index.gohtml"})
+	if err := templates.ExecuteTemplate(w, "base.gohtml", transactions); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -159,8 +159,8 @@ func (vh ViewHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	templates := prepareTemplates([]string{"templates/base.html", "templates/transaction/view.html"})
-	if err := templates.ExecuteTemplate(w, "base.html", transaction); err != nil {
+	templates := prepareTemplates([]string{"templates/base.gohtml", "templates/transaction/view.gohtml"})
+	if err := templates.ExecuteTemplate(w, "base.gohtml", transaction); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
