@@ -280,6 +280,20 @@ input[type=checkbox] {
     border-radius: 10px;
 }
 
+#dashboard-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-gap: 30px;
+}
+
+.dashboard-card {
+    border-radius: 10px;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    cursor: pointer;
+    padding: 5px 20px;
+    text-align: center;
+}
+
 .page-title > .actions {
     display: flex;
     justify-content: end;

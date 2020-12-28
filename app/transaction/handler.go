@@ -39,7 +39,15 @@ func (ah AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if err := InsertTransaction(ah.Database, transaction); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
+	}
+
+	transaction := Transaction{}
+	if name := r.URL.Query().Get("name"); name != "" {
+		transaction.Name = name
+	}
+	if categoryId, err := strconv.Atoi(r.URL.Query().Get("category")); err == nil {
+		transaction.Category = category.Category{Id: categoryId}
 	}
 
 	categories, err := category.GetCategories(ah.Database)
@@ -48,9 +56,11 @@ func (ah AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Categories []category.Category
+		Categories  []category.Category
+		Transaction Transaction
 	}{
-		Categories: categories,
+		Categories:  categories,
+		Transaction: transaction,
 	}
 	templates := prepareTemplates([]string{"templates/base.gohtml", "templates/transaction/add.gohtml"})
 	if err := templates.ExecuteTemplate(w, "base.gohtml", data); err != nil {
@@ -72,7 +82,7 @@ func (dh DeleteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
 }
 
 type EditHandler struct {
@@ -110,7 +120,7 @@ func (eh EditHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if err := UpdateTransaction(eh.Database, transaction); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
 	}
 
 	categories, err := category.GetCategories(eh.Database)
@@ -169,6 +179,9 @@ func prepareTemplates(templates []string) *template.Template {
 	return template.Must(template.New("base").Funcs(template.FuncMap{
 		"dbToDisplayDate": func(dbDate string) string {
 			return DbToDisplayDate(dbDate)
+		},
+		"today": func() string {
+			return CurrentDateInDisplayFormat()
 		},
 	}).ParseFiles(templates...))
 }

@@ -24,6 +24,9 @@ func (ah AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if name := r.FormValue("name"); name != "" {
 			transactionTemplate.Name = name
 		}
+		if position, err := strconv.Atoi(r.FormValue("position")); err == nil {
+			transactionTemplate.Position = position
+		}
 
 		if err := InsertTransactionTemplate(ah.Database, transactionTemplate); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -84,6 +87,9 @@ func (eh EditHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if name := r.FormValue("name"); name != "" {
 			transactionTemplate.Name = name
 		}
+		if position, err := strconv.Atoi(r.FormValue("position")); err == nil {
+			transactionTemplate.Position = position
+		}
 
 		if err := UpdateTransactionTemplate(eh.Database, transactionTemplate); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -114,7 +120,7 @@ type ListHandler struct {
 }
 
 func (lh ListHandler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
-	transactionTemplates, err := GetTransactionTemplates(lh.Database)
+	transactionTemplates, err := GetTransactionTemplates(lh.Database, false)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

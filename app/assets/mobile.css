@@ -133,6 +133,10 @@ form {
     padding: 5px 10px;
 }
 
+#dashboard-card-container {
+    margin-top: 30px;
+}
+
 .page-title {
     flex-direction: column;
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bitbucket.org/zanvd/accountant/category"
+	"bitbucket.org/zanvd/accountant/dashboard"
 	"bitbucket.org/zanvd/accountant/transaction"
 	"bitbucket.org/zanvd/accountant/transaction_template"
 	"database/sql"
@@ -27,7 +28,9 @@ func main() {
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("assets"))))
 
-	http.Handle("/", transaction.ListHandler{Database: db})
+	http.Handle("/", dashboard.Handler{Database: db})
+
+	http.Handle(transaction.BaseUrl, transaction.ListHandler{Database: db})
 	http.Handle(transaction.BaseUrl+"add/", transaction.AddHandler{Database: db})
 	http.Handle(transaction.BaseUrl+"delete/", transaction.DeleteHandler{Database: db})
 	http.Handle(transaction.BaseUrl+"edit/", transaction.EditHandler{Database: db})

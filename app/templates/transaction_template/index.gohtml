@@ -23,34 +23,34 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {{range $transaction_template := .}}
+                    {{range $transactionTemplate := .}}
                         <tr>
-                            <td>{{$transaction_template.Name}}</td>
+                            <td>{{$transactionTemplate.Name}}</td>
                             <td>
                                 <span class="category-pill"
-                                      style="background-color: {{$transaction_template.Category.Color}}; color: {{$transaction_template.Category.TextColor}};"
+                                      style="background-color: {{$transactionTemplate.Category.Color}}; color: {{$transactionTemplate.Category.TextColor}};"
                                 >
-                                    {{$transaction_template.Category.Name}}
+                                    {{$transactionTemplate.Category.Name}}
                                 </span>
                             </td>
                             <td class="table-action-cell">
                                 <a class="btn btn-icon btn-edit"
-                                   href="/transaction-template/edit/{{$transaction_template.Id}}"
+                                   href="/transaction-template/edit/{{$transactionTemplate.Id}}"
                                 >
                                     <svg class="feather">
                                         <use xlink:href="/static/icons/feather-sprite.svg#edit"/>
                                     </svg>
                                 </a>
                                 <a class="btn btn-icon btn-view"
-                                   href="/transaction-template/view/{{$transaction_template.Id}}"
+                                   href="/transaction-template/view/{{$transactionTemplate.Id}}"
                                 >
                                     <svg class="feather">
                                         <use xlink:href="/static/icons/feather-sprite.svg#search"/>
                                     </svg>
                                 </a>
                                 <a class="btn btn-icon btn-delete confirm-deletion"
-                                   href="/transaction-template/delete/{{$transaction_template.Id}}"
-                                   data-deletion-name="{{$transaction_template.Name}}"
+                                   href="/transaction-template/delete/{{$transactionTemplate.Id}}"
+                                   data-deletion-name="{{$transactionTemplate.Name}}"
                                    data-deletion-title="Transaction template"
                                 >
                                     <svg class="feather">

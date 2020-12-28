@@ -1,0 +1,24 @@
+{{define "content"}}
+    <section>
+        <article id="dashboard-card-container">
+            {{if not .}}
+            {{else}}
+                {{range $transactionTemplate := .}}
+                    <div class="dashboard-card"
+                         data-transaction-category="{{$transactionTemplate.Category.Id}}"
+                         data-transaction-name="{{$transactionTemplate.Name}}"
+                    >
+                        <p><b>{{$transactionTemplate.Name}}</b></p>
+                        <p>
+                            <span class="category-pill"
+                                  style="background-color: {{$transactionTemplate.Category.Color}}; color: {{$transactionTemplate.Category.TextColor}};"
+                            >
+                                {{$transactionTemplate.Category.Name}}
+                            </span>
+                        </p>
+                    </div>
+                {{end}}
+            {{end}}
+        </article>
+    </section>
+{{end}}

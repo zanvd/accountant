@@ -21,6 +21,10 @@ type Transaction struct {
 	TransactionDate string
 }
 
+func CurrentDateInDisplayFormat() string {
+	return time.Now().Format(displayDateFormat)
+}
+
 func CreateTransactionsTable(db *sql.DB) {
 	query := `
 		CREATE TABLE IF NOT EXISTS transactions (

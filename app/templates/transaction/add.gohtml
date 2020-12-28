@@ -3,7 +3,7 @@
         <article class="page-title">
             <h1>Transaction</h1>
             <div class="actions">
-                <a class="btn btn-icon btn-list" href="/">
+                <a class="btn btn-icon btn-list" href="/transaction/">
                     <svg class="feather">
                         <use xlink:href="/static/icons/feather-sprite.svg#list"/>
                     </svg>
@@ -14,7 +14,7 @@
             <form action="/transaction/add/" method="post">
                 <div class="form-group">
                     <label for="name">Name:</label>
-                    <input id="name" name="name" placeholder="Name" required type="text"/>
+                    <input id="name" name="name" placeholder="Name" required type="text" value="{{.Transaction.Name}}"/>
                 </div>
                 <div class="form-group">
                     <label for="category">Category:</label>
@@ -23,7 +23,11 @@
                             <option></option>
                         {{else}}
                             {{range $category := .Categories}}
-                                <option value="{{$category.Id}}">{{$category.Name}}</option>
+                                {{if eq $category.Id $.Transaction.Category.Id}}
+                                    <option selected value="{{$category.Id}}">{{$category.Name}}</option>
+                                {{else}}
+                                    <option value="{{$category.Id}}">{{$category.Name}}</option>
+                                {{end}}
                             {{end}}
                         {{end}}
                     </select>
@@ -39,6 +43,7 @@
                            placeholder="Transaction Date"
                            required
                            type="text"
+                           value="{{today}}"
                     />
                 </div>
                 <div class="form-group">
