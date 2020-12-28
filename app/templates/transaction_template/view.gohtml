@@ -1,0 +1,39 @@
+{{define "content"}}
+    <section>
+        <article class="page-title">
+            <h1>Transaction templates</h1>
+            <div class="actions">
+                <a class="btn btn-icon btn-view" href="/transaction-template/edit/{{.Id}}">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#edit"/>
+                    </svg>
+                </a>
+                <a class="btn btn-icon btn-delete confirm-deletion"
+                   href="/transaction-template/delete/{{.Id}}"
+                   data-deletion-name="{{.Name}}"
+                   data-deletion-title="Transaction template"
+                >
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
+                    </svg>
+                </a>
+                <a class="btn btn-icon btn-list" href="/transaction-template/">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#list"/>
+                    </svg>
+                </a>
+            </div>
+        </article>
+        <article class="data-container">
+            <h2>{{.Name}}</h2>
+            <p>
+                <b>Category:</b>
+                <span class="category-pill"
+                      style="background-color: {{.Category.Color}}; color: {{.Category.TextColor}};"
+                >
+                    {{.Category.Name}}
+                </span>
+            </p>
+        </article>
+    </section>
+{{end}}

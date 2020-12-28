@@ -1,0 +1,71 @@
+{{define "content"}}
+    <section>
+        <article class="page-title">
+            <h1>Transaction templates</h1>
+            <div class="actions">
+                <a class="btn btn-icon btn-view" href="/transaction-template/view/{{.TransactionTemplate.Id}}">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#search"/>
+                    </svg>
+                </a>
+                <a class="btn btn-icon btn-delete confirm-deletion"
+                   href="/transaction-template/delete/{{.TransactionTemplate.Id}}"
+                   data-deletion-name="{{.TransactionTemplate.Name}}"
+                   data-deletion-title="Transaction template"
+                >
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
+                    </svg>
+                </a>
+                <a class="btn btn-icon btn-list" href="/transaction-template/">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#list"/>
+                    </svg>
+                </a>
+            </div>
+        </article>
+        <article>
+            <form action="/transaction-template/edit/{{.TransactionTemplate.Id}}" method="post">
+                <h2>{{.TransactionTemplate.Name}}</h2>
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input id="name"
+                           name="name"
+                           placeholder="Name"
+                           required
+                           type="text"
+                           value="{{.TransactionTemplate.Name}}"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <select id="category" name="category" required>
+                        {{if not .Categories}}
+                            <option></option>
+                        {{else}}
+                            {{range $category := .Categories}}
+                                {{if eq $category.Id $.TransactionTemplate.Category.Id}}
+                                    <option selected value="{{$category.Id}}">{{$category.Name}}</option>
+                                {{else}}
+                                    <option value="{{$category.Id}}">{{$category.Name}}</option>
+                                {{end}}
+                            {{end}}
+                        {{end}}
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-icon" type="submit">
+                        <svg class="feather">
+                            <use xlink:href="/static/icons/feather-sprite.svg#check"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-icon btn-cancel go-back" type="button">
+                        <svg class="feather">
+                            <use xlink:href="/static/icons/feather-sprite.svg#x"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </article>
+    </section>
+{{end}}

@@ -1,0 +1,68 @@
+{{define "content"}}
+    <section>
+        <article class="page-title">
+            <h1>Transaction templates</h1>
+            <div class="actions">
+                <a class="btn btn-icon btn-add" href="/transaction-template/add/">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#plus"/>
+                    </svg>
+                </a>
+            </div>
+        </article>
+        <article>
+            {{if not .}}
+                <p>No transaction templates.</p>
+            {{else}}
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{range $transaction_template := .}}
+                        <tr>
+                            <td>{{$transaction_template.Name}}</td>
+                            <td>
+                                <span class="category-pill"
+                                      style="background-color: {{$transaction_template.Category.Color}}; color: {{$transaction_template.Category.TextColor}};"
+                                >
+                                    {{$transaction_template.Category.Name}}
+                                </span>
+                            </td>
+                            <td class="table-action-cell">
+                                <a class="btn btn-icon btn-edit"
+                                   href="/transaction-template/edit/{{$transaction_template.Id}}"
+                                >
+                                    <svg class="feather">
+                                        <use xlink:href="/static/icons/feather-sprite.svg#edit"/>
+                                    </svg>
+                                </a>
+                                <a class="btn btn-icon btn-view"
+                                   href="/transaction-template/view/{{$transaction_template.Id}}"
+                                >
+                                    <svg class="feather">
+                                        <use xlink:href="/static/icons/feather-sprite.svg#search"/>
+                                    </svg>
+                                </a>
+                                <a class="btn btn-icon btn-delete confirm-deletion"
+                                   href="/transaction-template/delete/{{$transaction_template.Id}}"
+                                   data-deletion-name="{{$transaction_template.Name}}"
+                                   data-deletion-title="Transaction template"
+                                >
+                                    <svg class="feather">
+                                        <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                    {{end}}
+                    </tbody>
+                </table>
+            {{end}}
+        </article>
+    </section>
+{{end}}

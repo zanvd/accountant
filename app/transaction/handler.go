@@ -9,6 +9,8 @@ import (
 	"strconv"
 )
 
+const BaseUrl string = "/transaction/"
+
 type AddHandler struct {
 	Database *sql.DB
 }

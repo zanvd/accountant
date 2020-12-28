@@ -10,7 +10,7 @@ This project requires a Docker and Docker Compose installation.
 A script for running it is present in the _bin_ folder.
 You can familiarize yourself with it by running it with the _-h_ flag.
 
-Please read the Notes before running the app.
+Please read the Notes bellow before running the app.
 
 ### Production
 
@@ -42,8 +42,8 @@ sudo chmod u+x bin/accountant.sh
 
 This application doesn't handle errors gracefully, so be prepared to see some non-formatted error messages.
 
-On that note, a category cannot be removed if it's linked to a transaction.
-In order to remove a category no transaction can use it.
+On that note, a category cannot be removed if it's linked to a transaction or transaction template.
+In order to remove a category no transaction or transaction template can use it.
 
 When a schema changes you have to remove existing data or manually change it.
 The easiest way to remove it is by removing the Docker volume with `docker volume rm accountant_db_vol`.

@@ -3,6 +3,7 @@ package main
 import (
 	"bitbucket.org/zanvd/accountant/category"
 	"bitbucket.org/zanvd/accountant/transaction"
+	"bitbucket.org/zanvd/accountant/transaction_template"
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
@@ -22,14 +23,21 @@ func main() {
 
 	category.CreateCategoryTable(db)
 	transaction.CreateTransactionsTable(db)
+	transaction_template.CreateTransactionTemplateTable(db)
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("assets"))))
 
 	http.Handle("/", transaction.ListHandler{Database: db})
-	http.Handle("/transaction/add/", transaction.AddHandler{Database: db})
-	http.Handle("/transaction/delete/", transaction.DeleteHandler{Database: db})
-	http.Handle("/transaction/edit/", transaction.EditHandler{Database: db})
-	http.Handle("/transaction/view/", transaction.ViewHandler{Database: db})
+	http.Handle(transaction.BaseUrl+"add/", transaction.AddHandler{Database: db})
+	http.Handle(transaction.BaseUrl+"delete/", transaction.DeleteHandler{Database: db})
+	http.Handle(transaction.BaseUrl+"edit/", transaction.EditHandler{Database: db})
+	http.Handle(transaction.BaseUrl+"view/", transaction.ViewHandler{Database: db})
+
+	http.Handle(transaction_template.BaseUrl, transaction_template.ListHandler{Database: db})
+	http.Handle(transaction_template.BaseUrl+"add/", transaction_template.AddHandler{Database: db})
+	http.Handle(transaction_template.BaseUrl+"delete/", transaction_template.DeleteHandler{Database: db})
+	http.Handle(transaction_template.BaseUrl+"edit/", transaction_template.EditHandler{Database: db})
+	http.Handle(transaction_template.BaseUrl+"view/", transaction_template.ViewHandler{Database: db})
 
 	http.Handle(category.BaseUrl, category.ListHandler{Database: db})
 	http.Handle(category.BaseUrl+"add/", category.AddHandler{Database: db})
