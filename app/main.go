@@ -5,9 +5,12 @@ import (
 	"bitbucket.org/zanvd/accountant/dashboard"
 	"bitbucket.org/zanvd/accountant/transaction"
 	"bitbucket.org/zanvd/accountant/transaction_template"
+	"bitbucket.org/zanvd/accountant/utility"
 	"database/sql"
 	"fmt"
+	"github.com/go-sql-driver/mysql"
 	_ "github.com/go-sql-driver/mysql"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -28,28 +31,67 @@ func main() {
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("assets"))))
 
-	http.Handle("/", dashboard.Handler{Database: db})
+	http.Handle("/", appHandler{Database: db, Handler: dashboard.Handler})
 
-	http.Handle(transaction.BaseUrl, transaction.ListHandler{Database: db})
-	http.Handle(transaction.BaseUrl+"add/", transaction.AddHandler{Database: db})
-	http.Handle(transaction.BaseUrl+"delete/", transaction.DeleteHandler{Database: db})
-	http.Handle(transaction.BaseUrl+"edit/", transaction.EditHandler{Database: db})
-	http.Handle(transaction.BaseUrl+"view/", transaction.ViewHandler{Database: db})
+	http.Handle(transaction.BaseUrl, appHandler{Database: db, Handler: transaction.ListHandler})
+	http.Handle(transaction.BaseUrl+"add/", appHandler{Database: db, Handler: transaction.AddHandler})
+	http.Handle(transaction.BaseUrl+"delete/", appHandler{Database: db, Handler: transaction.DeleteHandler})
+	http.Handle(transaction.BaseUrl+"edit/", appHandler{Database: db, Handler: transaction.EditHandler})
+	http.Handle(transaction.BaseUrl+"view/", appHandler{Database: db, Handler: transaction.ViewHandler})
 
-	http.Handle(transaction_template.BaseUrl, transaction_template.ListHandler{Database: db})
-	http.Handle(transaction_template.BaseUrl+"add/", transaction_template.AddHandler{Database: db})
-	http.Handle(transaction_template.BaseUrl+"delete/", transaction_template.DeleteHandler{Database: db})
-	http.Handle(transaction_template.BaseUrl+"edit/", transaction_template.EditHandler{Database: db})
-	http.Handle(transaction_template.BaseUrl+"view/", transaction_template.ViewHandler{Database: db})
+	http.Handle(transaction_template.BaseUrl, appHandler{Database: db, Handler: transaction_template.ListHandler})
+	http.Handle(transaction_template.BaseUrl+"add/", appHandler{Database: db, Handler: transaction_template.AddHandler})
+	http.Handle(
+		transaction_template.BaseUrl+"delete/", appHandler{Database: db, Handler: transaction_template.DeleteHandler})
+	http.Handle(
+		transaction_template.BaseUrl+"edit/", appHandler{Database: db, Handler: transaction_template.EditHandler})
+	http.Handle(
+		transaction_template.BaseUrl+"view/", appHandler{Database: db, Handler: transaction_template.ViewHandler})
 
-	http.Handle(category.BaseUrl, category.ListHandler{Database: db})
-	http.Handle(category.BaseUrl+"add/", category.AddHandler{Database: db})
-	http.Handle(category.BaseUrl+"delete/", category.DeleteHandler{Database: db})
-	http.Handle(category.BaseUrl+"edit/", category.EditHandler{Database: db})
-	http.Handle(category.BaseUrl+"view/", category.ViewHandler{Database: db})
+	http.Handle(category.BaseUrl, appHandler{Database: db, Handler: category.ListHandler})
+	http.Handle(category.BaseUrl+"add/", appHandler{Database: db, Handler: category.AddHandler})
+	http.Handle(category.BaseUrl+"delete/", appHandler{Database: db, Handler: category.DeleteHandler})
+	http.Handle(category.BaseUrl+"edit/", appHandler{Database: db, Handler: category.EditHandler})
+	http.Handle(category.BaseUrl+"view/", appHandler{Database: db, Handler: category.ViewHandler})
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err = http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatalln(err.Error())
+	}
+}
+
+type appHandler struct {
+	Database *sql.DB
+	Handler  func(*sql.DB, http.ResponseWriter, *http.Request) (int, error)
+}
+
+func (ah appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if status, err := ah.Handler(ah.Database, w, r); err != nil {
+		log.Printf("error occurred (%s): %+v", r.URL.RequestURI(), err)
+
+		// Handle DB errors with a custom text.
+		message := err.Error()
+		if _, ok := err.(*mysql.MySQLError); ok {
+			message = utility.GetMySQLErrorMessage(err)
+		} else if err == sql.ErrConnDone || err == sql.ErrTxDone {
+			message = "Something went wrong."
+			status = http.StatusInternalServerError
+		} else if err == sql.ErrNoRows {
+			message = "The requested data hasn't been found."
+			status = http.StatusNotFound
+		}
+
+		templateData := struct {
+			ErrorMessage interface{}
+			ErrorStatus  int
+		}{
+			ErrorMessage: message,
+			ErrorStatus:  status,
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/system/error.gohtml"))
+		if err := templates.ExecuteTemplate(w, "base.gohtml", templateData); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
 }
 

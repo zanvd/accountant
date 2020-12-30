@@ -1,0 +1,18 @@
+{{define "content"}}
+    <section>
+        <article class="page-title">
+            <h1>{{.ErrorStatus}}</h1>
+        </article>
+        <article>
+            <p>
+                {{.ErrorMessage}}
+                Go back
+                <button class="btn btn-icon" onclick="window.history.back()">
+                    <svg class="feather">
+                        <use xlink:href="/static/icons/feather-sprite.svg#arrow-left"/>
+                    </svg>
+                </button>
+            </p>
+        </article>
+    </section>
+{{end}}

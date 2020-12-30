@@ -1,2 +1,4 @@
+github.com/VividCortex/mysqlerr v0.0.0-20201215173831-4c396ae82aac h1:4w4jPA8uNKNtkEcVmMwcjXwkLbCnPpx//7RPWQHGPUA=
+github.com/VividCortex/mysqlerr v0.0.0-20201215173831-4c396ae82aac/go.mod h1:f3HiCrHjHBdcm6E83vGaXh1KomZMA2P6aeo3hKx/wg0=
 github.com/go-sql-driver/mysql v1.5.0 h1:ozyZYNQW3x3HtqT1jira07DN2PArx2v7/mN66gGcHOs=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=

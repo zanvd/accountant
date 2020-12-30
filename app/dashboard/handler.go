@@ -2,23 +2,21 @@ package dashboard
 
 import (
 	"bitbucket.org/zanvd/accountant/transaction_template"
+	"bitbucket.org/zanvd/accountant/utility"
 	"database/sql"
 	"html/template"
 	"net/http"
 )
 
-type Handler struct {
-	Database *sql.DB
-}
-
-func (dh Handler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
-	transactionTemplates, err := transaction_template.GetTransactionTemplates(dh.Database, true)
+func Handler(db *sql.DB, w http.ResponseWriter, _ *http.Request) (int, error) {
+	transactionTemplates, err := transaction_template.GetTransactionTemplates(db, true)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 	templates := template.Must(
 		template.ParseFiles("templates/base.gohtml", "templates/dashboard/dashboard.gohtml"))
-	if err := templates.ExecuteTemplate(w, "base.gohtml", transactionTemplates); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err = templates.ExecuteTemplate(w, "base.gohtml", transactionTemplates); err != nil {
+		return http.StatusInternalServerError, err
 	}
+	return http.StatusOK, nil
 }

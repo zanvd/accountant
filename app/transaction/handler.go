@@ -2,6 +2,7 @@ package transaction
 
 import (
 	"bitbucket.org/zanvd/accountant/category"
+	"bitbucket.org/zanvd/accountant/utility"
 	"database/sql"
 	"html/template"
 	"net/http"
@@ -11,11 +12,7 @@ import (
 
 const BaseUrl string = "/transaction/"
 
-type AddHandler struct {
-	Database *sql.DB
-}
-
-func (ah AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func AddHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
 	if r.Method == "POST" {
 		transaction := Transaction{}
 		if amount := r.FormValue("amount"); amount != "" {
@@ -36,10 +33,11 @@ func (ah AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		transaction.Summary = r.FormValue("summary")
 
-		if err := InsertTransaction(ah.Database, transaction); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		if err := InsertTransaction(db, transaction); err != nil {
+			return utility.MapMySQLErrorToHttpCode(err), err
 		}
 		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
+		return http.StatusTemporaryRedirect, nil
 	}
 
 	transaction := Transaction{}
@@ -50,9 +48,9 @@ func (ah AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		transaction.Category = category.Category{Id: categoryId}
 	}
 
-	categories, err := category.GetCategories(ah.Database)
+	categories, err := category.GetCategories(db)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
 	data := struct {
@@ -63,41 +61,35 @@ func (ah AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Transaction: transaction,
 	}
 	templates := prepareTemplates([]string{"templates/base.gohtml", "templates/transaction/add.gohtml"})
-	if err := templates.ExecuteTemplate(w, "base.gohtml", data); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err = templates.ExecuteTemplate(w, "base.gohtml", data); err != nil {
+		return http.StatusInternalServerError, err
 	}
+	return http.StatusOK, nil
 }
 
-type DeleteHandler struct {
-	Database *sql.DB
-}
-
-func (dh DeleteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func DeleteHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		return http.StatusBadRequest, err
 	}
 
-	if err = DeleteTransaction(dh.Database, id); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err = DeleteTransaction(db, id); err != nil {
+		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
 	http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
+	return http.StatusTemporaryRedirect, nil
 }
 
-type EditHandler struct {
-	Database *sql.DB
-}
-
-func (eh EditHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func EditHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		return http.StatusBadRequest, err
 	}
 
-	transaction, err := GetTransaction(eh.Database, id)
+	transaction, err := GetTransaction(db, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		return utility.MapMySQLErrorToHttpCode(err), err
 	} else if r.Method == "POST" {
 		if amount := r.FormValue("amount"); amount != "" {
 			if floatAmount, err := strconv.ParseFloat(amount, 64); err == nil {
@@ -117,15 +109,16 @@ func (eh EditHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		transaction.Summary = r.FormValue("summary")
 
-		if err := UpdateTransaction(eh.Database, transaction); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		if err = UpdateTransaction(db, transaction); err != nil {
+			return utility.MapMySQLErrorToHttpCode(err), err
 		}
 		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
+		return http.StatusTemporaryRedirect, nil
 	}
 
-	categories, err := category.GetCategories(eh.Database)
+	categories, err := category.GetCategories(db)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
 	data := struct {
@@ -136,43 +129,38 @@ func (eh EditHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Categories:  categories,
 	}
 	templates := prepareTemplates([]string{"templates/base.gohtml", "templates/transaction/edit.gohtml"})
-	if err := templates.ExecuteTemplate(w, "base.gohtml", data); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err = templates.ExecuteTemplate(w, "base.gohtml", data); err != nil {
+		return http.StatusInternalServerError, err
 	}
+	return http.StatusOK, nil
 }
 
-type ListHandler struct {
-	Database *sql.DB
-}
-
-func (lh ListHandler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
-	transactions, err := GetTransactions(lh.Database)
+func ListHandler(db *sql.DB, w http.ResponseWriter, _ *http.Request) (int, error) {
+	transactions, err := GetTransactions(db)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 	templates := prepareTemplates([]string{"templates/base.gohtml", "templates/transaction/index.gohtml"})
-	if err := templates.ExecuteTemplate(w, "base.gohtml", transactions); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err = templates.ExecuteTemplate(w, "base.gohtml", transactions); err != nil {
+		return http.StatusInternalServerError, err
 	}
+	return http.StatusOK, nil
 }
 
-type ViewHandler struct {
-	Database *sql.DB
-}
-
-func (vh ViewHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func ViewHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		return http.StatusBadRequest, err
 	}
-	transaction, err := GetTransaction(vh.Database, id)
+	transaction, err := GetTransaction(db, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 	templates := prepareTemplates([]string{"templates/base.gohtml", "templates/transaction/view.gohtml"})
-	if err := templates.ExecuteTemplate(w, "base.gohtml", transaction); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err = templates.ExecuteTemplate(w, "base.gohtml", transaction); err != nil {
+		return http.StatusInternalServerError, err
 	}
+	return http.StatusOK, nil
 }
 
 func prepareTemplates(templates []string) *template.Template {
