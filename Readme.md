@@ -26,6 +26,8 @@ sudo chmod u+x bin/accountant.sh
 # Generates a .htpasswd file.
 ./bin/accountant.sh secure
 ./bin/accountant.sh up --production
+# When setting up for the first time:
+docker exec -it accountant_app ./accountant-cmd createTables
 ```
 
 ### Development
@@ -36,6 +38,8 @@ Add the _accountant.net_ domain to your `/etc/hosts` file.
 sudo chmod u+x bin/accountant.sh
 ./bin/accountant.sh secrets
 ./bin/accountant.sh up
+# When setting up for the first time:
+docker exec -it accountant_app ./accountant-cmd createTables
 ```
 
 ## Notes

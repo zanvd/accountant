@@ -7,27 +7,19 @@ import (
 	"bitbucket.org/zanvd/accountant/transaction_template"
 	"bitbucket.org/zanvd/accountant/utility"
 	"database/sql"
-	"fmt"
 	"github.com/go-sql-driver/mysql"
 	_ "github.com/go-sql-driver/mysql"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"strings"
 )
 
 func main() {
-	db, err := initDatabase()
+	db, err := utility.InitDatabase()
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 	defer db.Close()
-
-	category.CreateCategoryTable(db)
-	transaction.CreateTransactionsTable(db)
-	transaction_template.CreateTransactionTemplateTable(db)
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("assets"))))
 
@@ -93,53 +85,4 @@ func (ah appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	}
-}
-
-// Deprecated. Creates a file for the SQLite DB.
-func createDbFile(removeExisting bool) string {
-	fileName := "accountant-sqlite.db"
-	if removeExisting {
-		_ = os.Remove(fileName)
-	}
-	log.Println("Creating DB file.")
-	file, err := os.Create(fileName)
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
-	if err := file.Close(); err != nil {
-		log.Fatalln(err.Error())
-	}
-	log.Println(fileName, "created.")
-	return fileName
-}
-
-func initDatabase() (*sql.DB, error) {
-	dbName, err := readSecretValueFromFile(os.Getenv("DB_NAME"))
-	if err != nil {
-		log.Fatalln("Failed to get the DB name:", err)
-	}
-	dbPassword, err := readSecretValueFromFile(os.Getenv("DB_PASSWORD"))
-	if err != nil {
-		log.Fatalln("Failed to get the DB password:", err)
-	}
-	dbUser, err := readSecretValueFromFile(os.Getenv("DB_USER"))
-	if err != nil {
-		log.Fatalln("Failed to get the DB user:", err)
-	}
-	return sql.Open("mysql", dbUser+":"+dbPassword+"@(accountant_database)/"+dbName)
-}
-
-func readSecretValueFromFile(filePath string) (secret string, err error) {
-	fileInfo, err := os.Stat(filePath)
-	if err != nil {
-		return
-	}
-	if !fileInfo.Mode().IsRegular() {
-		return "", fmt.Errorf("path to secret is not a file: %s", filePath)
-	}
-	buffer, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		return
-	}
-	return strings.TrimSpace(string(buffer)), nil
 }
