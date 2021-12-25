@@ -32,7 +32,7 @@ docker exec -it accountant_app ./accountant-cmd createTables
 
 ### Development
 
-Add the _accountant.net_ domain to your `/etc/hosts` file.
+Add the _accountant.test_ domain to your `/etc/hosts` file.
 
 ```shell
 sudo chmod u+x bin/accountant.sh

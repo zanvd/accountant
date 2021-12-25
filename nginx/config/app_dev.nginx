@@ -2,7 +2,7 @@ server {
     listen 80;
     listen [::]:80;
 
-    server_name accountant.net www.accountant.net;
+    server_name accountant.test www.accountant.test;
 
     location / {
         proxy_set_header Host $http_host;
