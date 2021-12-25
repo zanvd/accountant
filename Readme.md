@@ -17,7 +17,7 @@ Please read the Notes bellow before running the app.
 Substitute the domains in the `nginx/config/app_prod.nginx` with your own. 
 
 Run these commands:
-```shell script
+```shell
 sudo chmod u+x bin/accountant.sh
 # Creates the secrets folder with required credential files.
 ./bin/accountant.sh secrets --production
@@ -34,7 +34,7 @@ docker exec -it accountant_app ./accountant-cmd createTables
 
 Add the _accountant.net_ domain to your `/etc/hosts` file.
 
-```shell script
+```shell
 sudo chmod u+x bin/accountant.sh
 ./bin/accountant.sh secrets
 ./bin/accountant.sh up
