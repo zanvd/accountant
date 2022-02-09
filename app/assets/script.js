@@ -47,7 +47,7 @@ document.querySelectorAll('.dashboard-card').forEach(element => element.addEvent
     _ => {
         let name = element.getAttribute('data-transaction-name');
         let category = element.getAttribute('data-transaction-category')
-        window.location.href = `/transaction/add/?name=${name}&category=${category}`;
+        window.location.href = `/transaction/add?name=${name}&category=${category}`;
     }
 ));
 /* Dashboard cards end. */

@@ -1,27 +1,76 @@
 package transaction
 
 import (
-	"bitbucket.org/zanvd/accountant/category"
-	"bitbucket.org/zanvd/accountant/utility"
-	"database/sql"
-	"html/template"
 	"net/http"
 	"path"
 	"strconv"
+
+	"bitbucket.org/zanvd/accountant/category"
+	"bitbucket.org/zanvd/accountant/convert"
+	"bitbucket.org/zanvd/accountant/framework"
+	"bitbucket.org/zanvd/accountant/utility"
 )
 
-const BaseUrl string = "/transaction/"
+const BaseUrl string = "/transaction"
 
-func AddHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
+type TransactionHandler struct{}
+
+func (TransactionHandler) GetHandlers() map[string]framework.Endpoint {
+	return map[string]framework.Endpoint{
+		BaseUrl: {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: ListHandler,
+		},
+		BaseUrl + "/add": {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: AddHandler,
+		},
+		BaseUrl + "/delete/": {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: DeleteHandler,
+		},
+		BaseUrl + "/edit/": {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: EditHandler,
+		},
+		BaseUrl + "/view/": {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: ViewHandler,
+		},
+	}
+}
+
+func (TransactionHandler) GetTemplates() map[string]string {
+	return map[string]string{
+		"transaction-add":  "templates/transaction/add.gohtml",
+		"transaction-edit": "templates/transaction/edit.gohtml",
+		"transaction-list": "templates/transaction/index.gohtml",
+		"transaction-view": "templates/transaction/view.gohtml",
+	}
+}
+
+func AddHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	if r.Method == "POST" {
-		transaction := Transaction{}
+		transaction := Transaction{
+			UserId: t.Session.Data.User.Id,
+		}
 		if amount := r.FormValue("amount"); amount != "" {
 			if floatAmount, err := strconv.ParseFloat(amount, 64); err == nil {
 				transaction.Amount = floatAmount
 			}
 		}
 		if transactionDate := r.FormValue("transaction-date"); transactionDate != "" {
-			if dbDate := DisplayTimeToDb(transactionDate); dbDate != "" {
+			if dbDate := convert.DisplayTimeToDb(transactionDate); dbDate != "" {
 				transaction.TransactionDate = dbDate
 			}
 		}
@@ -33,7 +82,7 @@ func AddHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error)
 		}
 		transaction.Summary = r.FormValue("summary")
 
-		if err := InsertTransaction(db, transaction); err != nil {
+		if err := InsertTransaction(t.DB, transaction); err != nil {
 			return utility.MapMySQLErrorToHttpCode(err), err
 		}
 		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
@@ -48,32 +97,31 @@ func AddHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error)
 		transaction.Category = category.Category{Id: categoryId}
 	}
 
-	categories, err := category.GetCategories(db)
+	categories, err := category.GetCategories(t.DB, t.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
-	data := struct {
-		Categories  []category.Category
-		Transaction Transaction
-	}{
-		Categories:  categories,
-		Transaction: transaction,
-	}
-	templates := prepareTemplates([]string{"templates/base.gohtml", "templates/transaction/add.gohtml"})
-	if err = templates.ExecuteTemplate(w, "base.gohtml", data); err != nil {
-		return http.StatusInternalServerError, err
+	t.TemplateOptions = framework.TemplateOptions{
+		Data: struct {
+			Categories  []category.Category
+			Transaction Transaction
+		}{
+			Categories:  categories,
+			Transaction: transaction,
+		},
+		Name: "transaction-add",
 	}
 	return http.StatusOK, nil
 }
 
-func DeleteHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
+func DeleteHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
 
-	if err = DeleteTransaction(db, id); err != nil {
+	if err = DeleteTransaction(t.DB, id, t.Session.Data.User.Id); err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
@@ -81,13 +129,13 @@ func DeleteHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, err
 	return http.StatusTemporaryRedirect, nil
 }
 
-func EditHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
+func EditHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
 
-	transaction, err := GetTransaction(db, id)
+	transaction, err := GetTransaction(t.DB, id, t.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	} else if r.Method == "POST" {
@@ -97,7 +145,7 @@ func EditHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error
 			}
 		}
 		if transactionDate := r.FormValue("transaction-date"); transactionDate != "" {
-			if dbDate := DisplayTimeToDb(transactionDate); dbDate != "" {
+			if dbDate := convert.DisplayTimeToDb(transactionDate); dbDate != "" {
 				transaction.TransactionDate = dbDate
 			}
 		}
@@ -109,67 +157,55 @@ func EditHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error
 		}
 		transaction.Summary = r.FormValue("summary")
 
-		if err = UpdateTransaction(db, transaction); err != nil {
+		if err = UpdateTransaction(t.DB, transaction); err != nil {
 			return utility.MapMySQLErrorToHttpCode(err), err
 		}
 		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
 	}
 
-	categories, err := category.GetCategories(db)
+	categories, err := category.GetCategories(t.DB, t.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
-	data := struct {
-		Transaction Transaction
-		Categories  []category.Category
-	}{
-		Transaction: transaction,
-		Categories:  categories,
-	}
-	templates := prepareTemplates([]string{"templates/base.gohtml", "templates/transaction/edit.gohtml"})
-	if err = templates.ExecuteTemplate(w, "base.gohtml", data); err != nil {
-		return http.StatusInternalServerError, err
+	t.TemplateOptions = framework.TemplateOptions{
+		Data: struct {
+			Transaction Transaction
+			Categories  []category.Category
+		}{
+			Transaction: transaction,
+			Categories:  categories,
+		},
+		Name: "transaction-edit",
 	}
 	return http.StatusOK, nil
 }
 
-func ListHandler(db *sql.DB, w http.ResponseWriter, _ *http.Request) (int, error) {
-	transactions, err := GetTransactions(db)
+func ListHandler(t *framework.Tools, w http.ResponseWriter, _ *http.Request) (int, error) {
+	transactions, err := GetTransactions(t.DB, t.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
-	templates := prepareTemplates([]string{"templates/base.gohtml", "templates/transaction/index.gohtml"})
-	if err = templates.ExecuteTemplate(w, "base.gohtml", transactions); err != nil {
-		return http.StatusInternalServerError, err
+	t.TemplateOptions = framework.TemplateOptions{
+		Data: transactions,
+		Name: "transaction-list",
 	}
 	return http.StatusOK, nil
 }
 
-func ViewHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
+func ViewHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
-	transaction, err := GetTransaction(db, id)
+	transaction, err := GetTransaction(t.DB, id, t.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
-	templates := prepareTemplates([]string{"templates/base.gohtml", "templates/transaction/view.gohtml"})
-	if err = templates.ExecuteTemplate(w, "base.gohtml", transaction); err != nil {
-		return http.StatusInternalServerError, err
+	t.TemplateOptions = framework.TemplateOptions{
+		Data: transaction,
+		Name: "transaction-view",
 	}
 	return http.StatusOK, nil
-}
-
-func prepareTemplates(templates []string) *template.Template {
-	return template.Must(template.New("base").Funcs(template.FuncMap{
-		"dbToDisplayDate": func(dbDate string) string {
-			return DbToDisplayDate(dbDate)
-		},
-		"today": func() string {
-			return CurrentDateInDisplayFormat()
-		},
-	}).ParseFiles(templates...))
 }

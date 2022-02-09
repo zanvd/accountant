@@ -80,12 +80,24 @@ header > nav #menu-button:checked ~ #menu {
 
 /* HEADER END */
 /* TABLE */
+table {
+    border-collapse: collapse;
+}
+
 thead {
     display: none;
 }
 
+tr:not(:first-child) {
+    border-top: 1px solid #ddd;
+}
+
 tbody > tr > td:first-child {
     font-weight: bold;
+}
+
+tbody > tr:not(:first-child) > td:first-child {
+    margin-top: 20px;
 }
 
 td {

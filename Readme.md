@@ -23,12 +23,19 @@ sudo chmod u+x bin/accountant.sh
 ./bin/accountant.sh secrets --production
 # Generates a Let's encrypt certificate.
 ./bin/accountant.sh cert -d <your.domain> -e <email@your.domain>
-# Generates a .htpasswd file.
-./bin/accountant.sh secure
 ./bin/accountant.sh up --production
 # When setting up for the first time:
 docker exec -it accountant_app ./accountant-cmd createTables
 ```
+
+If you require HTTP Basic Auth, you can set it up with:
+```shell
+# Generates a .htpasswd file.
+./bin/accountant.sh secure
+```
+You also have to uncomment:
+* `docker-compose-prod.yml`: build arguments and auth volume
+* `nginx/Dockerfile`: the `RUN` command
 
 ### Development
 

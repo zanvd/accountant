@@ -2,9 +2,17 @@ version: "3.9"
 
 services:
   app:
+    # Debugger.
+    ports:
+      - "2345:2345"
+    security_opt:
+      - seccomp:unconfined
     volumes:
       - app_assets_vol:/app/assets
       - app_templates_vol:/app/templates
+  redis:
+    ports:
+      - "6379:6379"
 
 volumes:
   app_assets_vol:

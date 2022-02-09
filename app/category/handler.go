@@ -1,20 +1,68 @@
 package category
 
 import (
-	"bitbucket.org/zanvd/accountant/utility"
-	"database/sql"
-	"html/template"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
+
+	"bitbucket.org/zanvd/accountant/framework"
+	"bitbucket.org/zanvd/accountant/utility"
 )
 
-const BaseUrl = "/category/"
+const BaseUrl = "/category"
 
-func AddHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
+type CategoryHandler struct{}
+
+func (CategoryHandler) GetHandlers() map[string]framework.Endpoint {
+	return map[string]framework.Endpoint{
+		BaseUrl: {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: ListHandler,
+		},
+		BaseUrl + "/add": {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: AddHandler,
+		},
+		BaseUrl + "/delete/": {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: DeleteHandler,
+		},
+		BaseUrl + "/edit/": {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: EditHandler,
+		},
+		BaseUrl + "/view/": {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: ViewHandler,
+		},
+	}
+}
+
+func (CategoryHandler) GetTemplates() map[string]string {
+	return map[string]string{
+		"category-add":  "templates/category/add.gohtml",
+		"category-edit": "templates/category/edit.gohtml",
+		"category-list": "templates/category/index.gohtml",
+		"category-view": "templates/category/view.gohtml",
+	}
+}
+
+func AddHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	if r.Method == "POST" {
-		category := Category{}
+		category := Category{
+			UserId: t.Session.Data.User.Id,
+		}
 		if color := strings.TrimSpace(r.FormValue("color")); color != "" {
 			category.Color = color
 		} else {
@@ -30,26 +78,22 @@ func AddHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error)
 			category.TextColor = defaultTextColor
 		}
 
-		if err := InsertCategory(db, category); err != nil {
+		if err := InsertCategory(t.DB, category); err != nil {
 			return utility.MapMySQLErrorToHttpCode(err), err
 		}
 		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
 	}
-
-	templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/category/add.gohtml"))
-	if err := templates.ExecuteTemplate(w, "base.gohtml", new(struct{})); err != nil {
-		return http.StatusInternalServerError, err
-	}
+	t.TemplateOptions.Name = "category-add"
 	return http.StatusOK, nil
 }
 
-func DeleteHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
+func DeleteHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
-	if err = DeleteCategory(db, id); err != nil {
+	if err = DeleteCategory(t.DB, id, t.Session.Data.User.Id); err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
@@ -57,12 +101,12 @@ func DeleteHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, err
 	return http.StatusTemporaryRedirect, nil
 }
 
-func EditHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
+func EditHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
-	category, err := GetCategory(db, id)
+	category, err := GetCategory(t.DB, id, t.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	} else if r.Method == "POST" {
@@ -81,44 +125,43 @@ func EditHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error
 			category.TextColor = defaultTextColor
 		}
 
-		if err = UpdateCategory(db, category); err != nil {
+		if err = UpdateCategory(t.DB, category); err != nil {
 			return utility.MapMySQLErrorToHttpCode(err), err
 		}
 		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
 	}
-
-	templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/category/edit.gohtml"))
-	if err = templates.ExecuteTemplate(w, "base.gohtml", category); err != nil {
-		return http.StatusInternalServerError, err
+	t.TemplateOptions = framework.TemplateOptions{
+		Data: category,
+		Name: "category-edit",
 	}
 	return http.StatusOK, nil
 }
 
-func ListHandler(db *sql.DB, w http.ResponseWriter, _ *http.Request) (int, error) {
-	categories, err := GetCategories(db)
+func ListHandler(t *framework.Tools, w http.ResponseWriter, _ *http.Request) (int, error) {
+	categories, err := GetCategories(t.DB, t.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
-	templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/category/index.gohtml"))
-	if err = templates.ExecuteTemplate(w, "base.gohtml", categories); err != nil {
-		return http.StatusInternalServerError, err
+	t.TemplateOptions = framework.TemplateOptions{
+		Data: categories,
+		Name: "category-list",
 	}
 	return http.StatusOK, nil
 }
 
-func ViewHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
+func ViewHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
-	category, err := GetCategory(db, id)
+	category, err := GetCategory(t.DB, id, t.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
-	templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/category/view.gohtml"))
-	if err = templates.ExecuteTemplate(w, "base.gohtml", category); err != nil {
-		return http.StatusInternalServerError, err
+	t.TemplateOptions = framework.TemplateOptions{
+		Data: category,
+		Name: "category-view",
 	}
 	return http.StatusOK, nil
 }

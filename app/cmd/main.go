@@ -1,13 +1,15 @@
 package main
 
 import (
-	"bitbucket.org/zanvd/accountant/category"
-	"bitbucket.org/zanvd/accountant/transaction"
-	"bitbucket.org/zanvd/accountant/transaction_template"
-	"bitbucket.org/zanvd/accountant/utility"
 	"fmt"
 	"log"
 	"os"
+
+	"bitbucket.org/zanvd/accountant/category"
+	"bitbucket.org/zanvd/accountant/transaction"
+	"bitbucket.org/zanvd/accountant/transaction_template"
+	"bitbucket.org/zanvd/accountant/user"
+	"bitbucket.org/zanvd/accountant/utility"
 )
 
 func main() {
@@ -29,6 +31,7 @@ func createTables() {
 	}
 	defer db.Close()
 
+	user.CreateUserTable(db)
 	category.CreateCategoryTable(db)
 	transaction.CreateTransactionsTable(db)
 	transaction_template.CreateTransactionTemplateTable(db)
@@ -38,6 +41,6 @@ func createTables() {
 
 func help() {
 	fmt.Println(`Available commands:
-	createTables	Creates DB tables if they do not exists.
+	createTables	Creates DB tables if they don't exist.
 	help			Prints this help text.`)
 }

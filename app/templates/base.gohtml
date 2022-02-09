@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Accountant</title>
+    <title>Accountant{{if .Title}} - {{.Title}}{{end}}</title>
     <link href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" rel="stylesheet"/>
     <link href="/static/style.css" rel="stylesheet">
     <link href="/static/desktop.css" media="screen and (min-width: 750px)" rel="stylesheet"/>
@@ -27,19 +27,30 @@
             </svg>
         </label>
         <div id="menu">
-            <a href="/transaction/">Transactions</a>
-            <a href="/category/">Categories</a>
-            <a href="/transaction-template/">Transaction templates</a>
+            {{if .Session.LoggedIn}}
+                <a href="/dashboard">Dashboard</a>
+                <a href="/transaction">Transactions</a>
+                <a href="/category">Categories</a>
+                <a href="/transaction-template">Transaction templates</a>
+                <a href="/profile">{{.Session.User.Username}}</a>
+                <a href="/logout">Logout</a>
+            {{else}}
+                <a href="/login">Login</a>
+            {{end}}
         </div>
     </nav>
 </header>
 <main>
-    {{template "content" .}}
+    {{if .ErrorStatus}}
+        {{template "error" .}}
+    {{else}}
+        {{template "content" .Data}}
+    {{end}}
     <div id="deletion-dialog-container" class="hidden">
         <div id="deletion-dialog">
-            <h2 id="deletion-title">Delete transaction</h2>
+            <h2 id="deletion-title"></h2>
             <hr/>
-            <p id="deletion-text">Are you sure you want to delete transaction <strong>Spar (123)</strong>?</p>
+            <p id="deletion-text"></p>
             <hr/>
             <div class="dialog-actions">
                 <button id="deletion-submit" class="btn btn-icon" type="submit">

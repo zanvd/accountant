@@ -15,9 +15,9 @@ services:
       - cert_vol:/etc/letsencrypt
   nginx:
     build:
-      args:
-        - HTTP_PASSWORD=http_password
-        - HTTP_USER=http_user
+      #args:
+      #  - HTTP_PASSWORD=http_password
+      #  - HTTP_USER=http_user
       context: ./nginx
       target: prod
     ports:
@@ -26,9 +26,9 @@ services:
     volumes:
       - cert_challenge_vol:/var/www/cert
       - cert_vol:/etc/letsencrypt
-      - auth_vol:/etc/nginx/auth
+      #- auth_vol:/etc/nginx/auth
 
 volumes:
-  auth_vol:
+  #auth_vol:
   cert_challenge_vol:
   cert_vol:

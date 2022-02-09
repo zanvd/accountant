@@ -1,20 +1,68 @@
 package transaction_template
 
 import (
-	"bitbucket.org/zanvd/accountant/category"
-	"bitbucket.org/zanvd/accountant/utility"
-	"database/sql"
-	"html/template"
 	"net/http"
 	"path"
 	"strconv"
+
+	"bitbucket.org/zanvd/accountant/category"
+	"bitbucket.org/zanvd/accountant/framework"
+	"bitbucket.org/zanvd/accountant/utility"
 )
 
-const BaseUrl string = "/transaction-template/"
+const BaseUrl string = "/transaction-template"
 
-func AddHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
+type TransactionTemplateHandler struct{}
+
+func (TransactionTemplateHandler) GetHandlers() map[string]framework.Endpoint {
+	return map[string]framework.Endpoint{
+		BaseUrl: {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: ListHandler,
+		},
+		BaseUrl + "/add": {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: AddHandler,
+		},
+		BaseUrl + "/delete/": {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: DeleteHandler,
+		},
+		BaseUrl + "/edit/": {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: EditHandler,
+		},
+		BaseUrl + "/view/": {
+			Auth: framework.AuthSettings{
+				Public: false,
+			},
+			Handler: ViewHandler,
+		},
+	}
+}
+
+func (TransactionTemplateHandler) GetTemplates() map[string]string {
+	return map[string]string{
+		"transaction-template-add":  "templates/transaction_template/add.gohtml",
+		"transaction-template-edit": "templates/transaction_template/edit.gohtml",
+		"transaction-template-list": "templates/transaction_template/index.gohtml",
+		"transaction-template-view": "templates/transaction_template/view.gohtml",
+	}
+}
+
+func AddHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	if r.Method == "POST" {
-		transactionTemplate := TransactionTemplate{}
+		transactionTemplate := TransactionTemplate{
+			UserId: t.Session.Data.User.Id,
+		}
 		if categoryId, err := strconv.Atoi(r.FormValue("category")); err == nil {
 			transactionTemplate.Category = category.Category{Id: categoryId}
 		}
@@ -25,37 +73,36 @@ func AddHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error)
 			transactionTemplate.Position = position
 		}
 
-		if err := InsertTransactionTemplate(db, transactionTemplate); err != nil {
+		if err := InsertTransactionTemplate(t.DB, transactionTemplate); err != nil {
 			return utility.MapMySQLErrorToHttpCode(err), err
 		}
 		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
 	}
 
-	categories, err := category.GetCategories(db)
+	categories, err := category.GetCategories(t.DB, t.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
-	data := struct {
-		Categories []category.Category
-	}{
-		Categories: categories,
-	}
-	templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/transaction_template/add.gohtml"))
-	if err = templates.ExecuteTemplate(w, "base.gohtml", data); err != nil {
-		return http.StatusInternalServerError, err
+	t.TemplateOptions = framework.TemplateOptions{
+		Data: struct {
+			Categories []category.Category
+		}{
+			Categories: categories,
+		},
+		Name: "transaction-template-add",
 	}
 	return http.StatusOK, nil
 }
 
-func DeleteHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
+func DeleteHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
 
-	if err = DeleteTransactionTemplate(db, id); err != nil {
+	if err = DeleteTransactionTemplate(t.DB, id, t.Session.Data.User.Id); err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
@@ -63,13 +110,13 @@ func DeleteHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, err
 	return http.StatusTemporaryRedirect, nil
 }
 
-func EditHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
+func EditHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
 
-	transactionTemplate, err := GetTransactionTemplate(db, id)
+	transactionTemplate, err := GetTransactionTemplate(t.DB, id, t.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	} else if r.Method == "POST" {
@@ -83,56 +130,55 @@ func EditHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error
 			transactionTemplate.Position = position
 		}
 
-		if err = UpdateTransactionTemplate(db, transactionTemplate); err != nil {
+		if err = UpdateTransactionTemplate(t.DB, transactionTemplate); err != nil {
 			return utility.MapMySQLErrorToHttpCode(err), err
 		}
 		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
 	}
 
-	categories, err := category.GetCategories(db)
+	categories, err := category.GetCategories(t.DB, t.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
-	data := struct {
-		TransactionTemplate TransactionTemplate
-		Categories          []category.Category
-	}{
-		TransactionTemplate: transactionTemplate,
-		Categories:          categories,
-	}
-	templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/transaction_template/edit.gohtml"))
-	if err = templates.ExecuteTemplate(w, "base.gohtml", data); err != nil {
-		return http.StatusInternalServerError, err
+	t.TemplateOptions = framework.TemplateOptions{
+		Data: struct {
+			TransactionTemplate TransactionTemplate
+			Categories          []category.Category
+		}{
+			TransactionTemplate: transactionTemplate,
+			Categories:          categories,
+		},
+		Name: "transaction-template-edit",
 	}
 	return http.StatusOK, nil
 }
 
-func ListHandler(db *sql.DB, w http.ResponseWriter, _ *http.Request) (int, error) {
-	transactionTemplates, err := GetTransactionTemplates(db, false)
+func ListHandler(t *framework.Tools, w http.ResponseWriter, _ *http.Request) (int, error) {
+	transactionTemplates, err := GetTransactionTemplates(t.DB, false, t.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
-	templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/transaction_template/index.gohtml"))
-	if err = templates.ExecuteTemplate(w, "base.gohtml", transactionTemplates); err != nil {
-		return http.StatusInternalServerError, err
+	t.TemplateOptions = framework.TemplateOptions{
+		Data: transactionTemplates,
+		Name: "transaction-template-list",
 	}
 	return http.StatusOK, nil
 }
 
-func ViewHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) (int, error) {
+func ViewHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
-	transactionTemplate, err := GetTransactionTemplate(db, id)
+	transactionTemplate, err := GetTransactionTemplate(t.DB, id, t.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
-	templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/transaction_template/view.gohtml"))
-	if err = templates.ExecuteTemplate(w, "base.gohtml", transactionTemplate); err != nil {
-		return http.StatusInternalServerError, err
+	t.TemplateOptions = framework.TemplateOptions{
+		Data: transactionTemplate,
+		Name: "transaction-template-view",
 	}
 	return http.StatusOK, nil
 }

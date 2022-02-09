@@ -72,6 +72,14 @@ services:
     ports:
     - "80:80"
     restart: always
+  redis:
+    container_name: accountant_redis
+    image: redis:alpine
+    networks:
+      - internal_net
+    volumes:
+      - redis_vol:/data
 
 volumes:
   db_vol:
+  redis_vol:
