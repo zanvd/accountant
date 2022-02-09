@@ -34,6 +34,7 @@ If you require HTTP Basic Auth, you can set it up with:
 ./bin/accountant.sh secure
 ```
 You also have to uncomment:
+
 * `docker-compose-prod.yml`: build arguments and auth volume
 * `nginx/Dockerfile`: the `RUN` command
 
