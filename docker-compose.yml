@@ -17,7 +17,9 @@ secrets:
 services:
   # GO app
   app:
-    build: ./app
+    build:
+      context: ./app
+      target: dev
     container_name: accountant_app
     # Despite this container depending on the DB it still produces dial up errors since it spins up faster.
     # Just wait a bit until the DB container is up and running and the errors are going to stop.

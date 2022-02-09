@@ -1,6 +1,10 @@
 version: "3.9"
 
 services:
+  app:
+    build:
+      context: ./app
+      target: prod
   # Let's Encrypt certificates.
   cert:
     build: ./cert
