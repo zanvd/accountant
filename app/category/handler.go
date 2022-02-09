@@ -84,7 +84,10 @@ func AddHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int
 		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
 	}
-	t.TemplateOptions.Name = "category-add"
+	t.TemplateOptions = framework.TemplateOptions{
+		Name:  "category-add",
+		Title: "Add Category",
+	}
 	return http.StatusOK, nil
 }
 
@@ -132,8 +135,9 @@ func EditHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (in
 		return http.StatusTemporaryRedirect, nil
 	}
 	t.TemplateOptions = framework.TemplateOptions{
-		Data: category,
-		Name: "category-edit",
+		Data:  category,
+		Name:  "category-edit",
+		Title: "Edit Category",
 	}
 	return http.StatusOK, nil
 }
@@ -144,8 +148,9 @@ func ListHandler(t *framework.Tools, w http.ResponseWriter, _ *http.Request) (in
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 	t.TemplateOptions = framework.TemplateOptions{
-		Data: categories,
-		Name: "category-list",
+		Data:  categories,
+		Name:  "category-list",
+		Title: "Categories",
 	}
 	return http.StatusOK, nil
 }
@@ -160,8 +165,9 @@ func ViewHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (in
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 	t.TemplateOptions = framework.TemplateOptions{
-		Data: category,
-		Name: "category-view",
+		Data:  category,
+		Name:  "category-view",
+		Title: "View Category",
 	}
 	return http.StatusOK, nil
 }

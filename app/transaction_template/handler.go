@@ -91,7 +91,8 @@ func AddHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int
 		}{
 			Categories: categories,
 		},
-		Name: "transaction-template-add",
+		Name:  "transaction-template-add",
+		Title: "Add Transaction Template",
 	}
 	return http.StatusOK, nil
 }
@@ -150,7 +151,8 @@ func EditHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (in
 			TransactionTemplate: transactionTemplate,
 			Categories:          categories,
 		},
-		Name: "transaction-template-edit",
+		Name:  "transaction-template-edit",
+		Title: "Edit Transaction Template",
 	}
 	return http.StatusOK, nil
 }
@@ -161,8 +163,9 @@ func ListHandler(t *framework.Tools, w http.ResponseWriter, _ *http.Request) (in
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 	t.TemplateOptions = framework.TemplateOptions{
-		Data: transactionTemplates,
-		Name: "transaction-template-list",
+		Data:  transactionTemplates,
+		Name:  "transaction-template-list",
+		Title: "Transaction Templates",
 	}
 	return http.StatusOK, nil
 }
@@ -177,8 +180,9 @@ func ViewHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (in
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 	t.TemplateOptions = framework.TemplateOptions{
-		Data: transactionTemplate,
-		Name: "transaction-template-view",
+		Data:  transactionTemplate,
+		Name:  "transaction-template-view",
+		Title: "View Transaction Template",
 	}
 	return http.StatusOK, nil
 }

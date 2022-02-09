@@ -61,7 +61,10 @@ func ForgotPasswordHandler(t *framework.Tools, w http.ResponseWriter, r *http.Re
 	if r.Method == "POST" {
 
 	}
-	t.TemplateOptions.Name = "auth-forgot-password"
+	t.TemplateOptions = framework.TemplateOptions{
+		Name:  "auth-forgot-password",
+		Title: "Forgot Password",
+	}
 	return http.StatusOK, nil
 }
 
@@ -86,7 +89,10 @@ func LoginHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (i
 		}
 		http.Redirect(w, r, "http://accountant.test/dashboard", http.StatusTemporaryRedirect)
 	}
-	t.TemplateOptions.Name = "auth-login"
+	t.TemplateOptions = framework.TemplateOptions{
+		Name:  "auth-login",
+		Title: "Login",
+	}
 	return http.StatusOK, nil
 }
 
@@ -101,7 +107,10 @@ func PasswordResetHandler(t *framework.Tools, w http.ResponseWriter, r *http.Req
 	if r.Method == "POST" {
 
 	}
-	t.TemplateOptions.Name = "auth-password-reset"
+	t.TemplateOptions = framework.TemplateOptions{
+		Name:  "auth-password-reset",
+		Title: "Password Reset",
+	}
 	return http.StatusOK, nil
 }
 
@@ -137,6 +146,9 @@ func RegisterHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request)
 			return http.StatusInternalServerError, err
 		}
 	}
-	t.TemplateOptions.Name = "auth-register"
+	t.TemplateOptions = framework.TemplateOptions{
+		Name:  "auth-register",
+		Title: "Register",
+	}
 	return http.StatusOK, nil
 }
