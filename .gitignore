@@ -1,5 +1,6 @@
-# JetBrains IDE
+# IDEs
 .idea/
+.vscode/
 
 # SQLite
 *.db
