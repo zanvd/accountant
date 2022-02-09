@@ -11,6 +11,7 @@ import (
 	"bitbucket.org/zanvd/accountant/public"
 	"bitbucket.org/zanvd/accountant/transaction"
 	"bitbucket.org/zanvd/accountant/transaction_template"
+	"bitbucket.org/zanvd/accountant/user"
 	"bitbucket.org/zanvd/accountant/utility"
 )
 
@@ -50,6 +51,9 @@ func main() {
 
 	framework.RegisterHandlers(db, transaction_template.TransactionTemplateHandler{}, sm, tb)
 	framework.RegisterTemplates(tb, transaction_template.TransactionTemplateHandler{})
+
+	framework.RegisterHandlers(db, user.UserHandler{}, sm, tb)
+	framework.RegisterTemplates(tb, user.UserHandler{})
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("assets"))))
 
