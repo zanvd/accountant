@@ -77,7 +77,8 @@ func GetTransactions(db *sql.DB, uid int) (ts []Transaction, err error) {
 		       c.id, c.color, c.description, c.name, c.text_color
 		FROM transactions t
 		LEFT JOIN categories c ON c.id = t.category_id
-		WHERE t.user_id = ?;
+		WHERE t.user_id = ?
+		ORDER BY t.transaction_date DESC;
 	`
 	rows, err := db.Query(query, uid)
 	if err != nil {
