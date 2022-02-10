@@ -37,6 +37,7 @@ You also have to uncomment:
 
 * `docker-compose-prod.yml`: build arguments and auth volume
 * `nginx/Dockerfile`: the `RUN` command
+* `nginx/conf/app_prod.nginx`: the `auth_basic` directives
 
 ### Development
 
