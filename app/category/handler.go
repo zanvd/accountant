@@ -10,42 +10,52 @@ import (
 	"bitbucket.org/zanvd/accountant/utility"
 )
 
-const BaseUrl = "/category"
+const BaseUri = "/category"
 
 type CategoryHandler struct{}
 
 func (CategoryHandler) GetHandlers() map[string]framework.Endpoint {
 	return map[string]framework.Endpoint{
-		BaseUrl: {
+		BaseUri: {
 			Auth: framework.AuthSettings{
 				Public: false,
 			},
 			Handler: ListHandler,
 		},
-		BaseUrl + "/add": {
+		BaseUri + "/add": {
 			Auth: framework.AuthSettings{
 				Public: false,
 			},
 			Handler: AddHandler,
 		},
-		BaseUrl + "/delete/": {
+		BaseUri + "/delete/": {
 			Auth: framework.AuthSettings{
 				Public: false,
 			},
 			Handler: DeleteHandler,
 		},
-		BaseUrl + "/edit/": {
+		BaseUri + "/edit/": {
 			Auth: framework.AuthSettings{
 				Public: false,
 			},
 			Handler: EditHandler,
 		},
-		BaseUrl + "/view/": {
+		BaseUri + "/view/": {
 			Auth: framework.AuthSettings{
 				Public: false,
 			},
 			Handler: ViewHandler,
 		},
+	}
+}
+
+func (CategoryHandler) GetRoutes() map[string]string {
+	return map[string]string{
+		"category-add":    BaseUri + "/add",
+		"category-delete": BaseUri + "/delete",
+		"category-edit":   BaseUri + "/edit",
+		"category-list":   BaseUri,
+		"category-view":   BaseUri + "/view",
 	}
 }
 
@@ -81,7 +91,7 @@ func AddHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int
 		if err := InsertCategory(t.DB, category); err != nil {
 			return utility.MapMySQLErrorToHttpCode(err), err
 		}
-		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
+		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["category-list"], http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
 	}
 	t.TemplateOptions = framework.TemplateOptions{
@@ -100,7 +110,7 @@ func DeleteHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
-	http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["category-list"], http.StatusTemporaryRedirect)
 	return http.StatusTemporaryRedirect, nil
 }
 
@@ -131,7 +141,7 @@ func EditHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (in
 		if err = UpdateCategory(t.DB, category); err != nil {
 			return utility.MapMySQLErrorToHttpCode(err), err
 		}
-		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
+		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["category-list"], http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
 	}
 	t.TemplateOptions = framework.TemplateOptions{

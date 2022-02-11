@@ -3,42 +3,42 @@
         <article class="page-title">
             <h1>Transactions</h1>
             <div class="actions">
-                <a class="btn btn-icon btn-view" href="/transaction/view/{{.Transaction.Id}}">
+                <a class="btn btn-icon btn-view" href="{{url "transaction-view" .Routes}}/{{.Data.Transaction.Id}}">
                     <svg class="feather">
-                        <use xlink:href="/static/icons/feather-sprite.svg#search"/>
+                        <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#search"/>
                     </svg>
                 </a>
                 <a class="btn btn-icon btn-delete confirm-deletion"
-                   href="/transaction/delete/{{.Transaction.Id}}"
-                   data-deletion-name="{{.Transaction.Name}}"
+                   href="{{url "transaction-delete" .Routes}}/{{.Data.Transaction.Id}}"
+                   data-deletion-name="{{.Data.Transaction.Name}}"
                    data-deletion-title="Transaction"
                 >
                     <svg class="feather">
-                        <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
+                        <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#trash"/>
                     </svg>
                 </a>
-                <a class="btn btn-icon btn-list" href="/transaction">
+                <a class="btn btn-icon btn-list" href="{{url "transaction-list" .Routes}}">
                     <svg class="feather">
-                        <use xlink:href="/static/icons/feather-sprite.svg#list"/>
+                        <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#list"/>
                     </svg>
                 </a>
             </div>
         </article>
         <article>
-            <form action="/transaction/edit/{{.Transaction.Id}}" method="post">
-                <h2>{{.Transaction.Name}}</h2>
+            <form action="{{url "transaction-edit" .Routes}}/{{.Data.Transaction.Id}}" method="post">
+                <h2>{{.Data.Transaction.Name}}</h2>
                 <div class="form-group">
                     <label for="name">Name:</label>
-                    <input id="name" name="name" placeholder="Name" required type="text" value="{{.Transaction.Name}}"/>
+                    <input id="name" name="name" placeholder="Name" required type="text" value="{{.Data.Transaction.Name}}"/>
                 </div>
                 <div class="form-group">
                     <label for="category">Category:</label>
                     <select id="category" name="category" required>
-                        {{if not .Categories}}
+                        {{if not .Data.Categories}}
                             <option></option>
                         {{else}}
-                            {{range $category := .Categories}}
-                                {{if eq $category.Id $.Transaction.Category.Id}}
+                            {{range $category := .Data.Categories}}
+                                {{if eq $category.Id $.Data.Transaction.Category.Id}}
                                     <option selected value="{{$category.Id}}">{{$category.Name}}</option>
                                 {{else}}
                                     <option value="{{$category.Id}}">{{$category.Name}}</option>
@@ -54,7 +54,7 @@
                            placeholder="Amount"
                            required
                            type="number"
-                           value="{{.Transaction.Amount}}"
+                           value="{{.Data.Transaction.Amount}}"
                     />
                 </div>
                 <div class="form-group">
@@ -64,7 +64,7 @@
                            placeholder="Transaction Date"
                            required
                            type="text"
-                           value="{{.Transaction.TransactionDate | dbToDisplayDate}}"
+                           value="{{.Data.Transaction.TransactionDate | dbToDisplayDate}}"
                     />
                 </div>
                 <div class="form-group">
@@ -73,18 +73,18 @@
                            name="summary"
                            placeholder="Summary"
                            type="text"
-                           value="{{.Transaction.Summary}}"
+                           value="{{.Data.Transaction.Summary}}"
                     />
                 </div>
                 <div class="form-actions">
                     <button class="btn btn-icon" type="submit">
                         <svg class="feather">
-                            <use xlink:href="/static/icons/feather-sprite.svg#check"/>
+                            <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#check"/>
                         </svg>
                     </button>
                     <button class="btn btn-icon btn-cancel go-back" type="button">
                         <svg class="feather">
-                            <use xlink:href="/static/icons/feather-sprite.svg#x"/>
+                            <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#x"/>
                         </svg>
                     </button>
                 </div>

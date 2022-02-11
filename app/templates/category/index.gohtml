@@ -3,15 +3,15 @@
         <article class="page-title">
             <h1>Categories</h1>
             <div class="actions">
-                <a class="btn btn-icon btn-add" href="/category/add">
+                <a class="btn btn-icon btn-add" href="{{url "category-add" .Routes}}">
                     <svg class="feather">
-                        <use xlink:href="/static/icons/feather-sprite.svg#plus"/>
+                        <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#plus"/>
                     </svg>
                 </a>
             </div>
         </article>
         <article>
-            {{if not .}}
+            {{if not .Data}}
                 <p>No categories.</p>
             {{else}}
                 <table>
@@ -23,7 +23,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {{range $category := .}}
+                    {{range $category := .Data}}
                         <tr>
                             <td>
                                 <span class="category-pill"
@@ -34,23 +34,23 @@
                             </td>
                             <td>{{$category.Description}}</td>
                             <td class="table-action-cell">
-                                <a class="btn btn-icon btn-edit" href="/category/edit/{{$category.Id}}">
+                                <a class="btn btn-icon btn-edit" href="{{url "category-edit" $.Routes}}/{{$category.Id}}">
                                     <svg class="feather">
-                                        <use xlink:href="/static/icons/feather-sprite.svg#edit"/>
+                                        <use xlink:href="{{$.Routes.BaseUrl}}/static/icons/feather-sprite.svg#edit"/>
                                     </svg>
                                 </a>
-                                <a class="btn btn-icon btn-view" href="/category/view/{{$category.Id}}">
+                                <a class="btn btn-icon btn-view" href="{{url "category-view" $.Routes}}/{{$category.Id}}">
                                     <svg class="feather">
-                                        <use xlink:href="/static/icons/feather-sprite.svg#search"/>
+                                        <use xlink:href="{{$.Routes.BaseUrl}}/static/icons/feather-sprite.svg#search"/>
                                     </svg>
                                 </a>
                                 <a class="btn btn-icon btn-delete confirm-deletion"
-                                   href="/category/delete/{{$category.Id}}"
+                                   href="{{url "category-delete" $.Routes}}/{{$category.Id}}"
                                    data-deletion-name="{{$category.Name}}"
                                    data-deletion-title="Category"
                                 >
                                     <svg class="feather">
-                                        <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
+                                        <use xlink:href="{{$.Routes.BaseUrl}}/static/icons/feather-sprite.svg#trash"/>
                                     </svg>
                                 </a>
                             </td>

@@ -3,15 +3,15 @@
         <article class="page-title">
             <h1>Transaction templates</h1>
             <div class="actions">
-                <a class="btn btn-icon btn-add" href="/transaction-template/add">
+                <a class="btn btn-icon btn-add" href="{{url "transaction-template-add" .Routes}}">
                     <svg class="feather">
-                        <use xlink:href="/static/icons/feather-sprite.svg#plus"/>
+                        <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#plus"/>
                     </svg>
                 </a>
             </div>
         </article>
         <article>
-            {{if not .}}
+            {{if not .Data}}
                 <p>No transaction templates.</p>
             {{else}}
                 <table>
@@ -23,7 +23,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {{range $transactionTemplate := .}}
+                    {{range $transactionTemplate := .Data}}
                         <tr>
                             <td>{{$transactionTemplate.Name}}</td>
                             <td>
@@ -35,26 +35,26 @@
                             </td>
                             <td class="table-action-cell">
                                 <a class="btn btn-icon btn-edit"
-                                   href="/transaction-template/edit/{{$transactionTemplate.Id}}"
+                                   href="{{url "transaction-template-edit" $.Routes}}/{{$transactionTemplate.Id}}"
                                 >
                                     <svg class="feather">
-                                        <use xlink:href="/static/icons/feather-sprite.svg#edit"/>
+                                        <use xlink:href="{{$.Routes.BaseUrl}}/static/icons/feather-sprite.svg#edit"/>
                                     </svg>
                                 </a>
                                 <a class="btn btn-icon btn-view"
-                                   href="/transaction-template/view/{{$transactionTemplate.Id}}"
+                                   href="{{url "transaction-template-view" $.Routes}}/{{$transactionTemplate.Id}}"
                                 >
                                     <svg class="feather">
-                                        <use xlink:href="/static/icons/feather-sprite.svg#search"/>
+                                        <use xlink:href="{{$.Routes.BaseUrl}}/static/icons/feather-sprite.svg#search"/>
                                     </svg>
                                 </a>
                                 <a class="btn btn-icon btn-delete confirm-deletion"
-                                   href="/transaction-template/delete/{{$transactionTemplate.Id}}"
+                                   href="{{url "transaction-template-delete" $.Routes}}/{{$transactionTemplate.Id}}"
                                    data-deletion-name="{{$transactionTemplate.Name}}"
                                    data-deletion-title="Transaction template"
                                 >
                                     <svg class="feather">
-                                        <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
+                                        <use xlink:href="{{$.Routes.BaseUrl}}/static/icons/feather-sprite.svg#trash"/>
                                     </svg>
                                 </a>
                             </td>

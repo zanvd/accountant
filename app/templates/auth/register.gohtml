@@ -4,7 +4,7 @@
             <h1>Registration</h1>
         </article>
         <article>
-            <form action="/register" method="post">
+            <form action="{{url "auth-register" .Routes}}" method="post">
                 {{template "form_errors" .}}
                 <div class="form-group">
                     <label for="username">Username:</label>
@@ -25,7 +25,7 @@
                 <div class="form-actions">
                     <button class="btn btn-icon" type="submit">
                         <svg class="feather">
-                            <use xlink:href="/static/icons/feather-sprite.svg#check"/>
+                            <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#check"/>
                         </svg>
                     </button>
                 </div>

@@ -5,6 +5,8 @@ services:
     build:
       args:
         GOARG: -gcflags='all=-N -l'
+    env_file:
+      - app/env.dev
     # Debugger.
     ports:
       - "2345:2345"

@@ -19,6 +19,12 @@ func (PublicHandler) GetHandlers() map[string]framework.Endpoint {
 	}
 }
 
+func (PublicHandler) GetRoutes() map[string]string {
+	return map[string]string{
+		"home": "/",
+	}
+}
+
 func (PublicHandler) GetTemplates() map[string]string {
 	return map[string]string{
 		"home": "templates/public/home.gohtml",

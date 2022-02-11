@@ -48,6 +48,16 @@ func (AuthHandler) GetHandlers() map[string]framework.Endpoint {
 	}
 }
 
+func (AuthHandler) GetRoutes() map[string]string {
+	return map[string]string{
+		"auth-forgot-password": "/forgot-password",
+		"auth-login":           "/login",
+		"auth-logout":          "/logout",
+		"auth-password-reset":  "/password-reset",
+		"auth-register":        "/register",
+	}
+}
+
 func (AuthHandler) GetTemplates() map[string]string {
 	return map[string]string{
 		"auth-forgot-password": "templates/auth/forgot-password.gohtml",
@@ -87,7 +97,7 @@ func LoginHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (i
 			Email:    u.Email,
 			Username: u.Username,
 		}
-		http.Redirect(w, r, "http://accountant.test/dashboard", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["dashboard"], http.StatusTemporaryRedirect)
 	}
 	t.TemplateOptions = framework.TemplateOptions{
 		Name:  "auth-login",
@@ -99,7 +109,7 @@ func LoginHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (i
 func LogoutHanlder(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	t.Session.Data.LoggedIn = false
 	t.Session.Clear = true
-	http.Redirect(w, r, "http://accountant.test", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, t.Routes.BaseUrl, http.StatusTemporaryRedirect)
 	return http.StatusTemporaryRedirect, nil
 }
 
@@ -145,6 +155,7 @@ func RegisterHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request)
 		if err := user.InsertUser(t.DB, u); err != nil {
 			return http.StatusInternalServerError, err
 		}
+		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["auth-login"], http.StatusTemporaryRedirect)
 	}
 	t.TemplateOptions = framework.TemplateOptions{
 		Name:  "auth-register",

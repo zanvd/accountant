@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Accountant{{if .Title}} - {{.Title}}{{end}}</title>
     <link href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" rel="stylesheet"/>
-    <link href="/static/style.css" rel="stylesheet">
-    <link href="/static/desktop.css" media="screen and (min-width: 750px)" rel="stylesheet"/>
-    <link href="/static/mobile.css" media="screen and (max-width: 750px)" rel="stylesheet"/>
-    <link href="/static/dtsel-picker/dtsel.css" rel="stylesheet"/>
-    <script src="/static/script.js" defer></script>
-    <script src="/static/dtsel-picker/dtsel.js" defer></script>
+    <link href="{{.Routes.BaseUrl}}/static/style.css" rel="stylesheet">
+    <link href="{{.Routes.BaseUrl}}/static/desktop.css" media="screen and (min-width: 750px)" rel="stylesheet"/>
+    <link href="{{.Routes.BaseUrl}}/static/mobile.css" media="screen and (max-width: 750px)" rel="stylesheet"/>
+    <link href="{{.Routes.BaseUrl}}/static/dtsel-picker/dtsel.css" rel="stylesheet"/>
+    <script src="{{.Routes.BaseUrl}}/static/script.js" defer></script>
+    <script src="{{.Routes.BaseUrl}}/static/dtsel-picker/dtsel.js" defer></script>
 </head>
 <body>
 <header>
     <nav>
         <div id="menu-brand">
-            <a href="/">Accountant</a>
+            <a href="{{url "home" .Routes}}">Accountant</a>
         </div>
         <input id="menu-button" type="checkbox"/>
         <label id="menu-burger" for="menu-button">
@@ -28,14 +28,14 @@
         </label>
         <div id="menu">
             {{if .Session.LoggedIn}}
-                <a href="/dashboard">Dashboard</a>
-                <a href="/transaction">Transactions</a>
-                <a href="/category">Categories</a>
-                <a href="/transaction-template">Transaction templates</a>
-                <a href="/profile">{{.Session.User.Username}}</a>
-                <a href="/logout">Logout</a>
+                <a href="{{url "dashboard" .Routes}}">Dashboard</a>
+                <a href="{{url "category-list" .Routes}}">Categories</a>
+                <a href="{{url "transaction-list" .Routes}}">Transactions</a>
+                <a href="{{url "transaction-template-list" .Routes}}">Transaction templates</a>
+                <a href="{{url "user-profile" .Routes}}">{{.Session.User.Username}}</a>
+                <a href="{{url "auth-logout" .Routes}}">Logout</a>
             {{else}}
-                <a href="/login">Login</a>
+                <a href="{{url "auth-login" .Routes}}">Login</a>
             {{end}}
         </div>
     </nav>
@@ -44,7 +44,7 @@
     {{if .ErrorStatus}}
         {{template "error" .}}
     {{else}}
-        {{template "content" .Data}}
+        {{template "content" .}}
     {{end}}
     <div id="deletion-dialog-container" class="hidden">
         <div id="deletion-dialog">
@@ -55,12 +55,12 @@
             <div class="dialog-actions">
                 <button id="deletion-submit" class="btn btn-icon" type="submit">
                     <svg class="feather">
-                        <use xlink:href="/static/icons/feather-sprite.svg#check"/>
+                        <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#check"/>
                     </svg>
                 </button>
                 <button id="deletion-cancel" class="btn btn-icon btn-cancel" type="button">
                     <svg class="feather">
-                        <use xlink:href="/static/icons/feather-sprite.svg#x"/>
+                        <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#x"/>
                     </svg>
                 </button>
             </div>

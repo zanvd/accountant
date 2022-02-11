@@ -1,9 +1,9 @@
 {{define "content"}}
     <section>
         <article id="dashboard-card-container">
-            {{if not .}}
+            {{if not .Data}}
             {{else}}
-                {{range $transactionTemplate := .}}
+                {{range $transactionTemplate := .Data}}
                     <div class="dashboard-card"
                          data-transaction-category="{{$transactionTemplate.Category.Id}}"
                          data-transaction-name="{{$transactionTemplate.Name}}"

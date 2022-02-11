@@ -3,38 +3,38 @@
         <article class="page-title">
             <h1>Transaction templates</h1>
             <div class="actions">
-                <a class="btn btn-icon btn-view" href="/transaction-template/edit/{{.Id}}">
+                <a class="btn btn-icon btn-edit" href="{{url "transaction-template-edit" .Routes}}/{{.Data.Id}}">
                     <svg class="feather">
-                        <use xlink:href="/static/icons/feather-sprite.svg#edit"/>
+                        <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#edit"/>
                     </svg>
                 </a>
                 <a class="btn btn-icon btn-delete confirm-deletion"
-                   href="/transaction-template/delete/{{.Id}}"
-                   data-deletion-name="{{.Name}}"
+                   href="{{url "transaction-template-delete" .Routes}}/{{.Data.Id}}"
+                   data-deletion-name="{{.Data.Name}}"
                    data-deletion-title="Transaction template"
                 >
                     <svg class="feather">
-                        <use xlink:href="/static/icons/feather-sprite.svg#trash"/>
+                        <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#trash"/>
                     </svg>
                 </a>
-                <a class="btn btn-icon btn-list" href="/transaction-template">
+                <a class="btn btn-icon btn-list" href="{{url "transaction-template-list" .Routes}}">
                     <svg class="feather">
-                        <use xlink:href="/static/icons/feather-sprite.svg#list"/>
+                        <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#list"/>
                     </svg>
                 </a>
             </div>
         </article>
         <article class="data-container">
-            <h2>{{.Name}}</h2>
+            <h2>{{.Data.Name}}</h2>
             <p>
                 <b>Category:</b>
                 <span class="category-pill"
-                      style="background-color: {{.Category.Color}}; color: {{.Category.TextColor}};"
+                      style="background-color: {{.Data.Category.Color}}; color: {{.Data.Category.TextColor}};"
                 >
-                    {{.Category.Name}}
+                    {{.Data.Category.Name}}
                 </span>
             </p>
-            <p><b>Position:</b> {{.Position}}</p>
+            <p><b>Position:</b> {{.Data.Position}}</p>
         </article>
     </section>
 {{end}}

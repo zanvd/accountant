@@ -12,6 +12,13 @@ import (
 
 var ctx = context.Background()
 
+type Env int
+
+const (
+	Dev Env = iota + 1
+	Prod
+)
+
 type ConnectionConfig struct {
 	Db       int
 	Host     string
@@ -39,6 +46,7 @@ type SessionUser struct {
 
 type SessionManager struct {
 	Client *redis.Client
+	Env    Env
 }
 
 func (sm *SessionManager) ClearSession(t *Tools, w http.ResponseWriter) (err error) {
@@ -48,7 +56,7 @@ func (sm *SessionManager) ClearSession(t *Tools, w http.ResponseWriter) (err err
 		Name:     "accountant-session",
 		Path:     "/",
 		SameSite: http.SameSiteStrictMode,
-		Secure:   false, // TODO Set based on environment.
+		Secure:   sm.Env == Prod,
 		Value:    "",
 	}
 	http.SetCookie(w, &c)
@@ -100,7 +108,7 @@ func (sm *SessionManager) WriteSession(t *Tools, w http.ResponseWriter) (err err
 		Name:     "accountant-session",
 		Path:     "/",
 		SameSite: http.SameSiteStrictMode,
-		Secure:   false, // TODO Set based on environment.
+		Secure:   sm.Env == Prod,
 		Value:    t.Session.Id,
 	}
 	http.SetCookie(w, &c)

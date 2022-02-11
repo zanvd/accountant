@@ -18,8 +18,14 @@ type Middleware interface {
 	PostRequest(t *Tools, w http.ResponseWriter) error
 }
 
+type Routes struct {
+	BaseUrl string
+	Uris    map[string]string
+}
+
 type Tools struct {
 	DB              *sql.DB
+	Routes          *Routes
 	Session         Session
 	TemplateOptions TemplateOptions
 }
@@ -31,6 +37,7 @@ type Endpoint struct {
 
 type ModuleHandler interface {
 	GetHandlers() map[string]Endpoint // path = endpoint handler
+	GetRoutes() map[string]string
 	GetTemplates() map[string]string
 }
 
@@ -45,7 +52,7 @@ type AppHandler struct {
 func (ah AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Have to obtain a fresh set of Tools on each request. It would otherwise persist for the same handler
 	// resulting in things like error message and status being left over in the TemplateOptions.
-	ah.Tools = newTools(ah.Tools.DB)
+	ah.Tools = newTools(ah.Tools.DB, ah.Tools.Routes)
 	// Obtain session.
 	if err := ah.SessionManager.GetSession(ah.Tools, r); err != nil {
 		// TODO Log error.
@@ -117,10 +124,19 @@ func (ah AppHandler) handleErrors(err error, status int, w http.ResponseWriter, 
 	}*/
 }
 
-func RegisterHandlers(db *sql.DB, mh ModuleHandler, sm *SessionManager, tb *TemplateBuilder) {
+func RegisterHandlers(db *sql.DB, mh ModuleHandler, r *Routes, sm *SessionManager, tb *TemplateBuilder) {
 	ehs := mh.GetHandlers()
 	for p, eh := range ehs {
-		http.Handle(p, newAppHandler(eh, sm, tb, newTools(db)))
+		http.Handle(p, newAppHandler(eh, sm, tb, newTools(db, r)))
+	}
+}
+
+func RegisterRoutes(mh ModuleHandler, r *Routes) {
+	for n, u := range mh.GetRoutes() {
+		if _, ok := r.Uris[n]; ok {
+			log.Panicln("error: URI already added with name", n)
+		}
+		r.Uris[n] = u
 	}
 }
 
@@ -137,9 +153,10 @@ func newAppHandler(e Endpoint, sm *SessionManager, tb *TemplateBuilder, t *Tools
 	}
 }
 
-func newTools(db *sql.DB) *Tools {
+func newTools(db *sql.DB, r *Routes) *Tools {
 	return &Tools{
 		DB:              db,
+		Routes:          r,
 		Session:         Session{},
 		TemplateOptions: TemplateOptions{},
 	}

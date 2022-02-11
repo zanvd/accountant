@@ -23,6 +23,7 @@ type TemplateData struct {
 	Data         interface{}
 	ErrorMessage string
 	ErrorStatus  int
+	Routes       *Routes
 	Session      SessionData
 	Title        string
 }
@@ -43,6 +44,13 @@ func NewTemplateBuilder() *TemplateBuilder {
 			},
 			"today": func() string {
 				return convert.CurrentDateInDisplayFormat()
+			},
+			"url": func(name string, r *Routes) string {
+				uri, ok := r.Uris[name]
+				if !ok {
+					log.Panicln("error: no route with name", name)
+				}
+				return r.BaseUrl + uri
 			},
 		},
 		tmplList: make(map[string]*template.Template),
@@ -67,6 +75,7 @@ func (tb *TemplateBuilder) Render(t *Tools, w http.ResponseWriter) error {
 		Title:        t.TemplateOptions.Title,
 		ErrorMessage: t.TemplateOptions.ErrorMessage,
 		ErrorStatus:  t.TemplateOptions.ErrorStatus,
+		Routes:       t.Routes,
 		Session:      t.Session.Data,
 	}
 	return tb.tmplList[t.TemplateOptions.Name].ExecuteTemplate(w, "base.gohtml", d)

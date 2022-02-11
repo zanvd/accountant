@@ -11,42 +11,52 @@ import (
 	"bitbucket.org/zanvd/accountant/utility"
 )
 
-const BaseUrl string = "/transaction"
+const BaseUri string = "/transaction"
 
 type TransactionHandler struct{}
 
 func (TransactionHandler) GetHandlers() map[string]framework.Endpoint {
 	return map[string]framework.Endpoint{
-		BaseUrl: {
+		BaseUri: {
 			Auth: framework.AuthSettings{
 				Public: false,
 			},
 			Handler: ListHandler,
 		},
-		BaseUrl + "/add": {
+		BaseUri + "/add": {
 			Auth: framework.AuthSettings{
 				Public: false,
 			},
 			Handler: AddHandler,
 		},
-		BaseUrl + "/delete/": {
+		BaseUri + "/delete/": {
 			Auth: framework.AuthSettings{
 				Public: false,
 			},
 			Handler: DeleteHandler,
 		},
-		BaseUrl + "/edit/": {
+		BaseUri + "/edit/": {
 			Auth: framework.AuthSettings{
 				Public: false,
 			},
 			Handler: EditHandler,
 		},
-		BaseUrl + "/view/": {
+		BaseUri + "/view/": {
 			Auth: framework.AuthSettings{
 				Public: false,
 			},
 			Handler: ViewHandler,
 		},
+	}
+}
+
+func (TransactionHandler) GetRoutes() map[string]string {
+	return map[string]string{
+		"transaction-add":    BaseUri + "/add",
+		"transaction-delete": BaseUri + "/delete",
+		"transaction-edit":   BaseUri + "/edit",
+		"transaction-list":   BaseUri,
+		"transaction-view":   BaseUri + "/view",
 	}
 }
 
@@ -85,7 +95,7 @@ func AddHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int
 		if err := InsertTransaction(t.DB, transaction); err != nil {
 			return utility.MapMySQLErrorToHttpCode(err), err
 		}
-		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
+		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["transaction-list"], http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
 	}
 
@@ -126,7 +136,7 @@ func DeleteHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
-	http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["transaction-list"], http.StatusTemporaryRedirect)
 	return http.StatusTemporaryRedirect, nil
 }
 
@@ -161,7 +171,7 @@ func EditHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (in
 		if err = UpdateTransaction(t.DB, transaction); err != nil {
 			return utility.MapMySQLErrorToHttpCode(err), err
 		}
-		http.Redirect(w, r, BaseUrl, http.StatusTemporaryRedirect)
+		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["transaction-list"], http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
 	}
 

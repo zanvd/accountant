@@ -21,6 +21,12 @@ func (DashboardHandler) GetHandlers() map[string]framework.Endpoint {
 	}
 }
 
+func (DashboardHandler) GetRoutes() map[string]string {
+	return map[string]string{
+		"dashboard": "/dashboard",
+	}
+}
+
 func (DashboardHandler) GetTemplates() map[string]string {
 	return map[string]string{
 		"dashboard": "templates/dashboard/dashboard.gohtml",

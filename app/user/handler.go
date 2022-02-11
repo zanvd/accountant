@@ -19,6 +19,12 @@ func (UserHandler) GetHandlers() map[string]framework.Endpoint {
 	}
 }
 
+func (UserHandler) GetRoutes() map[string]string {
+	return map[string]string{
+		"user-profile": "/profile",
+	}
+}
+
 func (UserHandler) GetTemplates() map[string]string {
 	return map[string]string{
 		"user-profile": "templates/user/profile.gohtml",

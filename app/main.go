@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"bitbucket.org/zanvd/accountant/auth"
 	"bitbucket.org/zanvd/accountant/category"
@@ -30,29 +31,43 @@ func main() {
 		Port:     "6379",
 		Username: "",
 	})
+	if os.Getenv("ENV") == "dev" {
+		sm.Env = framework.Dev
+	} else {
+		sm.Env = framework.Prod
+	}
+
+	r := &framework.Routes{BaseUrl: os.Getenv("BASE_URL"), Uris: make(map[string]string)}
 
 	tb := framework.NewTemplateBuilder()
 	tb.AddTemplates(map[string]string{"error": "templates/system/error.gohtml"})
 
-	framework.RegisterHandlers(db, auth.AuthHandler{}, sm, tb)
+	framework.RegisterHandlers(db, auth.AuthHandler{}, r, sm, tb)
+	framework.RegisterRoutes(auth.AuthHandler{}, r)
 	framework.RegisterTemplates(tb, auth.AuthHandler{})
 
-	framework.RegisterHandlers(db, category.CategoryHandler{}, sm, tb)
+	framework.RegisterHandlers(db, category.CategoryHandler{}, r, sm, tb)
+	framework.RegisterRoutes(category.CategoryHandler{}, r)
 	framework.RegisterTemplates(tb, category.CategoryHandler{})
 
-	framework.RegisterHandlers(db, dashboard.DashboardHandler{}, sm, tb)
+	framework.RegisterHandlers(db, dashboard.DashboardHandler{}, r, sm, tb)
+	framework.RegisterRoutes(dashboard.DashboardHandler{}, r)
 	framework.RegisterTemplates(tb, dashboard.DashboardHandler{})
 
-	framework.RegisterHandlers(db, public.PublicHandler{}, sm, tb)
+	framework.RegisterHandlers(db, public.PublicHandler{}, r, sm, tb)
+	framework.RegisterRoutes(public.PublicHandler{}, r)
 	framework.RegisterTemplates(tb, public.PublicHandler{})
 
-	framework.RegisterHandlers(db, transaction.TransactionHandler{}, sm, tb)
+	framework.RegisterHandlers(db, transaction.TransactionHandler{}, r, sm, tb)
+	framework.RegisterRoutes(transaction.TransactionHandler{}, r)
 	framework.RegisterTemplates(tb, transaction.TransactionHandler{})
 
-	framework.RegisterHandlers(db, transaction_template.TransactionTemplateHandler{}, sm, tb)
+	framework.RegisterHandlers(db, transaction_template.TransactionTemplateHandler{}, r, sm, tb)
+	framework.RegisterRoutes(transaction_template.TransactionTemplateHandler{}, r)
 	framework.RegisterTemplates(tb, transaction_template.TransactionTemplateHandler{})
 
-	framework.RegisterHandlers(db, user.UserHandler{}, sm, tb)
+	framework.RegisterHandlers(db, user.UserHandler{}, r, sm, tb)
+	framework.RegisterRoutes(user.UserHandler{}, r)
 	framework.RegisterTemplates(tb, user.UserHandler{})
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("assets"))))
