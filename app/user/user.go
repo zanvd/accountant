@@ -19,7 +19,9 @@ func CreateUserTable(db *sql.DB) {
             email VARCHAR(255) NOT NULL,
             password VARCHAR(255) NOT NULL,
             username VARCHAR(255) NOT NULL,
-            PRIMARY KEY (id)
+            PRIMARY KEY (id),
+			UNIQUE KEY (email),
+			UNIQUE KEY (username)
         )
     `
 	log.Println("Creating the users table.")

@@ -9,6 +9,7 @@ import (
 
 	"bitbucket.org/zanvd/accountant/framework"
 	"bitbucket.org/zanvd/accountant/user"
+	"bitbucket.org/zanvd/accountant/utility"
 )
 
 type AuthHandler struct{}
@@ -153,7 +154,7 @@ func RegisterHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request)
 			Username: un,
 		}
 		if err := user.InsertUser(t.DB, u); err != nil {
-			return http.StatusInternalServerError, err
+			return utility.MapMySQLErrorToHttpCode(err), err
 		}
 		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["auth-login"], http.StatusTemporaryRedirect)
 	}
