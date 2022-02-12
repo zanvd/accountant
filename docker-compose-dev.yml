@@ -13,19 +13,12 @@ services:
     security_opt:
       - seccomp:unconfined
     volumes:
-      - app_assets_vol:/app/assets
       - app_templates_vol:/app/templates
   redis:
     ports:
       - "6379:6379"
 
 volumes:
-  app_assets_vol:
-    driver: local
-    driver_opts:
-      device: $PWD/app/assets
-      o: bind
-      type: none
   app_templates_vol:
     driver: local
     driver_opts:

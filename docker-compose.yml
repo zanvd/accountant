@@ -74,6 +74,8 @@ services:
     ports:
     - "80:80"
     restart: always
+    volumes:
+      - nginx_assets_vol:/var/www/devexp.co/assets
   redis:
     container_name: accountant_redis
     image: redis:alpine
@@ -84,4 +86,10 @@ services:
 
 volumes:
   db_vol:
+  nginx_assets_vol:
+    driver: local
+    driver_opts:
+      device: $PWD/app/assets
+      o: bind
+      type: none
   redis_vol:

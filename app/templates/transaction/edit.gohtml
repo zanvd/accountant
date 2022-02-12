@@ -49,13 +49,18 @@
                 </div>
                 <div class="form-group">
                     <label for="amount">Amount:</label>
-                    <input id="amount"
-                           name="amount"
-                           placeholder="Amount"
-                           required
-                           type="number"
-                           value="{{.Data.Transaction.Amount}}"
-                    />
+                    <div class="form-help">
+                        <input id="amount"
+                            aria-describedby="amount-help"
+                            name="amount"
+                            placeholder="Amount"
+                            required
+                            step="0.01"
+                            type="number"
+                            value="{{.Data.Transaction.Amount}}"
+                        />
+                        <small id="amount-help" class="help-text">Use . (dot) as a decimal separator.</small>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="transaction-date">Transaction Date:</label>

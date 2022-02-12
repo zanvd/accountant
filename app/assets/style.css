@@ -164,8 +164,17 @@ input[type=checkbox] {
     justify-content: space-evenly;
 }
 
+.form-help > small {
+    color: #4a4e51;
+}
+
 .form-group {
     display: flex;
+}
+
+.form-group > .form-help {
+    display: flex;
+    flex-direction: column;
 }
 
 .form-group input, .form-group select {

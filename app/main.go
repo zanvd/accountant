@@ -70,8 +70,6 @@ func main() {
 	framework.RegisterRoutes(user.UserHandler{}, r)
 	framework.RegisterTemplates(tb, user.UserHandler{})
 
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("assets"))))
-
 	if err = http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatalln(err.Error())
 	}
