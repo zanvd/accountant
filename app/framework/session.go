@@ -28,9 +28,8 @@ type ConnectionConfig struct {
 }
 
 type Session struct {
-	Id    string
-	Clear bool
-	Data  SessionData
+	Id   string
+	Data SessionData
 }
 
 type SessionData struct {
@@ -49,7 +48,7 @@ type SessionManager struct {
 	Env    Env
 }
 
-func (sm *SessionManager) ClearSession(t *Tools, w http.ResponseWriter) (err error) {
+func (sm *SessionManager) ClearSession(s *Session, w http.ResponseWriter) (err error) {
 	c := http.Cookie{
 		Expires:  time.Unix(0, 0),
 		HttpOnly: true,
@@ -60,8 +59,8 @@ func (sm *SessionManager) ClearSession(t *Tools, w http.ResponseWriter) (err err
 		Value:    "",
 	}
 	http.SetCookie(w, &c)
-	_, err = sm.Client.Del(ctx, t.Session.Id).Result()
-	t.Session.Data = SessionData{}
+	_, err = sm.Client.Del(ctx, s.Id).Result()
+	s.Data = SessionData{}
 	return
 }
 
@@ -76,7 +75,7 @@ func (sm *SessionManager) Connect(cc ConnectionConfig) {
 
 func (sm *SessionManager) GetSession(t *Tools, r *http.Request) error {
 	s := sm.createSession()
-	// TODO Log errors?
+	// TODO: Log errors?
 	if c, err := r.Cookie("accountant-session"); err == nil {
 		if sd, err := sm.Client.Get(ctx, c.Value).Result(); err == nil {
 			var umd SessionData
@@ -84,9 +83,8 @@ func (sm *SessionManager) GetSession(t *Tools, r *http.Request) error {
 				return err
 			}
 			s = Session{
-				Id:    c.Value,
-				Clear: false,
-				Data:  umd,
+				Id:   c.Value,
+				Data: umd,
 			}
 		}
 	}
@@ -94,12 +92,12 @@ func (sm *SessionManager) GetSession(t *Tools, r *http.Request) error {
 	return nil
 }
 
-func (sm *SessionManager) WriteSession(t *Tools, w http.ResponseWriter) (err error) {
+func (sm *SessionManager) WriteSession(s Session, w http.ResponseWriter) (err error) {
 	var md []byte
-	if md, err = json.Marshal(t.Session.Data); err != nil {
+	if md, err = json.Marshal(s.Data); err != nil {
 		return
 	}
-	if err = sm.Client.Set(ctx, t.Session.Id, string(md), time.Hour).Err(); err != nil {
+	if err = sm.Client.Set(ctx, s.Id, string(md), time.Hour).Err(); err != nil {
 		return
 	}
 	c := http.Cookie{
@@ -109,7 +107,7 @@ func (sm *SessionManager) WriteSession(t *Tools, w http.ResponseWriter) (err err
 		Path:     "/",
 		SameSite: http.SameSiteStrictMode,
 		Secure:   sm.Env == Prod,
-		Value:    t.Session.Id,
+		Value:    s.Id,
 	}
 	http.SetCookie(w, &c)
 	return
@@ -117,7 +115,6 @@ func (sm *SessionManager) WriteSession(t *Tools, w http.ResponseWriter) (err err
 
 func (sm *SessionManager) createSession() Session {
 	return Session{
-		Id:    uuid.New().String(),
-		Clear: false,
+		Id: uuid.New().String(),
 	}
 }

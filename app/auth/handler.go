@@ -108,8 +108,9 @@ func LoginHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (i
 }
 
 func LogoutHanlder(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
-	t.Session.Data.LoggedIn = false
-	t.Session.Clear = true
+	if err := t.SessionManager.ClearSession(&t.Session, w); err != nil {
+		return http.StatusInternalServerError, nil
+	}
 	http.Redirect(w, r, t.Routes.BaseUrl, http.StatusTemporaryRedirect)
 	return http.StatusTemporaryRedirect, nil
 }

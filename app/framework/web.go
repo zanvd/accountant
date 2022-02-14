@@ -23,10 +23,13 @@ type Routes struct {
 	Uris    map[string]string
 }
 
+// TODO: Move Session and TemplateOptions to separate struct (e.g. RequestData).
 type Tools struct {
 	DB              *sql.DB
 	Routes          *Routes
 	Session         Session
+	SessionManager  *SessionManager
+	TemplateBuilder *TemplateBuilder
 	TemplateOptions TemplateOptions
 }
 
@@ -41,21 +44,18 @@ type ModuleHandler interface {
 	GetTemplates() map[string]string
 }
 
-// TODO Rework session so it is managed through SessionManager from handlers.
 type AppHandler struct {
-	Endpoint        Endpoint
-	SessionManager  *SessionManager
-	TemplateBuilder *TemplateBuilder
-	Tools           *Tools
+	Endpoint Endpoint
+	Tools    *Tools
 }
 
 func (ah AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Have to obtain a fresh set of Tools on each request. It would otherwise persist for the same handler
 	// resulting in things like error message and status being left over in the TemplateOptions.
-	ah.Tools = newTools(ah.Tools.DB, ah.Tools.Routes)
+	ah.Tools = newTools(ah.Tools.DB, ah.Tools.Routes, ah.Tools.SessionManager, ah.Tools.TemplateBuilder)
 	// Obtain session.
-	if err := ah.SessionManager.GetSession(ah.Tools, r); err != nil {
-		// TODO Log error.
+	if err := ah.Tools.SessionManager.GetSession(ah.Tools, r); err != nil {
+		// TODO: Log error.
 	}
 	// Check authorization.
 	if !ah.Endpoint.Auth.Public && !ah.Tools.Session.Data.LoggedIn {
@@ -67,23 +67,17 @@ func (ah AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		ah.handleErrors(err, status, w, r)
 		return
-	}
-	// Clear or update session.
-	if ah.Tools.Session.Clear {
-		if err := ah.SessionManager.ClearSession(ah.Tools, w); err != nil {
-			ah.handleErrors(err, http.StatusInternalServerError, w, r)
-		}
+	} else if status == http.StatusTemporaryRedirect {
 		return
 	}
-	if err := ah.SessionManager.WriteSession(ah.Tools, w); err != nil {
+
+	// Update session.
+	if err := ah.Tools.SessionManager.WriteSession(ah.Tools.Session, w); err != nil {
 		ah.handleErrors(err, http.StatusInternalServerError, w, r)
 		return
 	}
-	if status == http.StatusTemporaryRedirect {
-		return
-	}
 	// Render template.
-	if err := ah.TemplateBuilder.Render(ah.Tools, w); err != nil {
+	if err := ah.Tools.TemplateBuilder.Render(ah.Tools, w); err != nil {
 		ah.handleErrors(err, http.StatusInternalServerError, w, r)
 		return
 	}
@@ -114,8 +108,8 @@ func (ah AppHandler) handleErrors(err error, status int, w http.ResponseWriter, 
 	if ah.Tools.TemplateOptions.Title == "" {
 		ah.Tools.TemplateOptions.Title = fmt.Sprintf("Error (%d)", status)
 	}
-	if err := ah.TemplateBuilder.Render(ah.Tools, w); err != nil {
-		// TODO Handle error.
+	if err := ah.Tools.TemplateBuilder.Render(ah.Tools, w); err != nil {
+		// TODO: Handle error.
 		return
 	}
 	/*templates := template.Must(template.ParseFiles("templates/base.gohtml", "templates/system/error.gohtml"))
@@ -127,7 +121,7 @@ func (ah AppHandler) handleErrors(err error, status int, w http.ResponseWriter, 
 func RegisterHandlers(db *sql.DB, mh ModuleHandler, r *Routes, sm *SessionManager, tb *TemplateBuilder) {
 	ehs := mh.GetHandlers()
 	for p, eh := range ehs {
-		http.Handle(p, newAppHandler(eh, sm, tb, newTools(db, r)))
+		http.Handle(p, newAppHandler(eh, newTools(db, r, sm, tb)))
 	}
 }
 
@@ -144,20 +138,20 @@ func RegisterTemplates(tb *TemplateBuilder, mh ModuleHandler) {
 	tb.AddTemplates(mh.GetTemplates())
 }
 
-func newAppHandler(e Endpoint, sm *SessionManager, tb *TemplateBuilder, t *Tools) AppHandler {
+func newAppHandler(e Endpoint, t *Tools) AppHandler {
 	return AppHandler{
-		Endpoint:        e,
-		SessionManager:  sm,
-		TemplateBuilder: tb,
-		Tools:           t,
+		Endpoint: e,
+		Tools:    t,
 	}
 }
 
-func newTools(db *sql.DB, r *Routes) *Tools {
+func newTools(db *sql.DB, r *Routes, sm *SessionManager, tb *TemplateBuilder) *Tools {
 	return &Tools{
 		DB:              db,
 		Routes:          r,
 		Session:         Session{},
+		SessionManager:  sm,
+		TemplateBuilder: tb,
 		TemplateOptions: TemplateOptions{},
 	}
 }
