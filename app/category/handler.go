@@ -68,10 +68,10 @@ func (CategoryHandler) GetTemplates() map[string]string {
 	}
 }
 
-func AddHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+func AddHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	if r.Method == "POST" {
 		category := Category{
-			UserId: t.Session.Data.User.Id,
+			UserId: rd.Session.Data.User.Id,
 		}
 		if color := strings.TrimSpace(r.FormValue("color")); color != "" {
 			category.Color = color
@@ -94,19 +94,19 @@ func AddHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int
 		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["category-list"], http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
 	}
-	t.TemplateOptions = framework.TemplateOptions{
+	rd.TemplateOptions = framework.TemplateOptions{
 		Name:  "category-add",
 		Title: "Add Category",
 	}
 	return http.StatusOK, nil
 }
 
-func DeleteHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+func DeleteHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
-	if err = DeleteCategory(t.DB, id, t.Session.Data.User.Id); err != nil {
+	if err = DeleteCategory(t.DB, id, rd.Session.Data.User.Id); err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
@@ -114,12 +114,12 @@ func DeleteHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (
 	return http.StatusTemporaryRedirect, nil
 }
 
-func EditHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+func EditHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
-	category, err := GetCategory(t.DB, id, t.Session.Data.User.Id)
+	category, err := GetCategory(t.DB, id, rd.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	} else if r.Method == "POST" {
@@ -144,7 +144,7 @@ func EditHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (in
 		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["category-list"], http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
 	}
-	t.TemplateOptions = framework.TemplateOptions{
+	rd.TemplateOptions = framework.TemplateOptions{
 		Data:  category,
 		Name:  "category-edit",
 		Title: "Edit Category",
@@ -152,12 +152,12 @@ func EditHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (in
 	return http.StatusOK, nil
 }
 
-func ListHandler(t *framework.Tools, w http.ResponseWriter, _ *http.Request) (int, error) {
-	categories, err := GetCategories(t.DB, t.Session.Data.User.Id)
+func ListHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, _ *http.Request) (int, error) {
+	categories, err := GetCategories(t.DB, rd.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
-	t.TemplateOptions = framework.TemplateOptions{
+	rd.TemplateOptions = framework.TemplateOptions{
 		Data:  categories,
 		Name:  "category-list",
 		Title: "Categories",
@@ -165,16 +165,16 @@ func ListHandler(t *framework.Tools, w http.ResponseWriter, _ *http.Request) (in
 	return http.StatusOK, nil
 }
 
-func ViewHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+func ViewHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
-	category, err := GetCategory(t.DB, id, t.Session.Data.User.Id)
+	category, err := GetCategory(t.DB, id, rd.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
-	t.TemplateOptions = framework.TemplateOptions{
+	rd.TemplateOptions = framework.TemplateOptions{
 		Data:  category,
 		Name:  "category-view",
 		Title: "View Category",

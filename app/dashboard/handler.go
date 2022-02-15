@@ -33,12 +33,12 @@ func (DashboardHandler) GetTemplates() map[string]string {
 	}
 }
 
-func Handler(t *framework.Tools, w http.ResponseWriter, _ *http.Request) (int, error) {
-	transactionTemplates, err := transaction_template.GetTransactionTemplates(t.DB, true, t.Session.Data.User.Id)
+func Handler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, _ *http.Request) (int, error) {
+	transactionTemplates, err := transaction_template.GetTransactionTemplates(t.DB, true, rd.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
-	t.TemplateOptions = framework.TemplateOptions{
+	rd.TemplateOptions = framework.TemplateOptions{
 		Data:  transactionTemplates,
 		Name:  "dashboard",
 		Title: "Dashboard",

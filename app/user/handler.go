@@ -31,8 +31,8 @@ func (UserHandler) GetTemplates() map[string]string {
 	}
 }
 
-func ProfileHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
-	t.TemplateOptions = framework.TemplateOptions{
+func ProfileHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+	rd.TemplateOptions = framework.TemplateOptions{
 		Name:  "user-profile",
 		Title: "Profile",
 	}

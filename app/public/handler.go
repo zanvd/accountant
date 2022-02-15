@@ -31,8 +31,8 @@ func (PublicHandler) GetTemplates() map[string]string {
 	}
 }
 
-func HomeHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
-	t.TemplateOptions = framework.TemplateOptions{
+func HomeHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+	rd.TemplateOptions = framework.TemplateOptions{
 		Name: "home",
 	}
 	return http.StatusOK, nil

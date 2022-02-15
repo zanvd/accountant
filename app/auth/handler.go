@@ -68,18 +68,18 @@ func (AuthHandler) GetTemplates() map[string]string {
 	}
 }
 
-func ForgotPasswordHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+func ForgotPasswordHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	if r.Method == "POST" {
 
 	}
-	t.TemplateOptions = framework.TemplateOptions{
+	rd.TemplateOptions = framework.TemplateOptions{
 		Name:  "auth-forgot-password",
 		Title: "Forgot Password",
 	}
 	return http.StatusOK, nil
 }
 
-func LoginHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+func LoginHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	if r.Method == "POST" {
 		p, un := "", ""
 		if p = strings.TrimSpace(r.PostFormValue("password")); p == "" {
@@ -92,41 +92,41 @@ func LoginHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (i
 		if err != nil || bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(p)) != nil {
 			return http.StatusBadRequest, errors.New("invalid username or password")
 		}
-		t.Session.Data.LoggedIn = true
-		t.Session.Data.User = framework.SessionUser{
+		rd.Session.Data.LoggedIn = true
+		rd.Session.Data.User = framework.SessionUser{
 			Id:       u.Id,
 			Email:    u.Email,
 			Username: u.Username,
 		}
 		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["dashboard"], http.StatusTemporaryRedirect)
 	}
-	t.TemplateOptions = framework.TemplateOptions{
+	rd.TemplateOptions = framework.TemplateOptions{
 		Name:  "auth-login",
 		Title: "Login",
 	}
 	return http.StatusOK, nil
 }
 
-func LogoutHanlder(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
-	if err := t.SessionManager.ClearSession(&t.Session, w); err != nil {
+func LogoutHanlder(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+	if err := t.SessionManager.ClearSession(&rd.Session, w); err != nil {
 		return http.StatusInternalServerError, nil
 	}
 	http.Redirect(w, r, t.Routes.BaseUrl, http.StatusTemporaryRedirect)
 	return http.StatusTemporaryRedirect, nil
 }
 
-func PasswordResetHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+func PasswordResetHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	if r.Method == "POST" {
 
 	}
-	t.TemplateOptions = framework.TemplateOptions{
+	rd.TemplateOptions = framework.TemplateOptions{
 		Name:  "auth-password-reset",
 		Title: "Password Reset",
 	}
 	return http.StatusOK, nil
 }
 
-func RegisterHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+func RegisterHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	if r.Method == "POST" {
 		e, p, pr, un := "", "", "", ""
 		if e = strings.TrimSpace(r.PostFormValue("email")); e == "" {
@@ -159,7 +159,7 @@ func RegisterHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request)
 		}
 		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["auth-login"], http.StatusTemporaryRedirect)
 	}
-	t.TemplateOptions = framework.TemplateOptions{
+	rd.TemplateOptions = framework.TemplateOptions{
 		Name:  "auth-register",
 		Title: "Register",
 	}

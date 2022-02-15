@@ -66,19 +66,19 @@ func (tb *TemplateBuilder) AddTemplates(tmpls map[string]string) {
 	}
 }
 
-func (tb *TemplateBuilder) Render(t *Tools, w http.ResponseWriter) error {
-	if t.TemplateOptions.Data == nil {
-		t.TemplateOptions.Data = new(struct{})
+func (tb *TemplateBuilder) Render(r *Routes, rd *RequestData, t *Tools, w io.Writer) error {
+	if rd.TemplateOptions.Data == nil {
+		rd.TemplateOptions.Data = new(struct{})
 	}
 	d := TemplateData{
-		Data:         t.TemplateOptions.Data,
-		Title:        t.TemplateOptions.Title,
-		ErrorMessage: t.TemplateOptions.ErrorMessage,
-		ErrorStatus:  t.TemplateOptions.ErrorStatus,
-		Routes:       t.Routes,
-		Session:      t.Session.Data,
+		Data:         rd.TemplateOptions.Data,
+		Title:        rd.TemplateOptions.Title,
+		ErrorMessage: rd.TemplateOptions.ErrorMessage,
+		ErrorStatus:  rd.TemplateOptions.ErrorStatus,
+		Routes:       r,
+		Session:      rd.Session.Data,
 	}
-	return tb.tmplList[t.TemplateOptions.Name].ExecuteTemplate(w, "base.gohtml", d)
+	return tb.tmplList[rd.TemplateOptions.Name].ExecuteTemplate(w, "base.gohtml", d)
 }
 
 func (tb *TemplateBuilder) load(n string, p string) *template.Template {

@@ -73,14 +73,14 @@ func (sm *SessionManager) Connect(cc ConnectionConfig) {
 	})
 }
 
-func (sm *SessionManager) GetSession(t *Tools, r *http.Request) error {
+func (sm *SessionManager) GetSession(r *http.Request) (Session, error) {
 	s := sm.createSession()
 	// TODO: Log errors?
 	if c, err := r.Cookie("accountant-session"); err == nil {
 		if sd, err := sm.Client.Get(ctx, c.Value).Result(); err == nil {
 			var umd SessionData
 			if err := json.Unmarshal([]byte(sd), &umd); err != nil {
-				return err
+				return s, err
 			}
 			s = Session{
 				Id:   c.Value,
@@ -88,8 +88,7 @@ func (sm *SessionManager) GetSession(t *Tools, r *http.Request) error {
 			}
 		}
 	}
-	t.Session = s
-	return nil
+	return s, nil
 }
 
 func (sm *SessionManager) WriteSession(s Session, w http.ResponseWriter) (err error) {

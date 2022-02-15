@@ -69,10 +69,10 @@ func (TransactionHandler) GetTemplates() map[string]string {
 	}
 }
 
-func AddHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+func AddHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	if r.Method == "POST" {
 		transaction := Transaction{
-			UserId: t.Session.Data.User.Id,
+			UserId: rd.Session.Data.User.Id,
 		}
 		if amount := r.FormValue("amount"); amount != "" {
 			if floatAmount, err := strconv.ParseFloat(amount, 64); err == nil {
@@ -107,12 +107,12 @@ func AddHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int
 		transaction.Category = category.Category{Id: categoryId}
 	}
 
-	categories, err := category.GetCategories(t.DB, t.Session.Data.User.Id)
+	categories, err := category.GetCategories(t.DB, rd.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
-	t.TemplateOptions = framework.TemplateOptions{
+	rd.TemplateOptions = framework.TemplateOptions{
 		Data: struct {
 			Categories  []category.Category
 			Transaction Transaction
@@ -126,13 +126,13 @@ func AddHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int
 	return http.StatusOK, nil
 }
 
-func DeleteHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+func DeleteHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
 
-	if err = DeleteTransaction(t.DB, id, t.Session.Data.User.Id); err != nil {
+	if err = DeleteTransaction(t.DB, id, rd.Session.Data.User.Id); err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
@@ -140,13 +140,13 @@ func DeleteHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (
 	return http.StatusTemporaryRedirect, nil
 }
 
-func EditHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+func EditHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
 
-	transaction, err := GetTransaction(t.DB, id, t.Session.Data.User.Id)
+	transaction, err := GetTransaction(t.DB, id, rd.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	} else if r.Method == "POST" {
@@ -175,12 +175,12 @@ func EditHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (in
 		return http.StatusTemporaryRedirect, nil
 	}
 
-	categories, err := category.GetCategories(t.DB, t.Session.Data.User.Id)
+	categories, err := category.GetCategories(t.DB, rd.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 
-	t.TemplateOptions = framework.TemplateOptions{
+	rd.TemplateOptions = framework.TemplateOptions{
 		Data: struct {
 			Transaction Transaction
 			Categories  []category.Category
@@ -194,12 +194,12 @@ func EditHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (in
 	return http.StatusOK, nil
 }
 
-func ListHandler(t *framework.Tools, w http.ResponseWriter, _ *http.Request) (int, error) {
-	transactions, err := GetTransactions(t.DB, t.Session.Data.User.Id)
+func ListHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, _ *http.Request) (int, error) {
+	transactions, err := GetTransactions(t.DB, rd.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
-	t.TemplateOptions = framework.TemplateOptions{
+	rd.TemplateOptions = framework.TemplateOptions{
 		Data:  transactions,
 		Name:  "transaction-list",
 		Title: "Transactions",
@@ -207,16 +207,16 @@ func ListHandler(t *framework.Tools, w http.ResponseWriter, _ *http.Request) (in
 	return http.StatusOK, nil
 }
 
-func ViewHandler(t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
+func ViewHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, r *http.Request) (int, error) {
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return http.StatusBadRequest, err
 	}
-	transaction, err := GetTransaction(t.DB, id, t.Session.Data.User.Id)
+	transaction, err := GetTransaction(t.DB, id, rd.Session.Data.User.Id)
 	if err != nil {
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
-	t.TemplateOptions = framework.TemplateOptions{
+	rd.TemplateOptions = framework.TemplateOptions{
 		Data:  transaction,
 		Name:  "transaction-view",
 		Title: "View Transaction",

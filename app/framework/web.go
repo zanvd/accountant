@@ -18,52 +18,54 @@ type Middleware interface {
 	PostRequest(t *Tools, w http.ResponseWriter) error
 }
 
+type RequestData struct {
+	Session         Session
+	TemplateOptions TemplateOptions
+}
+
 type Routes struct {
 	BaseUrl string
 	Uris    map[string]string
 }
 
-// TODO: Move Session and TemplateOptions to separate struct (e.g. RequestData).
 type Tools struct {
 	DB              *sql.DB
 	Routes          *Routes
-	Session         Session
 	SessionManager  *SessionManager
 	TemplateBuilder *TemplateBuilder
-	TemplateOptions TemplateOptions
 }
 
 type Endpoint struct {
 	Auth    AuthSettings
-	Handler func(t *Tools, w http.ResponseWriter, r *http.Request) (int, error)
+	Handler func(rd *RequestData, t *Tools, w http.ResponseWriter, r *http.Request) (int, error)
 }
 
 type ModuleHandler interface {
 	GetHandlers() map[string]Endpoint // path = endpoint handler
-	GetRoutes() map[string]string
-	GetTemplates() map[string]string
+	GetRoutes() map[string]string     // name = route
+	GetTemplates() map[string]string  // name = path
 }
 
 type AppHandler struct {
-	Endpoint Endpoint
-	Tools    *Tools
+	Endpoint    Endpoint
+	RequestData RequestData
+	Tools       *Tools
 }
 
 func (ah AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// Have to obtain a fresh set of Tools on each request. It would otherwise persist for the same handler
-	// resulting in things like error message and status being left over in the TemplateOptions.
-	ah.Tools = newTools(ah.Tools.DB, ah.Tools.Routes, ah.Tools.SessionManager, ah.Tools.TemplateBuilder)
+	var err error
+	ah.RequestData = RequestData{}
 	// Obtain session.
-	if err := ah.Tools.SessionManager.GetSession(ah.Tools, r); err != nil {
+	if ah.RequestData.Session, err = ah.Tools.SessionManager.GetSession(r); err != nil {
 		// TODO: Log error.
 	}
 	// Check authorization.
-	if !ah.Endpoint.Auth.Public && !ah.Tools.Session.Data.LoggedIn {
+	if !ah.Endpoint.Auth.Public && !ah.RequestData.Session.Data.LoggedIn {
 		ah.handleErrors(errors.New("unauthorized"), http.StatusUnauthorized, w, r)
 		return
 	}
 	// Handle request.
-	status, err := ah.Endpoint.Handler(ah.Tools, w, r)
+	status, err := ah.Endpoint.Handler(&ah.RequestData, ah.Tools, w, r)
 	if err != nil {
 		ah.handleErrors(err, status, w, r)
 		return
@@ -72,12 +74,12 @@ func (ah AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update session.
-	if err := ah.Tools.SessionManager.WriteSession(ah.Tools.Session, w); err != nil {
+	if err := ah.Tools.SessionManager.WriteSession(ah.RequestData.Session, w); err != nil {
 		ah.handleErrors(err, http.StatusInternalServerError, w, r)
 		return
 	}
 	// Render template.
-	if err := ah.Tools.TemplateBuilder.Render(ah.Tools, w); err != nil {
+	if err := ah.Tools.TemplateBuilder.Render(ah.Tools.Routes, &ah.RequestData, ah.Tools, w); err != nil {
 		ah.handleErrors(err, http.StatusInternalServerError, w, r)
 		return
 	}
@@ -100,15 +102,15 @@ func (ah AppHandler) handleErrors(err error, status int, w http.ResponseWriter, 
 
 	w.WriteHeader(status)
 
-	ah.Tools.TemplateOptions.ErrorMessage = message
-	ah.Tools.TemplateOptions.ErrorStatus = status
-	if ah.Tools.TemplateOptions.Name == "" {
-		ah.Tools.TemplateOptions.Name = "error"
+	ah.RequestData.TemplateOptions.ErrorMessage = message
+	ah.RequestData.TemplateOptions.ErrorStatus = status
+	if ah.RequestData.TemplateOptions.Name == "" {
+		ah.RequestData.TemplateOptions.Name = "error"
 	}
-	if ah.Tools.TemplateOptions.Title == "" {
-		ah.Tools.TemplateOptions.Title = fmt.Sprintf("Error (%d)", status)
+	if ah.RequestData.TemplateOptions.Title == "" {
+		ah.RequestData.TemplateOptions.Title = fmt.Sprintf("Error (%d)", status)
 	}
-	if err := ah.Tools.TemplateBuilder.Render(ah.Tools, w); err != nil {
+	if err := ah.Tools.TemplateBuilder.Render(ah.Tools.Routes, &ah.RequestData, ah.Tools, w); err != nil {
 		// TODO: Handle error.
 		return
 	}
@@ -118,14 +120,23 @@ func (ah AppHandler) handleErrors(err error, status int, w http.ResponseWriter, 
 	}*/
 }
 
-func RegisterHandlers(db *sql.DB, mh ModuleHandler, r *Routes, sm *SessionManager, tb *TemplateBuilder) {
+func RegisterHandlers(db *sql.DB, mhs []ModuleHandler, r *Routes, sm *SessionManager, tb *TemplateBuilder) {
+	for _, mh := range mhs {
 	ehs := mh.GetHandlers()
+		t := &Tools{
+			DB:              db,
+			Routes:          r,
+			SessionManager:  sm,
+			TemplateBuilder: tb,
+		}
 	for p, eh := range ehs {
-		http.Handle(p, newAppHandler(eh, newTools(db, r, sm, tb)))
+			http.Handle(p, AppHandler{Endpoint: eh, Tools: t})
+		}
 	}
 }
 
-func RegisterRoutes(mh ModuleHandler, r *Routes) {
+func RegisterRoutes(mhs []ModuleHandler, r *Routes) {
+	for _, mh := range mhs {
 	for n, u := range mh.GetRoutes() {
 		if _, ok := r.Uris[n]; ok {
 			log.Panicln("error: URI already added with name", n)
@@ -133,25 +144,10 @@ func RegisterRoutes(mh ModuleHandler, r *Routes) {
 		r.Uris[n] = u
 	}
 }
-
-func RegisterTemplates(tb *TemplateBuilder, mh ModuleHandler) {
-	tb.AddTemplates(mh.GetTemplates())
 }
 
-func newAppHandler(e Endpoint, t *Tools) AppHandler {
-	return AppHandler{
-		Endpoint: e,
-		Tools:    t,
-	}
-}
-
-func newTools(db *sql.DB, r *Routes, sm *SessionManager, tb *TemplateBuilder) *Tools {
-	return &Tools{
-		DB:              db,
-		Routes:          r,
-		Session:         Session{},
-		SessionManager:  sm,
-		TemplateBuilder: tb,
-		TemplateOptions: TemplateOptions{},
+func RegisterTemplates(mhs []ModuleHandler, tb *TemplateBuilder) {
+	for _, mh := range mhs {
+		tb.AddTemplates(baseTmpls, mh.GetTemplates())
 	}
 }
