@@ -1,8 +1,8 @@
 package framework
 
 import (
+	"io"
 	"log"
-	"net/http"
 	"text/template"
 
 	"bitbucket.org/zanvd/accountant/convert"
@@ -66,7 +66,7 @@ func (tb *TemplateBuilder) AddTemplates(tmpls map[string]string) {
 	}
 }
 
-func (tb *TemplateBuilder) Render(r *Routes, rd *RequestData, t *Tools, w io.Writer) error {
+func (tb *TemplateBuilder) Render(r *Routes, rd *RequestData, w io.Writer) error {
 	if rd.TemplateOptions.Data == nil {
 		rd.TemplateOptions.Data = new(struct{})
 	}

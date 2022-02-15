@@ -79,7 +79,7 @@ func (ah AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Render template.
-	if err := ah.Tools.TemplateBuilder.Render(ah.Tools.Routes, &ah.RequestData, ah.Tools, w); err != nil {
+	if err := ah.Tools.TemplateBuilder.Render(ah.Tools.Routes, &ah.RequestData, w); err != nil {
 		ah.handleErrors(err, http.StatusInternalServerError, w, r)
 		return
 	}
@@ -110,7 +110,7 @@ func (ah AppHandler) handleErrors(err error, status int, w http.ResponseWriter, 
 	if ah.RequestData.TemplateOptions.Title == "" {
 		ah.RequestData.TemplateOptions.Title = fmt.Sprintf("Error (%d)", status)
 	}
-	if err := ah.Tools.TemplateBuilder.Render(ah.Tools.Routes, &ah.RequestData, ah.Tools, w); err != nil {
+	if err := ah.Tools.TemplateBuilder.Render(ah.Tools.Routes, &ah.RequestData, w); err != nil {
 		// TODO: Handle error.
 		return
 	}
