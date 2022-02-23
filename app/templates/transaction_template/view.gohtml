@@ -3,14 +3,16 @@
         <article class="page-title">
             <h1>Transaction templates</h1>
             <div class="actions">
-                <a class="btn btn-icon btn-edit" href="{{url "transaction-template-edit" .Routes}}/{{.Data.Id}}">
+                <a class="btn btn-icon btn-edit"
+                    href="{{url "transaction-template-edit" .Routes}}/{{.Data.TransactionTemplate.Id}}"
+                >
                     <svg class="feather">
                         <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#edit"/>
                     </svg>
                 </a>
                 <a class="btn btn-icon btn-delete confirm-deletion"
-                   href="{{url "transaction-template-delete" .Routes}}/{{.Data.Id}}"
-                   data-deletion-name="{{.Data.Name}}"
+                   href="{{url "transaction-template-delete" .Routes}}/{{.Data.TransactionTemplate.Id}}"
+                   data-deletion-name="{{.Data.TransactionTemplate.Name}}"
                    data-deletion-title="Transaction template"
                 >
                     <svg class="feather">
@@ -25,16 +27,26 @@
             </div>
         </article>
         <article class="data-container">
-            <h2>{{.Data.Name}}</h2>
+            <h2>{{.Data.TransactionTemplate.Name}}</h2>
             <p>
                 <b>Category:</b>
-                <span class="category-pill"
-                      style="background-color: {{.Data.Category.Color}}; color: {{.Data.Category.TextColor}};"
+                <span class="pill"
+                      style="background-color: {{.Data.TransactionTemplate.Category.Color}}; color: {{.Data.TransactionTemplate.Category.TextColor}};"
                 >
-                    {{.Data.Category.Name}}
+                    {{.Data.TransactionTemplate.Category.Name}}
                 </span>
             </p>
-            <p><b>Position:</b> {{.Data.Position}}</p>
+            <p>
+                <b>Type:</b>
+                {{if eq .Data.TransactionTemplate.TransactionType .Data.TransactionTypes.income}}
+                    <span class="pill income">Income</span>
+                {{else}}
+                    <span class="pill outcome">Outcome</span>
+                {{end}}
+            </p>
+            <p>
+                <b>Position:</b> {{.Data.TransactionTemplate.Position}}
+            </p>
         </article>
     </section>
 {{end}}

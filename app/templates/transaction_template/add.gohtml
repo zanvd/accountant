@@ -28,6 +28,28 @@
                         {{end}}
                     </select>
                 </div>
+                <div class="form-group form-radio">
+                    <label>Type:</label>
+                    <div class="radio-container">
+                        <label for="typeIncome">
+                            <input id="typeIncome"
+                                checked="checked"
+                                name="type"
+                                type="radio"
+                                value="{{.Data.TransactionTypes.income}}"
+                            />
+                            Income
+                        </label>
+                        <label for="typeOutcome">
+                            <input id="typeOutcome"
+                                name="type"
+                                type="radio"
+                                value="{{.Data.TransactionTypes.outcome}}"
+                            />
+                            Outcome
+                        </label>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label for="position">Position:</label>
                     <input id="position" min="0" name="position" placeholder="Position" required type="number"/>

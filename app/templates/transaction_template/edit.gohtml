@@ -55,6 +55,33 @@
                         {{end}}
                     </select>
                 </div>
+                <div class="form-group form-radio">
+                    <label>Type:</label>
+                    <div class="radio-container">
+                        <label for="typeIncome">
+                            <input id="typeIncome"
+                                {{if eq .Data.TransactionTemplate.TransactionType .Data.TransactionTypes.income}}
+                                checked="checked"
+                                {{end}}
+                                name="type"
+                                type="radio"
+                                value="{{.Data.TransactionTypes.income}}"
+                            />
+                            Income
+                        </label>
+                        <label for="typeOutcome">
+                            <input id="typeOutcome"
+                                {{if eq .Data.TransactionTemplate.TransactionType .Data.TransactionTypes.outcome}}
+                                checked="checked"
+                                {{end}}
+                                name="type"
+                                type="radio"
+                                value="{{.Data.TransactionTypes.outcome}}"
+                            />
+                            Outcome
+                        </label>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label for="position">Position:</label>
                     <input id="position"

@@ -7,12 +7,20 @@ import (
 	"bitbucket.org/zanvd/accountant/category"
 )
 
+type TransactionType int
+
+const (
+	Income TransactionType = iota + 1
+	Outcome
+)
+
 type TransactionTemplate struct {
-	Id       int
-	Category category.Category
-	Name     string
-	Position int
-	UserId   int
+	Id              int
+	Category        category.Category
+	Name            string
+	Position        int
+	TransactionType TransactionType
+	UserId          int
 }
 
 func CreateTransactionTemplateTable(db *sql.DB) {
@@ -22,6 +30,7 @@ func CreateTransactionTemplateTable(db *sql.DB) {
 			category_id INT DEFAULT NULL,
 			name VARCHAR(30) NOT NULL,
 			position INT NOT NULL DEFAULT 1,
+			transaction_type TINYINT(1) NOT NULL DEFAULT 0,
 			user_id INT NOT NULL,
 			PRIMARY KEY (id),
 			FOREIGN KEY fk_category_id (category_id)
@@ -52,14 +61,14 @@ func DeleteTransactionTemplate(db *sql.DB, id int, uid int) (err error) {
 
 func GetTransactionTemplate(db *sql.DB, id int, uid int) (tt TransactionTemplate, err error) {
 	query := `
-		SELECT tt.id, tt.name, tt.position, tt.user_id, c.id, c.color, c.name, c.text_color
+		SELECT tt.id, tt.name, tt.position, tt.transaction_type, tt.user_id, c.id, c.color, c.name, c.text_color
 		FROM transaction_templates tt
 		LEFT JOIN categories c ON c.id = tt.category_id
 		WHERE tt.id = ? AND tt.user_id = ?;
 	`
 	row := db.QueryRow(query, id, uid)
 	err = row.Scan(
-		&tt.Id, &tt.Name, &tt.Position, &tt.UserId,
+		&tt.Id, &tt.Name, &tt.Position, &tt.TransactionType, &tt.UserId,
 		&tt.Category.Id, &tt.Category.Color, &tt.Category.Name, &tt.Category.TextColor,
 	)
 	return
@@ -67,7 +76,7 @@ func GetTransactionTemplate(db *sql.DB, id int, uid int) (tt TransactionTemplate
 
 func GetTransactionTemplates(db *sql.DB, orderByPosition bool, uid int) (tts []TransactionTemplate, err error) {
 	query := `
-		SELECT tt.id, tt.name, tt.position, tt.user_id, c.id, c.color, c.name, c.text_color
+		SELECT tt.id, tt.name, tt.position, tt.transaction_type, tt.user_id, c.id, c.color, c.name, c.text_color
 		FROM transaction_templates tt
 		LEFT JOIN categories c ON c.id = tt.category_id
 		WHERE tt.user_id = ?
@@ -85,7 +94,7 @@ func GetTransactionTemplates(db *sql.DB, orderByPosition bool, uid int) (tts []T
 	for rows.Next() {
 		tt := TransactionTemplate{}
 		if err = rows.Scan(
-			&tt.Id, &tt.Name, &tt.Position, &tt.UserId,
+			&tt.Id, &tt.Name, &tt.Position, &tt.TransactionType, &tt.UserId,
 			&tt.Category.Id, &tt.Category.Color, &tt.Category.Name, &tt.Category.TextColor,
 		); err != nil {
 			return
@@ -95,26 +104,34 @@ func GetTransactionTemplates(db *sql.DB, orderByPosition bool, uid int) (tts []T
 	return
 }
 
+func GetTransactionTypes() map[string]TransactionType {
+	return map[string]TransactionType{
+		"income":  Income,
+		"outcome": Outcome,
+	}
+}
+
 func InsertTransactionTemplate(db *sql.DB, tt TransactionTemplate) (err error) {
-	statement, err := db.Prepare(
-		"INSERT INTO transaction_templates(category_id, name, position, user_id) VALUES (?, ?, ?, ?);",
-	)
+	statement, err := db.Prepare(`
+		INSERT INTO transaction_templates(category_id, name, position, transaction_type, user_id)
+		VALUES (?, ?, ?, ?, ?);
+	`)
 	if err != nil {
 		return
 	}
-	_, err = statement.Exec(tt.Category.Id, tt.Name, tt.Position, tt.UserId)
+	_, err = statement.Exec(tt.Category.Id, tt.Name, tt.Position, tt.TransactionType, tt.UserId)
 	return
 }
 
 func UpdateTransactionTemplate(db *sql.DB, tt TransactionTemplate) (err error) {
 	statement, err := db.Prepare(`
 		UPDATE transaction_templates
-		SET category_id = ?, name = ?, position = ?
+		SET category_id = ?, name = ?, position = ?, transaction_type = ?
 		WHERE id = ? AND user_id = ?;
 	`)
 	if err != nil {
 		return
 	}
-	_, err = statement.Exec(tt.Category.Id, tt.Name, tt.Position, tt.Id, tt.UserId)
+	_, err = statement.Exec(tt.Category.Id, tt.Name, tt.Position, tt.TransactionType, tt.Id, tt.UserId)
 	return
 }

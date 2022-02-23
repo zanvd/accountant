@@ -8,6 +8,7 @@ import (
 	"bitbucket.org/zanvd/accountant/category"
 	"bitbucket.org/zanvd/accountant/convert"
 	"bitbucket.org/zanvd/accountant/framework"
+	"bitbucket.org/zanvd/accountant/transaction_template"
 	"bitbucket.org/zanvd/accountant/utility"
 )
 
@@ -106,6 +107,10 @@ func AddHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWr
 	if categoryId, err := strconv.Atoi(r.URL.Query().Get("category")); err == nil {
 		transaction.Category = category.Category{Id: categoryId}
 	}
+	transType := transaction_template.Income
+	if tt, err := strconv.Atoi(r.URL.Query().Get("type")); err == nil {
+		transType = transaction_template.TransactionType(tt)
+	}
 
 	categories, err := category.GetCategories(t.DB, rd.Session.Data.User.Id)
 	if err != nil {
@@ -114,11 +119,18 @@ func AddHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWr
 
 	rd.TemplateOptions = framework.TemplateOptions{
 		Data: struct {
-			Categories  []category.Category
-			Transaction Transaction
+			Categories       []category.Category
+			Transaction      Transaction
+			TransactionType  transaction_template.TransactionType
+			TransactionTypes map[string]transaction_template.TransactionType
 		}{
-			Categories:  categories,
-			Transaction: transaction,
+			Categories:      categories,
+			Transaction:     transaction,
+			TransactionType: transType,
+			TransactionTypes: map[string]transaction_template.TransactionType{
+				"income":  transaction_template.Income,
+				"outcome": transaction_template.Outcome,
+			},
 		},
 		Name:  "transaction-add",
 		Title: "Add Transaction",

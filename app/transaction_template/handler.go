@@ -82,6 +82,9 @@ func AddHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWr
 		if position, err := strconv.Atoi(r.FormValue("position")); err == nil {
 			transactionTemplate.Position = position
 		}
+		if transType, err := strconv.Atoi(r.FormValue("type")); err == nil {
+			transactionTemplate.TransactionType = TransactionType(transType)
+		}
 
 		if err := InsertTransactionTemplate(t.DB, transactionTemplate); err != nil {
 			return utility.MapMySQLErrorToHttpCode(err), err
@@ -97,9 +100,11 @@ func AddHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWr
 
 	rd.TemplateOptions = framework.TemplateOptions{
 		Data: struct {
-			Categories []category.Category
+			Categories       []category.Category
+			TransactionTypes map[string]TransactionType
 		}{
-			Categories: categories,
+			Categories:       categories,
+			TransactionTypes: GetTransactionTypes(),
 		},
 		Name:  "transaction-template-add",
 		Title: "Add Transaction Template",
@@ -140,6 +145,9 @@ func EditHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseW
 		if position, err := strconv.Atoi(r.FormValue("position")); err == nil {
 			transactionTemplate.Position = position
 		}
+		if transType, err := strconv.Atoi(r.FormValue("type")); err == nil {
+			transactionTemplate.TransactionType = TransactionType(transType)
+		}
 
 		if err = UpdateTransactionTemplate(t.DB, transactionTemplate); err != nil {
 			return utility.MapMySQLErrorToHttpCode(err), err
@@ -155,11 +163,13 @@ func EditHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseW
 
 	rd.TemplateOptions = framework.TemplateOptions{
 		Data: struct {
-			TransactionTemplate TransactionTemplate
 			Categories          []category.Category
+			TransactionTemplate TransactionTemplate
+			TransactionTypes    map[string]TransactionType
 		}{
-			TransactionTemplate: transactionTemplate,
 			Categories:          categories,
+			TransactionTemplate: transactionTemplate,
+			TransactionTypes:    GetTransactionTypes(),
 		},
 		Name:  "transaction-template-edit",
 		Title: "Edit Transaction Template",
@@ -173,7 +183,13 @@ func ListHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseW
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 	rd.TemplateOptions = framework.TemplateOptions{
-		Data:  transactionTemplates,
+		Data: struct {
+			TransactionTemplates []TransactionTemplate
+			TransactionTypes     map[string]TransactionType
+		}{
+			TransactionTemplates: transactionTemplates,
+			TransactionTypes:     GetTransactionTypes(),
+		},
 		Name:  "transaction-template-list",
 		Title: "Transaction Templates",
 	}
@@ -190,7 +206,13 @@ func ViewHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseW
 		return utility.MapMySQLErrorToHttpCode(err), err
 	}
 	rd.TemplateOptions = framework.TemplateOptions{
-		Data:  transactionTemplate,
+		Data: struct {
+			TransactionTemplate TransactionTemplate
+			TransactionTypes    map[string]TransactionType
+		}{
+			TransactionTemplate: transactionTemplate,
+			TransactionTypes:    GetTransactionTypes(),
+		},
 		Name:  "transaction-template-view",
 		Title: "View Transaction Template",
 	}

@@ -214,11 +214,13 @@ input[type=checkbox] {
     display: none;
 }
 
-.form-group.form-checkbox label {
+.form-group.form-checkbox label,
+.form-group.form-radio label {
     cursor: pointer;
 }
 
-.form-group.form-checkbox .checkbox-container {
+.form-group.form-checkbox .checkbox-container,
+.form-group.form-radio .radio-container {
     display: flex;
     flex: 10;
 }
@@ -232,6 +234,15 @@ input[type=checkbox] {
     flex: 10;
     grid-gap: 15px 10px;
     grid-template-columns: 1fr 1fr 1fr;
+}
+
+.form-group.form-radio .radio-container {
+    flex-direction: column;
+}
+
+.form-group.form-radio .radio-container label {
+    flex: auto;
+    margin: 0 0 5px;
 }
 
 .form-group.read-only p {
@@ -285,8 +296,18 @@ input[type=checkbox] {
     vertical-align: bottom;
 }
 
-.category-pill {
+.pill {
     border-radius: 10px;
+}
+
+.pill.income {
+    background-color: darkseagreen;
+    color: white;
+}
+
+.pill.outcome {
+    background-color: darksalmon;
+    color: white;
 }
 
 #dashboard-card-container {

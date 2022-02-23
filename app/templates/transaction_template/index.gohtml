@@ -11,7 +11,7 @@
             </div>
         </article>
         <article>
-            {{if not .Data}}
+            {{if not .Data.TransactionTemplates}}
                 <p>No transaction templates.</p>
             {{else}}
                 <table>
@@ -19,20 +19,32 @@
                     <tr>
                         <th>Name</th>
                         <th>Category</th>
+                        <th>Type</th>
+                        <th>Position</th>
                         <th></th>
                     </tr>
                     </thead>
                     <tbody>
-                    {{range $transactionTemplate := .Data}}
+                    {{range $transactionTemplate := .Data.TransactionTemplates}}
                         <tr>
                             <td>{{$transactionTemplate.Name}}</td>
                             <td>
-                                <span class="category-pill"
+                                <span class="pill"
                                       style="background-color: {{$transactionTemplate.Category.Color}}; color: {{$transactionTemplate.Category.TextColor}};"
                                 >
                                     {{$transactionTemplate.Category.Name}}
                                 </span>
                             </td>
+                            {{if eq $transactionTemplate.TransactionType $.Data.TransactionTypes.income}}
+                                <td>
+                                    <span class="pill income">Income</span>
+                                </td>
+                            {{else}}
+                                <td>
+                                    <span class="pill outcome">Outcome</span>
+                                </td>
+                            {{end}}
+                            <td>{{$transactionTemplate.Position}}</td>
                             <td class="table-action-cell">
                                 <a class="btn btn-icon btn-edit"
                                    href="{{url "transaction-template-edit" $.Routes}}/{{$transactionTemplate.Id}}"

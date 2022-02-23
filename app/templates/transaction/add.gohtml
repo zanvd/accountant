@@ -42,6 +42,9 @@
                             required
                             step="0.01"
                             type="number"
+                            {{if eq .Data.TransactionType .Data.TransactionTypes.outcome}}
+                                value="-0"
+                            {{end}}
                         />
                         <small id="amount-help" class="help-text">Use . (dot) as a decimal separator.</small>
                     </div>

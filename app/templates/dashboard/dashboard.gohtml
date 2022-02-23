@@ -7,10 +7,13 @@
                     <div class="dashboard-card"
                          data-transaction-category="{{$transactionTemplate.Category.Id}}"
                          data-transaction-name="{{$transactionTemplate.Name}}"
+                         data-transaction-type="{{$transactionTemplate.TransactionType}}"
                     >
-                        <p><b>{{$transactionTemplate.Name}}</b></p>
                         <p>
-                            <span class="category-pill"
+                            <b>{{$transactionTemplate.Name}}</b>
+                        </p>
+                        <p>
+                            <span class="pill"
                                   style="background-color: {{$transactionTemplate.Category.Color}}; color: {{$transactionTemplate.Category.TextColor}};"
                             >
                                 {{$transactionTemplate.Category.Name}}
