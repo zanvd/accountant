@@ -1,5 +1,15 @@
 {{define "content"}}
     <section>
+        <article class="page-title">
+            <h1>Dashboard</h1>
+            <div class="actions">
+                <a class="btn btn-icon btn-add" href="{{url "transaction-add" .Routes}}">
+                    <svg class="feather">
+                        <use xlink:href="{{.Routes.BaseUrl}}/static/icons/feather-sprite.svg#plus"/>
+                    </svg>
+                </a>
+            </div>
+        </article>
         <article id="dashboard-card-container">
             {{if not .Data}}
             {{else}}
