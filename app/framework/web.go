@@ -61,7 +61,7 @@ func (ah AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	// Check authorization.
 	if !ah.Endpoint.Auth.Public && !ah.RequestData.Session.Data.LoggedIn {
-		ah.handleErrors(errors.New("unauthorized"), http.StatusUnauthorized, w, r)
+		http.Redirect(w, r, ah.Tools.Routes.BaseUrl+ah.Tools.Routes.Uris["auth-login"], http.StatusTemporaryRedirect)
 		return
 	}
 	// Handle request.
