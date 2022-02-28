@@ -2,7 +2,6 @@ package framework
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
