@@ -1,3 +1,5 @@
+limit_req_zone $binary_remote_addr zone=app_limit:10m rate=5r/s;
+
 server {
     listen 80;
     listen [::]:80;
@@ -16,6 +18,11 @@ server {
     ssl_certificate /etc/letsencrypt/live/accountant.devexp.co/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/accountant.devexp.co/privkey.pem;
 
+    location /robots.txt {
+        add_header Content-type text/plain;
+        return 200 "User-agent: *\nDisallow: /\n";
+    }
+
     location /.well-known/acme-challenge {
         root /var/www/cert;
     }
@@ -28,6 +35,10 @@ server {
     location / {
         #auth_basic "Welcome to Accountant";
         #auth_basic_user_file "/etc/nginx/auth/.htpasswd";
+
+        limit_req_log_level warn;
+        limit_req_status 429;
+        limit_req zone=app_limit burst=5 nodelay;
 
         proxy_set_header Host $http_host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
