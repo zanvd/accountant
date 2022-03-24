@@ -8,12 +8,6 @@ import (
 	"bitbucket.org/zanvd/accountant/convert"
 )
 
-var sysTmpls = [3]string{
-	"templates/base.gohtml",
-	"templates/system/error.gohtml",
-	"templates/system/form_errors.gohtml",
-}
-
 type TemplateBuilder struct {
 	funcs    template.FuncMap
 	tmplList map[string]*template.Template // [name] = Template
@@ -29,10 +23,10 @@ type TemplateData struct {
 }
 
 type TemplateOptions struct {
-	Name         string
 	Data         interface{}
 	ErrorMessage string
 	ErrorStatus  int
+	Name         string
 	Title        string
 }
 
@@ -57,12 +51,12 @@ func NewTemplateBuilder() *TemplateBuilder {
 	}
 }
 
-func (tb *TemplateBuilder) AddTemplates(tmpls map[string]string) {
+func (tb *TemplateBuilder) AddTemplates(baseTmpls []string, tmpls map[string]string) {
 	for n, p := range tmpls {
 		if _, ok := tb.tmplList[n]; ok {
 			log.Panicln("error: template already added with name", n)
 		}
-		tb.tmplList[n] = tb.load(n, p)
+		tb.tmplList[n] = tb.load(baseTmpls, n, p)
 	}
 }
 
@@ -81,10 +75,7 @@ func (tb *TemplateBuilder) Render(r *Routes, rd *RequestData, w io.Writer) error
 	return tb.tmplList[rd.TemplateOptions.Name].ExecuteTemplate(w, "base.gohtml", d)
 }
 
-func (tb *TemplateBuilder) load(n string, p string) *template.Template {
-	paths := []string{p}
-	for _, sp := range sysTmpls {
-		paths = append(paths, sp)
-	}
-	return template.Must(template.New(n).Funcs(tb.funcs).ParseFiles(paths...))
+func (tb *TemplateBuilder) load(baseTmpls []string, n string, p string) *template.Template {
+	baseTmpls = append(baseTmpls, p)
+	return template.Must(template.New(n).Funcs(tb.funcs).ParseFiles(baseTmpls...))
 }

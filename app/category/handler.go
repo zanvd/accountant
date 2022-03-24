@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"bitbucket.org/zanvd/accountant/framework"
-	"bitbucket.org/zanvd/accountant/utility"
 )
 
 const BaseUri = "/category"
@@ -89,7 +88,7 @@ func AddHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWr
 		}
 
 		if err := InsertCategory(t.DB, category); err != nil {
-			return utility.MapMySQLErrorToHttpCode(err), err
+			return framework.MapMySQLErrorToHttpCode(err), err
 		}
 		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["category-list"], http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
@@ -107,7 +106,7 @@ func DeleteHandler(rd *framework.RequestData, t *framework.Tools, w http.Respons
 		return http.StatusBadRequest, err
 	}
 	if err = DeleteCategory(t.DB, id, rd.Session.Data.User.Id); err != nil {
-		return utility.MapMySQLErrorToHttpCode(err), err
+		return framework.MapMySQLErrorToHttpCode(err), err
 	}
 
 	http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["category-list"], http.StatusTemporaryRedirect)
@@ -121,7 +120,7 @@ func EditHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseW
 	}
 	category, err := GetCategory(t.DB, id, rd.Session.Data.User.Id)
 	if err != nil {
-		return utility.MapMySQLErrorToHttpCode(err), err
+		return framework.MapMySQLErrorToHttpCode(err), err
 	} else if r.Method == "POST" {
 		if color := strings.TrimSpace(r.FormValue("color")); color != "" {
 			category.Color = color
@@ -139,7 +138,7 @@ func EditHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseW
 		}
 
 		if err = UpdateCategory(t.DB, category); err != nil {
-			return utility.MapMySQLErrorToHttpCode(err), err
+			return framework.MapMySQLErrorToHttpCode(err), err
 		}
 		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["category-list"], http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
@@ -155,7 +154,7 @@ func EditHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseW
 func ListHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, _ *http.Request) (int, error) {
 	categories, err := GetCategories(t.DB, rd.Session.Data.User.Id)
 	if err != nil {
-		return utility.MapMySQLErrorToHttpCode(err), err
+		return framework.MapMySQLErrorToHttpCode(err), err
 	}
 	rd.TemplateOptions = framework.TemplateOptions{
 		Data:  categories,
@@ -172,7 +171,7 @@ func ViewHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseW
 	}
 	category, err := GetCategory(t.DB, id, rd.Session.Data.User.Id)
 	if err != nil {
-		return utility.MapMySQLErrorToHttpCode(err), err
+		return framework.MapMySQLErrorToHttpCode(err), err
 	}
 	rd.TemplateOptions = framework.TemplateOptions{
 		Data:  category,

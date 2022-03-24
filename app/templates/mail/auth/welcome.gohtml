@@ -1,0 +1,33 @@
+{{define "content"}}
+    <p>
+        Dear {{.Data.User.Username}},
+    </p>
+    <p>
+        Thank you for registering with the Accountant.
+    </p>
+    <p>
+        In order to finalize your registration and start using your account please follow this
+        <a href="{{url "auth-confirm-account" .Routes}}?username={{.Data.User.Username}}&token={{.Data.Token}}">
+            link
+        </a>.
+        <br/>
+        Or copy and paste it in your browser's address bar:
+        <br/>
+        <a href="{{url "auth-confirm-account" .Routes}}?username={{.Data.User.Username}}&token={{.Data.Token}}">
+            {{url "auth-confirm-account" .Routes}}?username={{.Data.User.Username}}&token={{.Data.Token}}
+        </a>
+    </p>
+    <p>
+        Your chosen username is: <b>{{.Data.User.Username}}</b>
+        <br/>
+        Please remember it as it is going to be required when logging in.
+    </p>
+    <p>
+        If it wasn't you who has performed the registration, please notify us and discard this message.
+    </p>
+    <p>
+        Kind regards,
+		<br/>
+        Accountant Team
+    </p>
+{{end}}

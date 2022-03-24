@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"bitbucket.org/zanvd/accountant/auth"
 	"bitbucket.org/zanvd/accountant/category"
@@ -13,31 +12,28 @@ import (
 	"bitbucket.org/zanvd/accountant/transaction"
 	"bitbucket.org/zanvd/accountant/transaction_template"
 	"bitbucket.org/zanvd/accountant/user"
-	"bitbucket.org/zanvd/accountant/utility"
 )
 
 func main() {
-	db, err := utility.InitDatabase()
+	c, err := framework.NewConfig()
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	db, err := framework.InitDatabase(c)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 	defer db.Close()
 
-	var sm *framework.SessionManager = new(framework.SessionManager)
-	sm.Connect(framework.ConnectionConfig{
-		Db:       0,
-		Host:     "redis",
-		Password: "",
-		Port:     "6379",
-		Username: "",
-	})
-	if os.Getenv("ENV") == "dev" {
-		sm.Env = framework.Dev
-	} else {
-		sm.Env = framework.Prod
-	}
+	cm := &framework.CacheManager{}
+	cm.Connect(c)
 
-	r := &framework.Routes{BaseUrl: os.Getenv("BASE_URL"), Uris: make(map[string]string)}
+	sm := framework.NewSessionManager(cm, c)
+
+	m := framework.NewMailer(c)
+
+	r := &framework.Routes{BaseUrl: c.BaseUrl, Uris: make(map[string]string)}
 
 	tb := framework.NewTemplateBuilder()
 	tb.AddTemplates(framework.GetBaseTemplates(), map[string]string{"error": "templates/system/error.gohtml"})
@@ -51,7 +47,8 @@ func main() {
 		transaction_template.TransactionTemplateHandler{},
 		user.UserHandler{},
 	}
-	framework.RegisterHandlers(db, mhs, r, sm, tb)
+	framework.RegisterHandlers(cm, db, m, mhs, r, sm, tb)
+	framework.RegisterMailTemplates([]framework.MailerConsumer{auth.AuthHandler{}}, tb)
 	framework.RegisterRoutes(mhs, r)
 	framework.RegisterTemplates(mhs, tb)
 

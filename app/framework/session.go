@@ -1,31 +1,12 @@
 package framework
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
 )
-
-var ctx = context.Background()
-
-type Env int
-
-const (
-	Dev Env = iota + 1
-	Prod
-)
-
-type ConnectionConfig struct {
-	Db       int
-	Host     string
-	Password string
-	Port     string
-	Username string
-}
 
 type Session struct {
 	Id   string
@@ -44,40 +25,42 @@ type SessionUser struct {
 }
 
 type SessionManager struct {
-	Client *redis.Client
-	Env    Env
+	CacheManager *CacheManager
+	CookieName   string
+	KeyPrefix    string
+	SecureCookie bool
+}
+
+func NewSessionManager(cacheManager *CacheManager, config *Config) *SessionManager {
+	return &SessionManager{
+		CacheManager: cacheManager,
+		CookieName:   config.Session.CookieName,
+		KeyPrefix:    config.Session.KeyPrefix + ":",
+		SecureCookie: config.Session.SecureCookie,
+	}
 }
 
 func (sm *SessionManager) ClearSession(s *Session, w http.ResponseWriter) (err error) {
 	c := http.Cookie{
 		Expires:  time.Unix(0, 0),
 		HttpOnly: true,
-		Name:     "accountant-session",
+		Name:     sm.CookieName,
 		Path:     "/",
 		SameSite: http.SameSiteStrictMode,
-		Secure:   sm.Env == Prod,
+		Secure:   sm.SecureCookie,
 		Value:    "",
 	}
 	http.SetCookie(w, &c)
-	_, err = sm.Client.Del(ctx, s.Id).Result()
+	_, err = sm.CacheManager.Delete(s.Id)
 	s.Data = SessionData{}
 	return
-}
-
-func (sm *SessionManager) Connect(cc ConnectionConfig) {
-	sm.Client = redis.NewClient(&redis.Options{
-		Addr:     cc.Host + ":" + cc.Port,
-		DB:       cc.Db,
-		Password: cc.Password,
-		Username: cc.Username,
-	})
 }
 
 func (sm *SessionManager) GetSession(r *http.Request) (Session, error) {
 	s := sm.createSession()
 	// TODO: Log errors?
-	if c, err := r.Cookie("accountant-session"); err == nil {
-		if sd, err := sm.Client.Get(ctx, c.Value).Result(); err == nil {
+	if c, err := r.Cookie(sm.CookieName); err == nil {
+		if sd, err := sm.CacheManager.Get(sm.KeyPrefix + c.Value); err == nil {
 			var umd SessionData
 			if err := json.Unmarshal([]byte(sd), &umd); err != nil {
 				return s, err
@@ -96,16 +79,16 @@ func (sm *SessionManager) WriteSession(s Session, w http.ResponseWriter) (err er
 	if md, err = json.Marshal(s.Data); err != nil {
 		return
 	}
-	if err = sm.Client.Set(ctx, s.Id, string(md), time.Hour).Err(); err != nil {
+	if err = sm.CacheManager.Set(sm.KeyPrefix+s.Id, string(md), time.Hour); err != nil {
 		return
 	}
 	c := http.Cookie{
 		HttpOnly: true,
 		MaxAge:   3600,
-		Name:     "accountant-session",
+		Name:     sm.CookieName,
 		Path:     "/",
 		SameSite: http.SameSiteStrictMode,
-		Secure:   sm.Env == Prod,
+		Secure:   sm.SecureCookie,
 		Value:    s.Id,
 	}
 	http.SetCookie(w, &c)

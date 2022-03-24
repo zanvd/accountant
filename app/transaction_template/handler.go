@@ -7,7 +7,6 @@ import (
 
 	"bitbucket.org/zanvd/accountant/category"
 	"bitbucket.org/zanvd/accountant/framework"
-	"bitbucket.org/zanvd/accountant/utility"
 )
 
 const BaseUri string = "/transaction-template"
@@ -87,7 +86,7 @@ func AddHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWr
 		}
 
 		if err := InsertTransactionTemplate(t.DB, transactionTemplate); err != nil {
-			return utility.MapMySQLErrorToHttpCode(err), err
+			return framework.MapMySQLErrorToHttpCode(err), err
 		}
 		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["transaction-template-list"], http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
@@ -95,7 +94,7 @@ func AddHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWr
 
 	categories, err := category.GetCategories(t.DB, rd.Session.Data.User.Id)
 	if err != nil {
-		return utility.MapMySQLErrorToHttpCode(err), err
+		return framework.MapMySQLErrorToHttpCode(err), err
 	}
 
 	rd.TemplateOptions = framework.TemplateOptions{
@@ -119,7 +118,7 @@ func DeleteHandler(rd *framework.RequestData, t *framework.Tools, w http.Respons
 	}
 
 	if err = DeleteTransactionTemplate(t.DB, id, rd.Session.Data.User.Id); err != nil {
-		return utility.MapMySQLErrorToHttpCode(err), err
+		return framework.MapMySQLErrorToHttpCode(err), err
 	}
 
 	http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["transaction-template-list"], http.StatusTemporaryRedirect)
@@ -134,7 +133,7 @@ func EditHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseW
 
 	transactionTemplate, err := GetTransactionTemplate(t.DB, id, rd.Session.Data.User.Id)
 	if err != nil {
-		return utility.MapMySQLErrorToHttpCode(err), err
+		return framework.MapMySQLErrorToHttpCode(err), err
 	} else if r.Method == "POST" {
 		if categoryId, err := strconv.Atoi(r.FormValue("category")); err == nil {
 			transactionTemplate.Category = category.Category{Id: categoryId}
@@ -150,7 +149,7 @@ func EditHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseW
 		}
 
 		if err = UpdateTransactionTemplate(t.DB, transactionTemplate); err != nil {
-			return utility.MapMySQLErrorToHttpCode(err), err
+			return framework.MapMySQLErrorToHttpCode(err), err
 		}
 		http.Redirect(w, r, t.Routes.BaseUrl+t.Routes.Uris["transaction-template-list"], http.StatusTemporaryRedirect)
 		return http.StatusTemporaryRedirect, nil
@@ -158,7 +157,7 @@ func EditHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseW
 
 	categories, err := category.GetCategories(t.DB, rd.Session.Data.User.Id)
 	if err != nil {
-		return utility.MapMySQLErrorToHttpCode(err), err
+		return framework.MapMySQLErrorToHttpCode(err), err
 	}
 
 	rd.TemplateOptions = framework.TemplateOptions{
@@ -180,7 +179,7 @@ func EditHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseW
 func ListHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, _ *http.Request) (int, error) {
 	transactionTemplates, err := GetTransactionTemplates(t.DB, false, rd.Session.Data.User.Id)
 	if err != nil {
-		return utility.MapMySQLErrorToHttpCode(err), err
+		return framework.MapMySQLErrorToHttpCode(err), err
 	}
 	rd.TemplateOptions = framework.TemplateOptions{
 		Data: struct {
@@ -203,7 +202,7 @@ func ViewHandler(rd *framework.RequestData, t *framework.Tools, w http.ResponseW
 	}
 	transactionTemplate, err := GetTransactionTemplate(t.DB, id, rd.Session.Data.User.Id)
 	if err != nil {
-		return utility.MapMySQLErrorToHttpCode(err), err
+		return framework.MapMySQLErrorToHttpCode(err), err
 	}
 	rd.TemplateOptions = framework.TemplateOptions{
 		Data: struct {

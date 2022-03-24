@@ -26,18 +26,10 @@ services:
     # TODO: Find a way to eliminate these errors altogether.
     depends_on:
       - database
-    environment:
-      DB_NAME: /run/secrets/accountant_db_database
-      DB_PASSWORD: /run/secrets/accountant_db_password
-      DB_USER: /run/secrets/accountant_db_user
     image: accountant_app
     networks:
       - external_net
       - internal_net
-    secrets:
-      - accountant_db_database
-      - accountant_db_password
-      - accountant_db_user
     restart: on-failure
   # MySQL database
   database:

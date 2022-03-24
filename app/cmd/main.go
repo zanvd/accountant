@@ -6,10 +6,10 @@ import (
 	"os"
 
 	"bitbucket.org/zanvd/accountant/category"
+	"bitbucket.org/zanvd/accountant/framework"
 	"bitbucket.org/zanvd/accountant/transaction"
 	"bitbucket.org/zanvd/accountant/transaction_template"
 	"bitbucket.org/zanvd/accountant/user"
-	"bitbucket.org/zanvd/accountant/utility"
 )
 
 func main() {
@@ -25,7 +25,12 @@ func main() {
 }
 
 func createTables() {
-	db, err := utility.InitDatabase()
+	c, err := framework.NewConfig()
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	db, err := framework.InitDatabase(c)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}

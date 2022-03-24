@@ -17,6 +17,7 @@ a {
 
 article {
     display: flex;
+    flex-direction: column;
 }
 
 main {
@@ -322,6 +323,10 @@ input[type=checkbox] {
     cursor: pointer;
     padding: 5px 20px;
     text-align: center;
+}
+
+.page-title {
+    flex-direction: row;
 }
 
 .page-title > .actions {

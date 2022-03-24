@@ -6,9 +6,14 @@ import (
 	"log"
 	"net/http"
 
-	"bitbucket.org/zanvd/accountant/utility"
 	"github.com/go-sql-driver/mysql"
 )
+
+var baseTmpls = []string{
+	"templates/base.gohtml",
+	"templates/system/error.gohtml",
+	"templates/system/form_errors.gohtml",
+}
 
 type Middleware interface {
 	PreRequest(t *Tools, r *http.Request) error
@@ -28,7 +33,9 @@ type Routes struct {
 }
 
 type Tools struct {
+	CacheManager    *CacheManager
 	DB              *sql.DB
+	Mailer          *Mailer
 	Routes          *Routes
 	SessionManager  *SessionManager
 	TemplateBuilder *TemplateBuilder
@@ -68,8 +75,6 @@ func (ah AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		ah.handleErrors(err, status, w, r)
 		return
-	} else if status == http.StatusTemporaryRedirect {
-		return
 	}
 
 	// Update session.
@@ -77,6 +82,12 @@ func (ah AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ah.handleErrors(err, http.StatusInternalServerError, w, r)
 		return
 	}
+
+	// Check for a redirect.
+	if status >= 300 && status < 400 {
+		return
+	}
+
 	// Render template.
 	if err := ah.Tools.TemplateBuilder.Render(ah.Tools.Routes, &ah.RequestData, w); err != nil {
 		ah.handleErrors(err, http.StatusInternalServerError, w, r)
@@ -90,7 +101,7 @@ func (ah AppHandler) handleErrors(err error, status int, w http.ResponseWriter, 
 	// Handle DB errors with a custom text.
 	message := err.Error()
 	if _, ok := err.(*mysql.MySQLError); ok {
-		message = utility.GetMySQLErrorMessage(err)
+		message = GetMySQLErrorMessage(err)
 	} else if err == sql.ErrConnDone || err == sql.ErrTxDone {
 		message = "Something went wrong."
 		status = http.StatusInternalServerError
@@ -119,30 +130,50 @@ func (ah AppHandler) handleErrors(err error, status int, w http.ResponseWriter, 
 	}*/
 }
 
-func RegisterHandlers(db *sql.DB, mhs []ModuleHandler, r *Routes, sm *SessionManager, tb *TemplateBuilder) {
+func GetBaseTemplates() []string {
+	return baseTmpls
+}
+
+func RegisterHandlers(
+	cm *CacheManager,
+	db *sql.DB,
+	m *Mailer,
+	mhs []ModuleHandler,
+	r *Routes,
+	sm *SessionManager,
+	tb *TemplateBuilder,
+) {
 	for _, mh := range mhs {
-	ehs := mh.GetHandlers()
+		ehs := mh.GetHandlers()
 		t := &Tools{
 			DB:              db,
+			CacheManager:    cm,
+			Mailer:          m,
 			Routes:          r,
 			SessionManager:  sm,
 			TemplateBuilder: tb,
 		}
-	for p, eh := range ehs {
+		for p, eh := range ehs {
 			http.Handle(p, AppHandler{Endpoint: eh, Tools: t})
 		}
 	}
 }
 
-func RegisterRoutes(mhs []ModuleHandler, r *Routes) {
-	for _, mh := range mhs {
-	for n, u := range mh.GetRoutes() {
-		if _, ok := r.Uris[n]; ok {
-			log.Panicln("error: URI already added with name", n)
-		}
-		r.Uris[n] = u
+func RegisterMailTemplates(mcs []MailerConsumer, tb *TemplateBuilder) {
+	for _, mc := range mcs {
+		tb.AddTemplates(baseMailTmpls, mc.GetMailTemplates())
 	}
 }
+
+func RegisterRoutes(mhs []ModuleHandler, r *Routes) {
+	for _, mh := range mhs {
+		for n, u := range mh.GetRoutes() {
+			if _, ok := r.Uris[n]; ok {
+				log.Panicln("error: URI already added with name", n)
+			}
+			r.Uris[n] = u
+		}
+	}
 }
 
 func RegisterTemplates(mhs []ModuleHandler, tb *TemplateBuilder) {

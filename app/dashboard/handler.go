@@ -5,7 +5,6 @@ import (
 
 	"bitbucket.org/zanvd/accountant/framework"
 	"bitbucket.org/zanvd/accountant/transaction_template"
-	"bitbucket.org/zanvd/accountant/utility"
 )
 
 type DashboardHandler struct{}
@@ -36,7 +35,7 @@ func (DashboardHandler) GetTemplates() map[string]string {
 func Handler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWriter, _ *http.Request) (int, error) {
 	transactionTemplates, err := transaction_template.GetTransactionTemplates(t.DB, true, rd.Session.Data.User.Id)
 	if err != nil {
-		return utility.MapMySQLErrorToHttpCode(err), err
+		return framework.MapMySQLErrorToHttpCode(err), err
 	}
 	rd.TemplateOptions = framework.TemplateOptions{
 		Data:  transactionTemplates,

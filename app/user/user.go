@@ -6,16 +6,18 @@ import (
 )
 
 type User struct {
-	Id       int
-	Email    string
-	Password string
-	Username string
+	Id        int
+	Confirmed bool
+	Email     string
+	Password  string
+	Username  string
 }
 
 func CreateUserTable(db *sql.DB) {
 	query := `
         CREATE TABLE IF NOT EXISTS users (
             id INT NOT NULL AUTO_INCREMENT,
+			confirmed TINYINT(1) NOT NULL DEFAULT 0,
             email VARCHAR(255) NOT NULL,
             password VARCHAR(255) NOT NULL,
             username VARCHAR(255) NOT NULL,
@@ -42,13 +44,13 @@ func DeleteUser(db *sql.DB, id int) (err error) {
 
 func GetUser(db *sql.DB, id int) (u User, err error) {
 	row := db.QueryRow("SELECT * FROM users WHERE id = ?;", id)
-	err = row.Scan(&u.Id, &u.Email, &u.Password, &u.Username)
+	err = row.Scan(&u.Id, &u.Confirmed, &u.Email, &u.Password, &u.Username)
 	return
 }
 
 func GetUserByUsername(db *sql.DB, username string) (u User, err error) {
 	row := db.QueryRow("SELECT * FROM users WHERE username = ?;", username)
-	err = row.Scan(&u.Id, &u.Email, &u.Password, &u.Username)
+	err = row.Scan(&u.Id, &u.Confirmed, &u.Email, &u.Password, &u.Username)
 	return
 }
 
@@ -62,10 +64,10 @@ func InsertUser(db *sql.DB, u User) (err error) {
 }
 
 func UpdateUser(db *sql.DB, u User) (err error) {
-	statement, err := db.Prepare("UPDATE users SET email = ?, password = ?, username = ? WHERE id = ?;")
+	statement, err := db.Prepare("UPDATE users SET confirmed = ?, email = ?, password = ?, username = ? WHERE id = ?;")
 	if err != nil {
 		return
 	}
-	_, err = statement.Exec(u.Email, u.Password, u.Username, u.Id)
+	_, err = statement.Exec(u.Confirmed, u.Email, u.Password, u.Username, u.Id)
 	return
 }
