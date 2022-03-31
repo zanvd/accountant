@@ -1,6 +1,7 @@
 package stats
 
 import (
+	"math"
 	"net/http"
 
 	"bitbucket.org/zanvd/accountant/framework"
@@ -52,9 +53,9 @@ func Handler(rd *framework.RequestData, t *framework.Tools, w http.ResponseWrite
 			Outcome float64
 			Savings float64
 		}{
-			Income:  income,
-			Outcome: outcome,
-			Savings: income + outcome,
+			Income:  math.Round(income*100) / 100,
+			Outcome: math.Round(outcome*100) / 100,
+			Savings: math.Round((income+outcome)*100) / 100,
 		},
 		Name:  "stats",
 		Title: "Stats",
