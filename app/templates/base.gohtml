@@ -32,6 +32,7 @@
                 <a href="{{url "category-list" .Routes}}">Categories</a>
                 <a href="{{url "transaction-list" .Routes}}">Transactions</a>
                 <a href="{{url "transaction-template-list" .Routes}}">Transaction templates</a>
+                <a href="{{url "stats" .Routes}}">Stats</a>
                 <a href="{{url "user-profile" .Routes}}">{{.Session.User.Username}}</a>
                 <a href="{{url "auth-logout" .Routes}}">Logout</a>
             {{else}}

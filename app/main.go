@@ -9,6 +9,7 @@ import (
 	"bitbucket.org/zanvd/accountant/dashboard"
 	"bitbucket.org/zanvd/accountant/framework"
 	"bitbucket.org/zanvd/accountant/public"
+	"bitbucket.org/zanvd/accountant/stats"
 	"bitbucket.org/zanvd/accountant/transaction"
 	"bitbucket.org/zanvd/accountant/transaction_template"
 	"bitbucket.org/zanvd/accountant/user"
@@ -43,6 +44,7 @@ func main() {
 		category.CategoryHandler{},
 		dashboard.DashboardHandler{},
 		public.PublicHandler{},
+		stats.StatsHandler{},
 		transaction.TransactionHandler{},
 		transaction_template.TransactionTemplateHandler{},
 		user.UserHandler{},
