@@ -26,3 +26,5 @@ RUN echo "xdebug.client_host='host.docker.internal'" >> /usr/local/etc/php/conf.
 
 # Production image
 FROM build as prod
+
+COPY . .
