@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+{% block title %}View Transaction | {{ parent() }}{% endblock %}
+{% block content %}
+<section>
+   {{ include('_heading.html.twig', {
+       actions: {
+           delete: 'transaction_delete',
+           edit: 'transaction_edit',
+           index: 'transaction_index'
+        },
+       data: transaction,
+       title: "Transaction #{transaction.name}"
+    }) }}
+   <article class="data-container">
+        <h2>{{ transaction.name }}</h2>
+        <p>
+            <b>Category:</b>
+            <span class="pill"
+                style="background-color: {{ transaction.Category.color }}; color: {{ transaction.Category.textColor }};"
+            >
+                {{ transaction.Category.name }}
+            </span>
+        </p>
+        <p><b>Amount:</b> {{ transaction.amount|number_format(2) }}</p>
+        <p><b>Transaction Date:</b> {{ transaction.transactionDate|date(format_date) }}</p>
+        <p><b>Summary:</b> {{ transaction.summary }}</p>
+   </article>
+</section>
+{% endblock %}

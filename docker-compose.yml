@@ -15,15 +15,12 @@ secrets:
     file: secrets/db_user.txt
 
 services:
-  # GO app
+  # PHP app
   app:
     build:
       context: ./app
       target: dev
     container_name: accountant_app
-    # Despite this container depending on the DB it still produces dial up errors since it spins up faster.
-    # Just wait a bit until the DB container is up and running and the errors are going to stop.
-    # TODO: Find a way to eliminate these errors altogether.
     depends_on:
       - database
     image: accountant_app
@@ -67,7 +64,7 @@ services:
     - "80:80"
     restart: always
     volumes:
-      - nginx_assets_vol:/var/www/devexp.co/assets
+      - nginx_assets_vol:/var/www/accountant/assets
   redis:
     container_name: accountant_redis
     image: redis:alpine
@@ -81,7 +78,7 @@ volumes:
   nginx_assets_vol:
     driver: local
     driver_opts:
-      device: $PWD/app/assets
+      device: $PWD/app/public/assets
       o: bind
       type: none
   redis_vol:

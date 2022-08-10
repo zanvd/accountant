@@ -1,0 +1,9 @@
+private_controllers:
+  prefix: '/app'
+  resource: '../../src/Controller/Private/'
+  trailing_slash_on_root: false
+  type: annotation
+public_controllers:
+  resource: '../../src/Controller/Public/'
+  trailing_slash_on_root: false
+  type: annotation

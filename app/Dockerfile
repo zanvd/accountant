@@ -1,43 +1,28 @@
-# Build
-FROM golang:1.18 AS build
+FROM php:8.1-fpm-alpine AS build
 
-ARG GOARG=""
-
-WORKDIR /tmp/app
-
-COPY go.mod .
-COPY go.sum .
-RUN go mod download
-
-COPY . .
-
-RUN /bin/bash -c "GOOS=linux go build ${GOARG} -o ./dist/accountant ."
-RUN GOOS=linux go build -o ./dist/accountant-cmd ./cmd
-
-# Dev container
-FROM golang:1.18 AS dev
-
-RUN go install github.com/go-delve/delve/cmd/dlv@latest
+RUN apk --no-cache update \
+    && apk --no-cache upgrade \
+    && apk --no-cache add ${PHPIZE_DEPS} \
+    && docker-php-ext-install mysqli pdo pdo_mysql \
+    && pecl install redis-5.3.7 \
+    && docker-php-ext-enable pdo_mysql redis \
+    && apk del ${PHPIZE_DEPS}
 
 WORKDIR /app
 
-COPY --from=build /tmp/app/dist/accountant ./accountant
-COPY --from=build /tmp/app/dist/accountant-cmd ./accountant-cmd
-COPY ./assets ./assets
-COPY ./config.yaml ./config.yaml
-COPY ./templates ./templates
+# Development image
+FROM build AS dev
 
-CMD [ "dlv", "exec", "/app/accountant", "--headless=true", "--listen=:2345", "--api-version=2", "--accept-multiclient", "--log", "--continue" ]
+RUN apk --no-cache update \
+    && apk --no-cache upgrade \
+    && apk --no-cache add ${PHPIZE_DEPS} \
+    && pecl install xdebug-3.1.5 \
+    && docker-php-ext-enable xdebug \
+    && apk del ${PHPIZE_DEPS}
 
-# Prod container
-FROM golang:1.18 AS prod
+RUN echo "xdebug.client_host='host.docker.internal'" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
-WORKDIR /app
-
-COPY --from=build /tmp/app/dist/accountant ./accountant
-COPY --from=build /tmp/app/dist/accountant-cmd ./accountant-cmd
-COPY ./assets ./assets
-COPY ./config.yaml ./config.yaml
-COPY ./templates ./templates
-
-CMD ["./accountant"]
+# Production image
+FROM build as prod

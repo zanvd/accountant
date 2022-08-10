@@ -2,26 +2,16 @@ version: "3.9"
 
 services:
   app:
-    build:
-      args:
-        GOARG: -gcflags='all=-N -l'
-    env_file:
-      - app/env.dev
-    # Debugger.
-    ports:
-      - "2345:2345"
-    security_opt:
-      - seccomp:unconfined
     volumes:
-      - app_templates_vol:/app/templates
+      - app_vol:/app
   redis:
     ports:
       - "6379:6379"
 
 volumes:
-  app_templates_vol:
+  app_vol:
     driver: local
     driver_opts:
-      device: $PWD/app/templates
+      device: $PWD/app
       o: bind
       type: none

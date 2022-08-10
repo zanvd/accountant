@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+{% block title %}View Transaction Template | {{ parent() }}{% endblock %}
+{% block content %}
+<section>
+   {{ include('_heading.html.twig', {
+       actions: {
+           delete: 'transaction_template_delete',
+           edit: 'transaction_template_edit',
+           index: 'transaction_template_index'
+        },
+       data: transactionTemplate,
+       title: "Transaction Template #{transactionTemplate.name}"
+    }) }}
+   <article class="data-container">
+        <h2>{{ transactionTemplate.name }}</h2>
+        <p>
+            <b>Category:</b>
+            <span class="pill"
+                    style="background-color: {{ transactionTemplate.Category.color }}; color: {{ transactionTemplate.Category.textColor }};"
+            >
+                {{ transactionTemplate.Category.name }}
+            </span>
+        </p>
+        <p>
+            <b>Type:</b>
+            {% if transactionTemplate.isIncome() == 'income' %}
+                <span class="pill income">Income</span>
+            {% else %}
+                <span class="pill outcome">Outcome</span>
+            {% endif %}
+        </p>
+        <p>
+            <b>Position:</b> {{ transactionTemplate.position}}
+        </p>
+   </article>
+</section>
+{% endblock %}

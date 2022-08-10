@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+{% block title %}View Category | {{ parent() }}{% endblock %}
+{% block content %}
+<section>
+   {{ include('_heading.html.twig', {
+       actions: {
+           delete: 'category_delete',
+           edit: 'category_edit',
+           index: 'category_index'
+        },
+       data: category,
+       title: "Category #{category.name}"
+    }) }}
+   <article class="data-container">
+        <h2>{{ category.name }}</h2>
+        <p>
+            <b>Color:</b>
+            <span class="category-color-view pill" style="background-color: {{ category.color }};"></span>
+        </p>
+        <p>
+            <b>Text Color:</b>
+            <span class="category-color-view pill" style="background-color: {{ category.textColor }};"></span>
+        </p>
+        <p><b>Description:</b> {{ category.description }}</p>
+   </article>
+</section>
+{% endblock %}

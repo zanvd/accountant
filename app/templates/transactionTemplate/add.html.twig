@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+{% block title %}New Transaction Template | {{ parent() }}{% endblock %}
+{% block content %}
+<section>
+   {{ include('_heading.html.twig', {
+       actions: {index: 'transaction_template_index'},
+       title: 'New Transaction Template'
+    }) }}
+   <article>
+        {{ form(form) }}
+   </article>
+</section>
+{% endblock %}

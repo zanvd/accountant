@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+{% block title %}Category | {{ parent() }}{% endblock %}
+{% block content %}
+<section>
+    {{ include('_heading.html.twig', {actions: {add: 'category_add'}, title: 'Categories'}) }}
+    <article>
+    {% if categories %}
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for c in categories %}
+                <tr>
+                    <td>
+                        <span class="pill" style="background-color: {{ c.color }}; color: {{ c.textColor }};">
+                            {{ c.name }}
+                        </span>
+                    </td>
+                    <td>{{ c.description }}</td>
+                    <td class="table-action-cell">
+                        <a class="btn btn-icon btn-edit" href="{{ url('category_edit', {'id': c.id}) }}">
+                            <svg class="feather">
+                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#edit') }}"/>
+                            </svg>
+                        </a>
+                        <a class="btn btn-icon btn-view" href="{{ url('category_view', {'id': c.id}) }}">
+                            <svg class="feather">
+                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#search') }}"/>
+                            </svg>
+                        </a>
+                        <a class="btn btn-icon btn-delete confirm-deletion"
+                            href="{{ url('category_delete', {'id': c.id}) }}"
+                            data-deletion-name="{{ c.name }}"
+                            data-deletion-title="Category"
+                        >
+                            <svg class="feather">
+                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#trash') }}"/>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No categories.</p>
+    {% endif %}
+    </article>
+</section>
+{% endblock %}

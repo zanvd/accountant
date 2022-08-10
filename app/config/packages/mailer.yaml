@@ -1,0 +1,7 @@
+framework:
+    mailer:
+        dsn: '%env(MAILER_DSN)%'
+        envelope:
+            sender: 'zapp.devcom@gmail.com'
+        headers:
+            From: 'Accountant <zapp.devcom@gmail.com>'

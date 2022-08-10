@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Accountant{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" rel="stylesheet"/>
+    <link href="{{ absolute_url('/static/style.css') }}" rel="stylesheet">
+    <link href="{{ absolute_url('/static/desktop.css') }}" media="screen and (min-width: 750px)" rel="stylesheet"/>
+    <link href="{{ absolute_url('/static/mobile.css') }}" media="screen and (max-width: 750px)" rel="stylesheet"/>
+    <link href="{{ absolute_url('/static/dtsel-picker/dtsel.css') }}" rel="stylesheet"/>
+    <script src="{{ absolute_url('/static/script.js') }}" defer></script>
+    <script src="{{ absolute_url('/static/dtsel-picker/dtsel.js') }}" defer></script>
+</head>
+<body>
+<head>
+<header>
+    <nav>
+        <div id="menu-brand">
+            <a href="{{ url('public_home') }}">Accountant</a>
+        </div>
+        <input id="menu-button" type="checkbox"/>
+        <label id="menu-burger" for="menu-button">
+            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                      d="M2 12.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"
+                />
+            </svg>
+        </label>
+        <div id="menu">
+            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                <a href="{{ url('dashboard_index') }}">Dashboard</a>
+                <a href="{{ url('category_index') }}">Categories</a>
+                <a href="{{ url('transaction_index') }}">Transactions</a>
+                <a href="{{ url('transaction_template_index') }}">Transaction templates</a>
+                <a href="{{ url('stats_index') }}">Stats</a>
+                <a href="">Profile</a>
+                <a href="{{url('auth_logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url('auth_login') }}">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+<main>
+    {% block content %}{% endblock %}
+    <div id="deletion-dialog-container" class="hidden">
+        <div id="deletion-dialog">
+            <h2 id="deletion-title"></h2>
+            <hr/>
+            <p id="deletion-text"></p>
+            <hr/>
+            <div class="dialog-actions">
+                <button id="deletion-submit" class="btn btn-icon" type="submit">
+                    <svg class="feather">
+                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#check') }}"/>
+                    </svg>
+                </button>
+                <button id="deletion-cancel" class="btn btn-icon btn-cancel" type="button">
+                    <svg class="feather">
+                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#x') }}"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+<footer>
+    <p>
+        &copy; <a href="http://www.devexp.co" target="_blank">devexp</a>
+    </p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+{% block title %}Transaction | {{ parent() }}{% endblock %}
+{% block content %}
+<section>
+    {{ include('_heading.html.twig', {actions: {add: 'transaction_add'}, title: 'Transactions'}) }}
+    <article>
+    {% if transactions %}
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Transaction Date</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for t in transactions %}
+                <tr>
+                    <td>{{ t.name }}</td>
+                    <td>{{ t.amount|number_format(2) }}</td>
+                    <td>
+                        <span class="pill"
+                            style="background-color: {{ t.Category.color }}; color: {{ t.Category.textColor }};"
+                        >
+                            {{ t.Category.name }}
+                        </span>
+                    </td>
+                    <td>{{ t.transactionDate|date(format_date) }}</td>
+                    <td class="table-action-cell">
+                        <a class="btn btn-icon btn-edit" href="{{ url('transaction_edit', {'id': t.id}) }}">
+                            <svg class="feather">
+                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#edit') }}"/>
+                            </svg>
+                        </a>
+                        <a class="btn btn-icon btn-view" href="{{ url('transaction_view', {'id': t.id}) }}">
+                            <svg class="feather">
+                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#search') }}"/>
+                            </svg>
+                        </a>
+                        <a class="btn btn-icon btn-delete confirm-deletion"
+                            href="{{ url('transaction_delete', {'id': t.id}) }}"
+                            data-deletion-name="{{ t.name }}"
+                            data-deletion-title="Transaction"
+                        >
+                            <svg class="feather">
+                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#trash') }}"/>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No transactions.</p>
+    {% endif %}
+    </article>
+</section>
+{% endblock %}

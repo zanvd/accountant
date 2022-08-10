@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+{% block title %}Edit Transaction | {{ parent() }}{% endblock %}
+{% block content %}
+<section>
+   {{ include('_heading.html.twig', {
+       actions: {
+           delete: 'transaction_delete',
+           index: 'transaction_index',
+           view: 'transaction_view'
+        },
+       data: transaction,
+       title: "Transaction #{transaction.name}"
+    }) }}
+   <article>
+         {{ form(form) }}
+         {{ include('transaction/initDate.html.twig') }}
+   </article>
+</section>
+{% endblock %}

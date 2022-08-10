@@ -24,8 +24,8 @@ sudo chmod u+x bin/accountant.sh
 # Generates a Let's encrypt certificate.
 ./bin/accountant.sh cert -d <your.domain> -e <email@your.domain>
 ./bin/accountant.sh up --production
-# When setting up for the first time:
-docker exec -it accountant_app ./accountant-cmd createTables
+# Runs migrations:
+docker exec -it accountant_app bin/console doctrine:migrations:migrate
 ```
 
 If you require HTTP Basic Auth, you can set it up with:
@@ -47,8 +47,8 @@ Add the _accountant.test_ domain to your `/etc/hosts` file.
 sudo chmod u+x bin/accountant.sh
 ./bin/accountant.sh secrets
 ./bin/accountant.sh up
-# When setting up for the first time:
-docker exec -it accountant_app ./accountant-cmd createTables
+# Runs migrations:
+docker exec -it accountant_app bin/console doctrine:migrations:migrate
 ```
 
 ## Notes
@@ -58,8 +58,4 @@ This application doesn't handle errors gracefully, so be prepared to see some no
 On that note, a category cannot be removed if it's linked to a transaction or transaction template.
 In order to remove a category no transaction or transaction template can use it.
 
-When a schema changes you have to remove existing data or manually change it.
-The easiest way to remove it is by removing the Docker volume with `docker volume rm accountant_db_vol`.
-You can manually alter the tables by connecting to the DB container `docker exec -it accountant_database /bin/sh`,
-where you can log in to the MySQL DB and alter the schema.
 You can find your DB credentials in the _secrets_ folder.

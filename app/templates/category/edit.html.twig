@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+{% block title %}Edit Category | {{ parent() }}{% endblock %}
+{% block content %}
+<section>
+   {{ include('_heading.html.twig', {
+       actions: {
+           delete: 'category_delete',
+           index: 'category_index',
+           view: 'category_view'
+        },
+       data: category,
+       title: "Category #{category.name}"
+    }) }}
+   <article>
+        {{ form(form) }}
+   </article>
+</section>
+{% endblock %}

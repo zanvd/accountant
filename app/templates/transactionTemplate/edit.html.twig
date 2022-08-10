@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+{% block title %}Edit Transaction Template | {{ parent() }}{% endblock %}
+{% block content %}
+<section>
+   {{ include('_heading.html.twig', {
+       actions: {
+           delete: 'transaction_template_delete',
+           index: 'transaction_template_index',
+           view: 'transaction_template_view'
+        },
+       data: transactionTemplate,
+       title: "Transaction Template #{transactionTemplate.name}"
+    }) }}
+   <article>
+        {{ form(form) }}
+   </article>
+</section>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+{% block title %}Dashboard | {{ parent() }}{% endblock %}
+{% block content %}
+<section>
+    {{ include('_heading.html.twig', {title: 'Dashboard', actions: {add: 'transaction_add'}}) }}
+    <article id="dashboard-card-container">
+        {% if transactionTemplates %}
+            {% for tt in transactionTemplates %}
+                <div class="dashboard-card"
+                    data-transaction-category="{{ tt.Category.id }}"
+                    data-transaction-name="{{ tt.name }}"
+                    data-transaction-type="{{ tt.transactionType.value }}"
+                >
+                    <p>
+                        <b>{{ tt.name }}</b>
+                    </p>
+                    <p>
+                        <span class="pill"
+                            style="background-color: {{ tt.Category.color }}; color: {{ tt.Category.textColor }};"
+                        >
+                            {{ tt.Category.name }}
+                        </span>
+                    </p>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </article>
+</section>
+{% endblock %}
