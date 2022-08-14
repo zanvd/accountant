@@ -1,30 +1,54 @@
-FROM php:8.1-fpm-alpine AS build
+# Prepared with help from: https://github.com/dunglas/symfony-docker/blob/main/Dockerfile
+
+# Base image is also production.
+FROM php:8.1-fpm-alpine AS base
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 RUN apk --no-cache update \
     && apk --no-cache upgrade \
-    && apk --no-cache add ${PHPIZE_DEPS} \
+    && apk --no-cache add --virtual .build-deps ${PHPIZE_DEPS} \
     && docker-php-ext-install mysqli pdo pdo_mysql \
     && pecl install redis-5.3.7 \
     && docker-php-ext-enable pdo_mysql redis \
-    && apk del ${PHPIZE_DEPS}
+    && apk del .build-deps
 
 WORKDIR /app
 
+COPY composer.* symfony.* ./
+
+RUN composer install --prefer-dist --no-autoloader --no-scripts --no-progress --no-dev \
+    && composer clear-cache
+
+COPY . .
+
+RUN mkdir -p var/cache var/log \
+    && composer dump-autoload --classmap-authoritative --no-dev \
+    && composer dump-env prod \
+    && composer run-script --no-dev post-install-cmd \
+    && chmod +x bin/console \
+    && sync
+
 # Development image
-FROM build AS dev
+FROM base AS dev
+
+RUN mv "$PHP_INI_DIR/php.ini" "$PHP_INI_DIR/php.ini-production" \
+    && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 RUN apk --no-cache update \
     && apk --no-cache upgrade \
-    && apk --no-cache add ${PHPIZE_DEPS} \
+    && apk --no-cache add --virtual .build-deps ${PHPIZE_DEPS} \
     && pecl install xdebug-3.1.5 \
     && docker-php-ext-enable xdebug \
-    && apk del ${PHPIZE_DEPS}
+    && apk del .build-deps
 
 RUN echo "xdebug.client_host='host.docker.internal'" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    && composer install --no-progress \
+    && composer clear-cache \
+    && sync
 
-# Production image
-FROM build as prod
-
-COPY . .
+# && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \

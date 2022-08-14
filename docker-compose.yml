@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.7"
 
 networks:
   external_net:
@@ -39,8 +39,6 @@ services:
     image: mysql
     networks:
       - internal_net
-    ports:
-      - "3306:3306"
     restart: always
     secrets:
       - accountant_db_database
