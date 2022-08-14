@@ -89,7 +89,13 @@ class TransactionController extends AbstractController
     public function index(): Response
     {
         return $this->render('transaction/index.html.twig', [
-            'transactions' => $this->trRepo->findBy(['user' => $this->getUser()])
+            'transactions' => $this->trRepo->findBy(
+                ['user' => $this->getUser()],
+                [
+                    'transactionDate' => 'DESC',
+                    'id' => 'DESC',
+                ]
+            )
         ]);
     }
 
