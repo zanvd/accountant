@@ -23,7 +23,7 @@ class TransactionTemplate
     #[ORM\Column(type: 'integer')]
     private int $position;
 
-    #[ORM\Column(type: 'string', enumType: TransactionType::class, length: 7)]
+    #[ORM\Column(type: 'string', length: 7, enumType: TransactionType::class)]
     private TransactionType $transactionType;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'transactionTemplates')]
