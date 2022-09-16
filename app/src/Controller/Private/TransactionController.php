@@ -47,7 +47,7 @@ class TransactionController extends AbstractController
         if ($f->isSubmitted() && $f->isValid()) {
             $this->trRepo->add($t, true);
 
-            return $this->redirectToRoute('transaction_index');
+            return $this->redirectToRoute('dashboard_index');
         }
 
         return $this->renderForm('transaction/add.html.twig', ['form' => $f]);
