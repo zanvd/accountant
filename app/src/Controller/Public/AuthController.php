@@ -136,7 +136,7 @@ class AuthController extends AbstractController
     #[Route('/verify-email', methods: ['GET'], name: 'verify_email')]
     public function verifyUserEmail(Request $request): Response
     {
-        $id = $id = $request->get('id');
+        $id = $request->get('id');
         if (is_null($id)) return $this->redirectToRoute('auth_register');
 
         $u = $this->userRepository->find($id);
