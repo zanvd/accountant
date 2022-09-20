@@ -31,7 +31,7 @@ class Transaction
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'transactions')]
     #[ORM\JoinColumn(nullable: false)]
-    private $user;
+    private ?User $user;
 
     public function getId(): ?int
     {
