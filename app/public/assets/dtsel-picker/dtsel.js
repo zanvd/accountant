@@ -89,12 +89,12 @@
         this.inputElem.addEventListener("blur", handler, false);
     }
     DTS.prototype.inputElemHandler = function (e) {
-        if (e.type == "focus") {
+        if (e.type === "focus") {
             if (!this.dtbox) {
                 this.dtbox = new DTBox(e.target, this);
             }
             this.dtbox.visible = true;
-        } else if (e.type == "blur" && this.dtbox && this.dtbox.visible) {
+        } else if (e.type === "blur" && this.dtbox && this.dtbox.visible) {
             var self = this;
             setTimeout(function () {
                 if (self.dtbox.cancelBlur > 0) {
@@ -428,7 +428,7 @@
     /** @param {Event} e */
     DTBox.prototype.onTimeChange = function(e) {
         e.stopPropagation();
-        if (e.type == 'mousedown') {
+        if (e.type === 'mousedown') {
             this.cancelBlur += 1;
             return;
         }
@@ -436,7 +436,7 @@
         var el = e.target;
         this[el.name] = parseInt(el.value) || 0;
         this.setupFooter();
-        if (e.type == 'change') {
+        if (e.type === 'change') {
             var self = this;
             setTimeout(function(){
                 self.elem.focus();
@@ -523,6 +523,8 @@
         this.setInputValue();
         this.setHeaderContent();
         this.setBodyContent();
+        // Close the picker.
+        this.elem.dispatchEvent((new Event('blur')));
     }
 
     /** @param {Event} e */
