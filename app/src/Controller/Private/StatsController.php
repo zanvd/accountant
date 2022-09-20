@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/stats', name: 'stats_')]
 class StatsController extends AbstractController
 {
-    #[Route('', methods: ['GET'], name: 'index')]
+    #[Route('', name: 'index', methods: ['GET'])]
     public function index(TransactionRepository $transactionRepository): Response
     {
         $i = 0;

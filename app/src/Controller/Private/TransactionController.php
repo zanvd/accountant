@@ -26,7 +26,7 @@ class TransactionController extends AbstractController
         $this->trRepo = $doctrine->getRepository(Transaction::class);
     }
 
-    #[Route('/add', methods: ['GET', 'POST'], name: 'add')]
+    #[Route('/add', name: 'add', methods: ['GET', 'POST'])]
     public function add(Request $request): Response
     {
         $c = null;
@@ -39,8 +39,10 @@ class TransactionController extends AbstractController
             ->setName($request->query->get('name', ''))
             ->setTransactionDate(new DateTime())
             ->setUser($this->getUser());
-        if (TransactionTypeEnum::tryFrom($request->query->get('type')) === TransactionTypeEnum::Outcome)
-            $t->setAmount('-1'); // TODO: Consider alternative way.
+        if (TransactionTypeEnum::tryFrom($request->query->get('type')) === TransactionTypeEnum::Outcome) {
+            // TODO: Consider alternative way.
+            $t->setAmount('-1');
+        }
 
         $f = $this->createForm(TransactionType::class, $t);
         $f->handleRequest($request);
@@ -54,22 +56,26 @@ class TransactionController extends AbstractController
     }
 
     // TODO: Try to get this to be a delete method.
-    #[Route('/delete/{id}', methods: ['GET'], name: 'delete')]
+    #[Route('/delete/{id}', name: 'delete', methods: ['GET'])]
     public function delete(int $id): Response
     {
         $t = $this->trRepo->findOneBy(['id' => $id, 'user' => $this->getuser()]);
-        if (!$t) throw $this->createNotFoundException("No transaction with id $id.");
+        if (!$t) {
+            throw $this->createNotFoundException("No transaction with id $id.");
+        }
 
         $this->trRepo->remove($t, true);
 
         return $this->redirectToRoute('transaction_index');
     }
 
-    #[Route('/edit/{id}', methods: ['GET', 'POST'], name: 'edit')]
+    #[Route('/edit/{id}', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(int $id, Request $request): Response
     {
         $t = $this->trRepo->findOneBy(['id' => $id, 'user' => $this->getuser()]);
-        if (!$t) throw $this->createNotFoundException("No transaction with id $id.");
+        if (!$t) {
+            throw $this->createNotFoundException("No transaction with id $id.");
+        }
 
         $f = $this->createForm(TransactionType::class, $t);
         $f->handleRequest($request);
@@ -85,8 +91,8 @@ class TransactionController extends AbstractController
         ]);
     }
 
-    #[Route('', methods: ['GET'], name: 'index')]
-    public function index(): Response
+    #[Route('', name: 'index', methods: ['GET'])]
+    public function index(Request $request): Response
     {
         return $this->render('transaction/index.html.twig', [
             'transactions' => $this->trRepo->findBy(
@@ -99,11 +105,13 @@ class TransactionController extends AbstractController
         ]);
     }
 
-    #[Route('/view/{id}', methods: ['GET'], name: 'view')]
+    #[Route('/view/{id}', name: 'view', methods: ['GET'])]
     public function view(int $id): Response
     {
         $t = $this->trRepo->findOneBy(['id' => $id, 'user' => $this->getUser()]);
-        if (!$t) throw $this->createNotFoundException("No transaction with id $id.");
+        if (!$t) {
+            throw $this->createNotFoundException("No transaction with id $id.");
+        }
 
         return $this->render('transaction/view.html.twig', ['transaction' => $t]);
     }

@@ -6,6 +6,7 @@ use App\Entity\TransactionTemplate;
 use App\Form\Type\TransactionTemplateType;
 use App\Repository\TransactionTemplateRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,8 +15,8 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/transaction-template', name: 'transaction_template_')]
 class TransactionTemplateController extends AbstractController
 {
-    private TransactionTemplateRepository $trTeRepo;
     private ManagerRegistry $doctrine;
+    private ObjectRepository|TransactionTemplateRepository $trTeRepo;
 
     public function __construct(ManagerRegistry $doctrine)
     {
@@ -23,7 +24,7 @@ class TransactionTemplateController extends AbstractController
         $this->trTeRepo = $doctrine->getRepository(TransactionTemplate::class);
     }
 
-    #[Route('/add', methods: ['GET', 'POST'], name: 'add')]
+    #[Route('/add', name: 'add', methods: ['GET', 'POST'])]
     public function add(Request $request): Response
     {
         $tt = new TransactionTemplate();
@@ -40,7 +41,7 @@ class TransactionTemplateController extends AbstractController
     }
 
     // TODO: Try to get this to be a delete method.
-    #[Route('/delete/{id}', methods: ['GET'], name: 'delete')]
+    #[Route('/delete/{id}', name: 'delete', methods: ['GET'])]
     public function delete(int $id): Response
     {
         $tt = $this->trTeRepo->findOneBy(['id' => $id, 'user' => $this->getuser()]);
@@ -51,7 +52,7 @@ class TransactionTemplateController extends AbstractController
         return $this->redirectToRoute('transaction_template_index');
     }
 
-    #[Route('/edit/{id}', methods: ['GET', 'POST'], name: 'edit')]
+    #[Route('/edit/{id}', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(int $id, Request $request): Response
     {
         $tt = $this->trTeRepo->findOneBy(['id' => $id, 'user' => $this->getuser()]);
@@ -71,7 +72,7 @@ class TransactionTemplateController extends AbstractController
         ]);
     }
 
-    #[Route('', methods: ['GET'], name: 'index')]
+    #[Route('', name: 'index', methods: ['GET'])]
     public function index(): Response
     {
         return $this->render('transactionTemplate/index.html.twig', [
@@ -79,7 +80,7 @@ class TransactionTemplateController extends AbstractController
         ]);
     }
 
-    #[Route('/view/{id}', methods: ['GET'], name: 'view')]
+    #[Route('/view/{id}', name: 'view', methods: ['GET'])]
     public function view(int $id): Response
     {
         $tt = $this->trTeRepo->findOneBy(['id' => $id, 'user' => $this->getUser()]);

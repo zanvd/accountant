@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Form\Type\CategoryType;
 use App\Repository\CategoryRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/category', name: 'category_')]
 class CategoryController extends AbstractController
 {
-    private CategoryRepository $catRepo;
+    private CategoryRepository|ObjectRepository $catRepo;
     private ManagerRegistry $doctrine;
 
     public function __construct(ManagerRegistry $doctrine)
@@ -23,7 +24,7 @@ class CategoryController extends AbstractController
         $this->doctrine = $doctrine;
     }
 
-    #[Route('/add', methods: ['GET', 'POST'], name: 'add')]
+    #[Route('/add', name: 'add', methods: ['GET', 'POST'])]
     public function add(Request $request): Response
     {
         $c = new Category();
@@ -40,7 +41,7 @@ class CategoryController extends AbstractController
     }
 
     // TODO: Try to get this to be a delete method.
-    #[Route('/delete/{id}', methods: ['GET'], name: 'delete')]
+    #[Route('/delete/{id}', name: 'delete', methods: ['GET'])]
     public function delete(int $id): Response
     {
         $c = $this->catRepo->findOneBy(['id' => $id, 'user' => $this->getuser()]);
@@ -51,7 +52,7 @@ class CategoryController extends AbstractController
         return $this->redirectToRoute('category_index');
     }
 
-    #[Route('/edit/{id}', methods: ['GET', 'POST'], name: 'edit')]
+    #[Route('/edit/{id}', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(int $id, Request $request): Response
     {
         $c = $this->catRepo->findOneBy(['id' => $id, 'user' => $this->getuser()]);
@@ -71,7 +72,7 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('', methods: ['GET'], name: 'index')]
+    #[Route('', name: 'index', methods: ['GET'])]
     public function index(): Response
     {
         return $this->render('category/index.html.twig', [
@@ -79,7 +80,7 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('/view/{id}', methods: ['GET'], name: 'view')]
+    #[Route('/view/{id}', name: 'view', methods: ['GET'])]
     public function view(int $id): Response
     {
         $c = $this->catRepo->findOneBy(['id' => $id, 'user' => $this->getUser()]);
