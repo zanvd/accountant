@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 {% block title %}Transaction Template | {{ parent() }}{% endblock %}
 {% block content %}
-<section>
+<article>
     {{ include('_heading.html.twig', {actions: {add: 'transaction_template_add'}, title: 'Transaction Templates'}) }}
-    <article>
+    <section>
     {% if transactionTemplates %}
         <table>
             <thead>
@@ -64,6 +64,6 @@
     {% else %}
         <p>No transaction templates.</p>
     {% endif %}
-    </article>
-</section>
+    </section>
+</article>
 {% endblock %}

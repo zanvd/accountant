@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 {% block title %}New Transaction | {{ parent() }}{% endblock %}
 {% block content %}
-<section>
+<article>
     {{ include('_heading.html.twig', {
         actions: {index: 'transaction_index'},
         title: 'New Transaction'
     }) }}
-    <article>
+    <section>
         {{ form(form) }}
         {{ include('transaction/initDate.html.twig') }}
-    </article>
-</section>
+    </section>
+</article>
 {% endblock %}

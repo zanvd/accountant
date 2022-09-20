@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 {% block title %}Register | {{ parent() }}{% endblock %}
 {% block content %}
-<section>
+<article>
     {{ include('_heading.html.twig', {title: 'Register'}) }}
-    <article>
+    <section>
         {% for flash_error in app.flashes('verify_email_error') %}
             <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
         {% endfor %}
         {{ form(form) }}
-    </article>
-</section>
+    </section>
+</article>
 {% endblock %}

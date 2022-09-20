@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 {% block title %}Transaction | {{ parent() }}{% endblock %}
 {% block content %}
-    <section>
+    <article>
         {{ include('_heading.html.twig', {actions: {add: 'transaction_add'}, title: 'Transactions'}) }}
-        <article>
+        <section>
             <div style="display: flex; flex-direction: row; justify-content: flex-end;">
                 <a href="{{ url('transaction_index') }}?from={{ from | date_modify('first day of previous month') | date('Y-m-d') }}&to={{ from | date_modify('last day of previous month') | date('Y-m-d') }}">
                     <svg class="feather">
@@ -71,6 +71,6 @@
             {% else %}
                 <p>No transactions.</p>
             {% endif %}
-        </article>
-    </section>
+        </section>
+    </article>
 {% endblock %}

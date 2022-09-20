@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% block title %}View Transaction Template | {{ parent() }}{% endblock %}
 {% block content %}
-<section>
+<article>
    {{ include('_heading.html.twig', {
        actions: {
            delete: 'transaction_template_delete',
@@ -11,7 +11,7 @@
        data: transactionTemplate,
        title: "Transaction Template #{transactionTemplate.name}"
     }) }}
-   <article class="data-container">
+   <section class="data-container">
         <h2>{{ transactionTemplate.name }}</h2>
         <p>
             <b>Category:</b>
@@ -32,6 +32,6 @@
         <p>
             <b>Position:</b> {{ transactionTemplate.position}}
         </p>
-   </article>
-</section>
+   </section>
+</article>
 {% endblock %}

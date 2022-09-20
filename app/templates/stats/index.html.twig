@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 {% block title %}Stats | {{ parent() }}{% endblock %}
 {% block content %}
-<section>
-    <article class="page-title">
+<article>
+    <section class="page-title">
         <h1>Stats</h1>
-    </article>
-    <article>
+    </section>
+    <section>
         <p>
             <strong>Income:</strong>
             {{ stats.income }}€
@@ -18,6 +18,6 @@
             <strong>Savings:</strong>
             {{ stats.savings }}€
         </p>
-    </article>
-</section>
+    </section>
+</article>
 {% endblock %}

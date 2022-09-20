@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 {% block title %}New Category | {{ parent() }}{% endblock %}
 {% block content %}
-<section>
+<article>
    {{ include('_heading.html.twig', {actions: {index: 'category_index'}, title: 'New Category'}) }}
-   <article>
+   <section>
         {{ form(form) }}
-   </article>
-</section>
+   </section>
+</article>
 {% endblock %}

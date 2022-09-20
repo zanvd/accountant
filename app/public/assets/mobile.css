@@ -3,10 +3,6 @@ main {
     padding: 0 20px;
 }
 
-article {
-    flex-direction: column;
-}
-
 /* HEADER */
 /*
 https://github.com/franciscop/picnic/blob/master/src/plugins/nav/_plugin.scss

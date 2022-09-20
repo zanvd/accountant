@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 {% block title %}Category | {{ parent() }}{% endblock %}
 {% block content %}
-<section>
+<article>
     {{ include('_heading.html.twig', {actions: {add: 'category_add'}, title: 'Categories'}) }}
-    <article>
+    <section>
     {% if categories %}
         <table>
             <thead>
@@ -50,6 +50,6 @@
     {% else %}
         <p>No categories.</p>
     {% endif %}
-    </article>
-</section>
+    </section>
+</article>
 {% endblock %}

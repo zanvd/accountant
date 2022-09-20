@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 {% block title %}Dashboard | {{ parent() }}{% endblock %}
 {% block content %}
-<section>
+<article>
     {{ include('_heading.html.twig', {title: 'Dashboard', actions: {add: 'transaction_add'}}) }}
-    <article id="dashboard-card-container">
+    <section id="dashboard-card-container">
         {% if transactionTemplates %}
             {% for tt in transactionTemplates %}
                 <div class="dashboard-card"
@@ -24,6 +24,6 @@
                 </div>
             {% endfor %}
         {% endif %}
-    </article>
-</section>
+    </section>
+</article>
 {% endblock %}
