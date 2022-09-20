@@ -4,7 +4,7 @@
     <article>
         {{ include('_heading.html.twig', {actions: {add: 'transaction_add'}, title: 'Transactions'}) }}
         <section>
-            <div style="display: flex; flex-direction: row; justify-content: flex-end;">
+            <div style="display: flex; flex-direction: row; justify-content: flex-end; margin-bottom: 1.3em;">
                 <a href="{{ url('transaction_index') }}?from={{ from | date_modify('first day of previous month') | date('Y-m-d') }}&to={{ from | date_modify('last day of previous month') | date('Y-m-d') }}">
                     <svg class="feather">
                         <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#chevron-left') }}"/>
