@@ -9,6 +9,8 @@ use App\Form\Type\TransactionType;
 use App\Repository\TransactionRepository;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class TransactionController extends AbstractController
 {
     private ManagerRegistry $doctrine;
-    private TransactionRepository $trRepo;
+    private ObjectRepository|TransactionRepository $trRepo;
 
     public function __construct(ManagerRegistry $doctrine)
     {
@@ -94,14 +96,25 @@ class TransactionController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(Request $request): Response
     {
+        if ($from = $request->query->get('from')) {
+            try {
+                $from = new DateTime($from);
+            } catch (Exception) {
+                $from = new DateTime();
+            }
+        }
+        if ($to = $request->query->get('to')) {
+            try {
+                $to = new DateTime($to);
+            } catch (Exception) {
+                $to = new DateTime();
+            }
+        }
+
         return $this->render('transaction/index.html.twig', [
-            'transactions' => $this->trRepo->findBy(
-                ['user' => $this->getUser()],
-                [
-                    'transactionDate' => 'DESC',
-                    'id' => 'DESC',
-                ]
-            )
+            'from' => $from,
+            'to' => $to,
+            'transactions' => $this->trRepo->listForPeriod($this->getUser(), $from, $to),
         ]);
     }
 
