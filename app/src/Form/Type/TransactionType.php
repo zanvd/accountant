@@ -43,7 +43,6 @@ class TransactionType extends AbstractType
                 'row_attr' => ['class' => 'form-group'],
             ])
             ->add('transactionDate', DateType::class, [
-                'attr' => ['id' => 'transaction-date'],
                 'format' => 'dd. MM. yyyy',
                 'html5' => false,
                 'label' => 'Transaction date:',
