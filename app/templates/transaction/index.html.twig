@@ -3,74 +3,90 @@
 {% block content %}
     <article>
         {{ include('_heading.html.twig', {actions: {add: 'transaction_add'}, title: 'Transactions'}) }}
-        <section>
-            <div style="display: flex; flex-direction: row; justify-content: flex-end; margin-bottom: 1.3em;">
-                <a href="{{ url('transaction_index') }}?from={{ from | date_modify('first day of previous month') | date('Y-m-d') }}&to={{ from | date_modify('last day of previous month') | date('Y-m-d') }}">
-                    <svg class="feather">
-                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#chevron-left') }}"/>
-                    </svg>
-                </a>
-                <div style="line-height: 1.7; min-width: 100px; text-align: center;">
-                    {{ from | default(date()) | date('F Y') }}
+        <section id="transactions-container">
+            <div id="transactions-table-container">
+                <div id="transactions-month-selector">
+                    <a href="{{ url('transaction_index') }}?from={{ from | date_modify('first day of previous month') | date('Y-m-d') }}&to={{ from | date_modify('last day of previous month') | date('Y-m-d') }}">
+                        <svg class="feather">
+                            <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#chevron-left') }}"/>
+                        </svg>
+                    </a>
+                    <div id="transactions-month-text">
+                        {{ from | default(date()) | date('F Y') }}
+                    </div>
+                    <a href="{{ url('transaction_index') }}?from={{ to | date_modify('first day of next month') | date('Y-m-d') }}&to={{ to | date_modify('last day of next month') | date('Y-m-d') }}">
+                        <svg class="feather">
+                            <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#chevron-right') }}"/>
+                        </svg>
+                    </a>
                 </div>
-                <a href="{{ url('transaction_index') }}?from={{ to | date_modify('first day of next month') | date('Y-m-d') }}&to={{ to | date_modify('last day of next month') | date('Y-m-d') }}">
-                    <svg class="feather">
-                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#chevron-right') }}"/>
-                    </svg>
-                </a>
-            </div>
-            {% if transactions %}
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Amount</th>
-                        <th>Category</th>
-                        <th>Transaction Date</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for t in transactions %}
+                {% if transactions %}
+                    <table>
+                        <thead>
                         <tr>
-                            <td>{{ t.name }}</td>
-                            <td>{{ t.amount|number_format(2) }}</td>
-                            <td>
-                        <span class="pill"
-                              style="background-color: {{ t.Category.color }}; color: {{ t.Category.textColor }};"
-                        >
-                            {{ t.Category.name }}
-                        </span>
-                            </td>
-                            <td>{{ t.transactionDate|date(format_date) }}</td>
-                            <td class="table-action-cell">
-                                <a class="btn btn-icon btn-edit" href="{{ url('transaction_edit', {'id': t.id}) }}">
-                                    <svg class="feather">
-                                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#edit') }}"/>
-                                    </svg>
-                                </a>
-                                <a class="btn btn-icon btn-view" href="{{ url('transaction_view', {'id': t.id}) }}">
-                                    <svg class="feather">
-                                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#search') }}"/>
-                                    </svg>
-                                </a>
-                                <a class="btn btn-icon btn-delete confirm-deletion"
-                                   href="{{ url('transaction_delete', {'id': t.id}) }}"
-                                   data-deletion-name="{{ t.name }}"
-                                   data-deletion-title="Transaction"
-                                >
-                                    <svg class="feather">
-                                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#trash') }}"/>
-                                    </svg>
-                                </a>
-                            </td>
+                            <th>Name</th>
+                            <th>Amount</th>
+                            <th>Category</th>
+                            <th>Transaction Date</th>
+                            <th></th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>No transactions.</p>
-            {% endif %}
+                        </thead>
+                        <tbody>
+                        {% for t in transactions %}
+                            <tr>
+                                <td>{{ t.name }}</td>
+                                <td>{{ t.amount|number_format(2) }}</td>
+                                <td>
+                            <span class="pill"
+                                  style="background-color: {{ t.Category.color }}; color: {{ t.Category.textColor }};"
+                            >
+                                {{ t.Category.name }}
+                            </span>
+                                </td>
+                                <td>{{ t.transactionDate|date(format_date) }}</td>
+                                <td class="table-action-cell">
+                                    <a class="btn btn-icon btn-edit" href="{{ url('transaction_edit', {'id': t.id}) }}">
+                                        <svg class="feather">
+                                            <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#edit') }}"/>
+                                        </svg>
+                                    </a>
+                                    <a class="btn btn-icon btn-view" href="{{ url('transaction_view', {'id': t.id}) }}">
+                                        <svg class="feather">
+                                            <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#search') }}"/>
+                                        </svg>
+                                    </a>
+                                    <a class="btn btn-icon btn-delete confirm-deletion"
+                                       href="{{ url('transaction_delete', {'id': t.id}) }}"
+                                       data-deletion-name="{{ t.name }}"
+                                       data-deletion-title="Transaction"
+                                    >
+                                        <svg class="feather">
+                                            <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#trash') }}"/>
+                                        </svg>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No transactions.</p>
+                {% endif %}
+            </div>
+            <div id="transactions-balance-container">
+                <p>
+                    <strong>Income:</strong>
+                    {{ stats.income | default(0) }}€
+                </p>
+                <p>
+                    <strong>Outcome:</strong>
+                    {{ stats.outcome | default(0) }}€
+                </p>
+                <p>
+                    <strong>Savings:</strong>
+                    {{ stats.savings | default(0) }}€
+                </p>
+            </div>
         </section>
     </article>
 {% endblock %}

@@ -101,6 +101,7 @@ form {
     padding: 15px 50px;
     width: 450px;
 }
+
 /* END DELETION DIALOG */
 .actions {
     display: flex;
@@ -136,4 +137,9 @@ form {
 
 .data-container p {
     padding: 20px 10px;
+}
+
+#transactions-month-selector {
+    /* Use the same margin as for .page-title > .actions */
+    margin-bottom: 1.34em;
 }

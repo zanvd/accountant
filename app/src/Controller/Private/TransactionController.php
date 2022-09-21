@@ -2,6 +2,7 @@
 
 namespace App\Controller\Private;
 
+use App\Balance\Calculator;
 use App\Entity\Category;
 use App\Entity\Transaction;
 use App\Enum\TransactionType as TransactionTypeEnum;
@@ -19,11 +20,13 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/transaction', name: 'transaction_')]
 class TransactionController extends AbstractController
 {
+    private Calculator $calculator;
     private ManagerRegistry $doctrine;
     private ObjectRepository|TransactionRepository $trRepo;
 
-    public function __construct(ManagerRegistry $doctrine)
+    public function __construct(Calculator $calculator, ManagerRegistry $doctrine)
     {
+        $this->calculator = $calculator;
         $this->doctrine = $doctrine;
         $this->trRepo = $doctrine->getRepository(Transaction::class);
     }
@@ -113,8 +116,9 @@ class TransactionController extends AbstractController
 
         return $this->render('transaction/index.html.twig', [
             'from' => $from,
+            'stats' => $this->calculator->getPeriodBalance($this->getUser(), $from, $to),
             'to' => $to,
-            'transactions' => $this->trRepo->listForPeriod($this->getUser(), $from, $to),
+            'transactions' => $this->trRepo->getTransactionsForPeriod($this->getUser(), $from, $to),
         ]);
     }
 

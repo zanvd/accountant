@@ -36,7 +36,7 @@ class TransactionRepository extends ServiceEntityRepository
     /**
      * @return Transaction[]
      */
-    public function listForPeriod(UserInterface $user, ?DateTime $from = null, ?DateTime $to = null): array
+    public function getTransactionsForPeriod(UserInterface $user, ?DateTime $from = null, ?DateTime $to = null): array
     {
         $from ??= new DateTime('first day of this month');
         $to ??= new DateTime('last day of this month');
