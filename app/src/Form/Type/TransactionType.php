@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Entity\Transaction;
 use App\Form\Type\Element\ResetIconButtonType;
 use App\Form\Type\Element\SubmitIconButtonType;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -29,12 +30,13 @@ class TransactionType extends AbstractType
                 'choice_label' => 'name',
                 'class' => Category::class,
                 'label' => 'Category:',
+                'query_builder' => fn(EntityRepository $er) => $er->createQueryBuilder('c')->orderBy('c.name', 'ASC'),
                 'row_attr' => ['class' => 'form-group'],
             ])
             ->add('amount', MoneyType::class, [
                 'attr' => [
                     'placeholder' => 'Amount',
-                    'step' => '0.01'
+                    'step' => '0.01',
                 ],
                 'currency' => false,
                 'help' => 'Use . (dot) as a decimal separator.',
@@ -62,16 +64,16 @@ class TransactionType extends AbstractType
                     'inherit_data' => true,
                     'label' => false,
                 ])
-                ->add('save', SubmitIconButtonType::class, [
-                    'attr' => ['class' => 'btn btn-icon'],
-                ])
-                ->add('cancel', ResetIconButtonType::class, [
-                    'attr' => ['class' => 'btn btn-icon btn-cancel go-back'],
-                ])
+                    ->add('save', SubmitIconButtonType::class, [
+                        'attr' => ['class' => 'btn btn-icon'],
+                    ])
+                    ->add('cancel', ResetIconButtonType::class, [
+                        'attr' => ['class' => 'btn btn-icon btn-cancel go-back'],
+                    ])
             );
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['data_class' => Transaction::class]);
     }
