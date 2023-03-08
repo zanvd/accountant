@@ -37,11 +37,11 @@
                                 <td>{{ t.name }}</td>
                                 <td>{{ t.amount|number_format(2) }}</td>
                                 <td>
-                            <span class="pill"
-                                  style="background-color: {{ t.Category.color }}; color: {{ t.Category.textColor }};"
-                            >
-                                {{ t.Category.name }}
-                            </span>
+                                    <span class="pill"
+                                          style="background-color: {{ t.Category.color }}; color: {{ t.Category.textColor }};"
+                                    >
+                                        {{ t.Category.name }}
+                                    </span>
                                 </td>
                                 <td>{{ t.transactionDate|date(format_date) }}</td>
                                 <td class="table-action-cell">

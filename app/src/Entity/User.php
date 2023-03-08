@@ -23,7 +23,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $email;
 
     #[ORM\Column(type: 'boolean')]
-    private $isVerified = false;
+    private bool $isVerified = false;
 
     #[ORM\Column(type: 'string')]
     private string $password;
@@ -35,17 +35,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $username;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Category::class, orphanRemoval: true)]
-    private $categories;
+    private Collection $categories;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: RecurringTransaction::class, orphanRemoval: true)]
+    private Collection $recurringTransactions;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Transaction::class, orphanRemoval: true)]
-    private $transactions;
+    private Collection $transactions;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: TransactionTemplate::class, orphanRemoval: true)]
-    private $transactionTemplates;
+    private Collection $transactionTemplates;
 
     public function __construct()
     {
         $this->categories = new ArrayCollection();
+        $this->recurringTransactions = new ArrayCollection();
         $this->transactions = new ArrayCollection();
         $this->transactionTemplates = new ArrayCollection();
     }
@@ -173,6 +177,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return ArrayCollection<int, RecurringTransaction>
+     */
+    public function getRecurringTransactions(): ArrayCollection
+    {
+        return $this->transactions;
+    }
+
+    public function addRecurringTransaction(RecurringTransaction $recurringTransaction): self
+    {
+        if (!$this->recurringTransactions->contains($recurringTransaction)) {
+            $this->recurringTransactions[] = $recurringTransaction;
+            $recurringTransaction->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecurringTransaction(RecurringTransaction $recurringTransaction): self
+    {
+        if ($this->recurringTransactions->removeElement($recurringTransaction)) {
+            // set the owning side to null (unless already changed)
+            if ($recurringTransaction->getUser() === $this) {
+                $recurringTransaction->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
 
     /**
      * @return Collection<int, Transaction>

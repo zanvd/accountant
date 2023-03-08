@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block title %}View Transaction | {{ parent() }}{% endblock %}
+{% block content %}
+    <article>
+        {{ include('_heading.html.twig', {
+            actions: {
+                delete: 'recurring_transaction_delete',
+                edit: 'recurring_transaction_edit',
+                index: 'recurring_transaction_index'
+            },
+            data: recurringTransaction,
+            title: "Recurring Transaction #{recurringTransaction.name}"
+        }) }}
+        <section class="data-container">
+            <h2>{{ recurringTransaction.name }}</h2>
+            <p>
+                <b>Category:</b>
+                <span class="pill"
+                      style="background-color: {{ recurringTransaction.Category.color }}; color: {{ recurringTransaction.Category.textColor }};"
+                >
+                {{ recurringTransaction.Category.name }}
+            </span>
+            </p>
+            <p><b>Amount:</b> {{ recurringTransaction.amount|number_format(2) }}</p>
+            <p><b>Summary:</b> {{ recurringTransaction.summary }}</p>
+            <p><b>Period:</b> Each {{ recurringTransaction.periodNum }} {{ recurringTransaction.periodType.value }}</p>
+            <p><b>Start Date:</b> {{ recurringTransaction.startDate|date(format_date) }}</p>
+            <p>
+                <b>End Date:</b>
+                {% if recurringTransaction.endDate %}
+                    {{ recurringTransaction.endDate|date(format_date) }}
+                {% else %}
+                    Indefinitely
+                {% endif %}
+            </p>
+        </section>
+    </article>
+{% endblock %}

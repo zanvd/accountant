@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+{% block title %}Recurring Transactions | {{ parent() }}{% endblock %}
+{% block content %}
+    <article>
+        {{ include('_heading.html.twig', {actions: {add: 'recurring_transaction_add'}, title: 'Recurring Transactions'}) }}
+        <section>
+            {% if recurringTransactions %}
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Amount</th>
+                        <th>Category</th>
+                        <th>Period</th>
+                        <th>Start date</th>
+                        <th>End date</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for rt in recurringTransactions %}
+                        <tr>
+                            <td>{{ rt.name }}</td>
+                            <td>{{ rt.amount|number_format(2) }}</td>
+                            <td>
+                                <span class="pill"
+                                      style="background-color: {{ rt.Category.color }}; color: {{ rt.Category.textColor }};"
+                                >
+                                    {{ rt.Category.name }}
+                                </span>
+                            </td>
+                            <td>Each {{ rt.periodNum }} {{ rt.periodType.value }}</td>
+                            <td>{{ rt.startDate|date(format_date) }}</td>
+                            <td>
+                                {% if rt.endDate %}
+                                    {{ rt.endDate|date(format_date) }}
+                                {% else %}
+                                    Indefinitely
+                                {% endif %}
+                            </td>
+                            <td class="table-action-cell">
+                                <a class="btn btn-icon btn-edit" href="{{ url('recurring_transaction_edit', {'id': rt.id}) }}">
+                                    <svg class="feather">
+                                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#edit') }}"/>
+                                    </svg>
+                                </a>
+                                <a class="btn btn-icon btn-view" href="{{ url('recurring_transaction_view', {'id': rt.id}) }}">
+                                    <svg class="feather">
+                                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#search') }}"/>
+                                    </svg>
+                                </a>
+                                <a class="btn btn-icon btn-delete confirm-deletion"
+                                   href="{{ url('recurring_transaction_delete', {'id': rt.id}) }}"
+                                   data-deletion-name="{{ rt.name }}"
+                                   data-deletion-title="Recurring Transaction"
+                                >
+                                    <svg class="feather">
+                                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#trash') }}"/>
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No recurring transactions.</p>
+            {% endif %}
+        </section>
+    </article>
+{% endblock %}

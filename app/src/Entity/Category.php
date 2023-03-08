@@ -6,6 +6,7 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ORM\Table(name: 'category')]
@@ -16,30 +17,34 @@ class Category
     #[ORM\Column(type: 'integer')]
     private int $id;
 
-    #[ORM\Column(length: 7, type: 'string')]
+    #[ORM\Column(type: 'string', length: 7)]
     private string $color = '';
 
-    #[ORM\Column(length: 150, type: 'string')]
+    #[ORM\Column(type: 'string', length: 150)]
     private string $description = '';
 
-    #[ORM\Column(length: 30, type: 'string')]
+    #[ORM\Column(type: 'string', length: 30)]
     private string $name;
 
-    #[ORM\Column(length: 7, type: 'string')]
-    private string $text_color = '#000000';
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: RecurringTransaction::class)]
+    private Collection $recurringTransactions;
+
+    #[ORM\Column(type: 'string', length: 7)]
+    private string $textColor = '#000000';
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Transaction::class)]
     private Collection $transactions;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: TransactionTemplate::class)]
-    private $transactionTemplates;
+    private Collection $transactionTemplates;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'categories')]
     #[ORM\JoinColumn(nullable: false)]
-    private $user;
+    private ?User $user;
 
     public function __construct()
     {
+        $this->recurringTransactions = new ArrayCollection();
         $this->transactions = new ArrayCollection();
         $this->transactionTemplates = new ArrayCollection();
     }
@@ -85,22 +90,52 @@ class Category
         return $this;
     }
 
-    public function getTextColor(): ?string
+    /**
+     * @return ArrayCollection<int, RecurringTransaction>
+     */
+    public function getRecurringTransactions(): ArrayCollection
     {
-        return $this->text_color;
+        return $this->transactions;
     }
 
-    public function setTextColor(string $text_color): self
+    public function addRecurringTransaction(RecurringTransaction $recurringTransaction): self
     {
-        $this->text_color = $text_color;
+        if (!$this->recurringTransactions->contains($recurringTransaction)) {
+            $this->recurringTransactions[] = $recurringTransaction;
+            $recurringTransaction->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecurringTransaction(RecurringTransaction $recurringTransaction): self
+    {
+        if ($this->recurringTransactions->removeElement($recurringTransaction)) {
+            // set the owning side to null (unless already changed)
+            if ($recurringTransaction->getCategory() === $this) {
+                $recurringTransaction->setCategory(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getTextColor(): ?string
+    {
+        return $this->textColor;
+    }
+
+    public function setTextColor(string $textColor): self
+    {
+        $this->textColor = $textColor;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Transaction>
+     * @return ArrayCollection<int, Transaction>
      */
-    public function getTransactions(): Collection
+    public function getTransactions(): ArrayCollection
     {
         return $this->transactions;
     }
@@ -128,9 +163,9 @@ class Category
     }
 
     /**
-     * @return Collection<int, TransactionTemplate>
+     * @return ArrayCollection<int, TransactionTemplate>
      */
-    public function getTransactionTemplates(): Collection
+    public function getTransactionTemplates(): ArrayCollection
     {
         return $this->transactionTemplates;
     }

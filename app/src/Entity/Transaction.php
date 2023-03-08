@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\TransactionRepository;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TransactionRepository::class)]
@@ -27,7 +28,7 @@ class Transaction
     private string $summary;
 
     #[ORM\Column(type: 'date')]
-    private \DateTimeInterface $transactionDate;
+    private DateTimeInterface $transactionDate;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'transactions')]
     #[ORM\JoinColumn(nullable: false)]
@@ -86,12 +87,12 @@ class Transaction
         return $this;
     }
 
-    public function getTransactionDate(): ?\DateTimeInterface
+    public function getTransactionDate(): ?DateTimeInterface
     {
         return $this->transactionDate;
     }
 
-    public function setTransactionDate(\DateTimeInterface $transactionDate): self
+    public function setTransactionDate(DateTimeInterface $transactionDate): self
     {
         $this->transactionDate = $transactionDate;
 

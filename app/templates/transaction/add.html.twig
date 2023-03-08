@@ -8,7 +8,7 @@
     }) }}
     <section>
         {{ form(form) }}
-        {{ include('transaction/initDate.html.twig') }}
+        {{ include('_initDate.html.twig', {elementId: 'transaction_transactionDate'}) }}
     </section>
 </article>
 {% endblock %}

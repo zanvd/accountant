@@ -178,6 +178,15 @@ input[type=checkbox] {
     flex-direction: column;
 }
 
+.form-group > .inline-fields {
+    display: flex;
+    flex: 10;
+}
+
+.form-group > .inline-fields :not(:last-child) {
+    margin-right: 10px;
+}
+
 .form-group input, .form-group select {
     background-color: #f2f2f2;
     border: none;
