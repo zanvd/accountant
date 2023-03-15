@@ -52,3 +52,28 @@ document.querySelectorAll('.dashboard-card').forEach(element => element.addEvent
     }
 ));
 /* Dashboard cards end. */
+
+/* Transactions filter. */
+document.getElementById('transactions-filter-submit').addEventListener('click', function () {
+    let params = new URLSearchParams(window.location.search);
+
+    let catId = document.getElementById('transactions-filter-category').value;
+    if (catId) {
+        params.set('category', catId);
+    } else {
+        params.delete('category')
+    }
+
+    window.location.search = params.toString();
+});
+
+Array.from(document.getElementsByClassName('transactions-month-button'), link => link.addEventListener('click', function () {
+    let linkParams = new URL(link.href).searchParams;
+    let url = new URL(window.location);
+
+    url.searchParams.set('from', linkParams.get('from'));
+    url.searchParams.set('to', linkParams.get('to'));
+
+    link.href = url.href;
+}));
+/* Transactions filter end. */

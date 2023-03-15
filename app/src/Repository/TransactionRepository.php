@@ -2,7 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Category;
 use App\Entity\Transaction;
+use App\Filter\DateTimeFilter;
+use App\Filter\EntityFilter;
+use App\Filter\TransactionFilter;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
@@ -19,8 +23,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class TransactionRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private DateTimeFilter $dateTimeFilter;
+    private EntityFilter $entityFilter;
+
+    public function __construct(ManagerRegistry $registry, DateTimeFilter $dateTimeFilter, EntityFilter $entityFilter)
     {
+        $this->dateTimeFilter = $dateTimeFilter;
+        $this->entityFilter = $entityFilter;
+
         parent::__construct($registry, Transaction::class);
     }
 
@@ -36,26 +46,26 @@ class TransactionRepository extends ServiceEntityRepository
     /**
      * @return Transaction[]
      */
-    public function getTransactionsForPeriod(UserInterface $user, ?DateTime $from = null, ?DateTime $to = null): array
-    {
+    public function getFilteredTransactions(
+        UserInterface $user,
+        ?Category $category = null,
+        ?DateTime $from = null,
+        ?DateTime $to = null
+    ): array {
         $from ??= new DateTime('first day of this month');
         $to ??= new DateTime('last day of this month');
 
-        $criteria = new Criteria();
-        $criteria
-            ->where(
-                Criteria::expr()->andX(
-                    Criteria::expr()->gte('transactionDate', $from),
-                    Criteria::expr()->lte('transactionDate', $to),
-                    Criteria::expr()->eq('user', $user)
-                )
-            )
-            ->orderBy([
-                'transactionDate' => 'DESC',
-                'id' => 'DESC',
-            ]);
+        $qb = $this->createQueryBuilder('t');
+        $qb->andWhere($qb->expr()->eq('t.user', ':user'))
+            ->setParameter('user', $user)
+            ->orderBy('t.transactionDate', 'DESC')
+            ->addOrderBy('t.id', 'DESC');
+        $qb = $this->dateTimeFilter->apply($qb, 't', 'transactionDate', 'transactionDate', $from, $to);
+        if ($category) {
+            $qb = $this->entityFilter->apply($qb, 't', 'category', $category);
+        }
 
-        return $this->matching($criteria)->toArray();
+        return $qb->getQuery()->getResult();
     }
 
     public function remove(Transaction $entity, bool $flush = false): void

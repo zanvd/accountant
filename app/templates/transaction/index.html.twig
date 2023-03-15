@@ -5,20 +5,44 @@
         {{ include('_heading.html.twig', {actions: {add: 'transaction_add'}, title: 'Transactions'}) }}
         <section id="transactions-container">
             <div id="transactions-table-container">
-                <div id="transactions-month-selector">
-                    <a href="{{ url('transaction_index') }}?from={{ from | date_modify('first day of previous month') | date('Y-m-d') }}&to={{ from | date_modify('last day of previous month') | date('Y-m-d') }}">
-                        <svg class="feather">
-                            <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#chevron-left') }}"/>
-                        </svg>
-                    </a>
-                    <div id="transactions-month-text">
-                        {{ from | default(date()) | date('F Y') }}
+                <div id="transactions-filter-container">
+                    <div id="transactions-filter-left-container">
+                        <div>
+                            <label for="transactions-filter-category">Category:</label>
+                            <select id="transactions-filter-category">
+                                <option></option>
+                                {% for c in categories %}
+                                    {% if c.id == filter.categoryId %}
+                                        <option value="{{ c.id }}" selected>{{ c.name }}</option>
+                                    {% else %}
+                                        <option value="{{ c.id }}">{{ c.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <a id="transactions-filter-submit">
+                            <svg class="feather">
+                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#search') }}"/>
+                            </svg>
+                        </a>
                     </div>
-                    <a href="{{ url('transaction_index') }}?from={{ to | date_modify('first day of next month') | date('Y-m-d') }}&to={{ to | date_modify('last day of next month') | date('Y-m-d') }}">
-                        <svg class="feather">
-                            <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#chevron-right') }}"/>
-                        </svg>
-                    </a>
+                    <div id="transactions-month-selector">
+                        <a class="transactions-month-button"
+                           href="{{ url('transaction_index') }}?from={{ from | date_modify('first day of previous month') | date('Y-m-d') }}&to={{ from | date_modify('last day of previous month') | date('Y-m-d') }}">
+                            <svg class="feather">
+                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#chevron-left') }}"/>
+                            </svg>
+                        </a>
+                        <div id="transactions-month-text">
+                            {{ from | default(date()) | date('F Y') }}
+                        </div>
+                        <a class="transactions-month-button"
+                           href="{{ url('transaction_index') }}?from={{ to | date_modify('first day of next month') | date('Y-m-d') }}&to={{ to | date_modify('last day of next month') | date('Y-m-d') }}">
+                            <svg class="feather">
+                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#chevron-right') }}"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
                 {% if transactions %}
                     <table>

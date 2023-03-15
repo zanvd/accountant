@@ -4,7 +4,6 @@ namespace App\Balance;
 
 use App\Entity\Transaction;
 use App\Repository\TransactionRepository;
-use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -33,10 +32,14 @@ class Calculator
         return $b;
     }
 
-    public function getPeriodBalance(UserInterface $user, ?DateTime $from = null, ?DateTime $to = null): Balance
+    /**
+     * @param array<Transaction> $transactions
+     * @return Balance
+     */
+    public function getTransactionsBalance(array $transactions): Balance
     {
         $b = new Balance();
-        foreach ($this->trRepo->getTransactionsForPeriod($user, $from, $to) as $transaction) {
+        foreach ($transactions as $transaction) {
             if (($amount = $transaction->getAmount()) > 0) {
                 $b->setIncome($b->getIncome() + $amount);
             } else {

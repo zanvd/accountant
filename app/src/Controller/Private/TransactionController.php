@@ -7,6 +7,7 @@ use App\Entity\Category;
 use App\Entity\Transaction;
 use App\Enum\TransactionType as TransactionTypeEnum;
 use App\Form\Type\TransactionType;
+use App\Repository\CategoryRepository;
 use App\Repository\TransactionRepository;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,6 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class TransactionController extends AbstractController
 {
     private Calculator $calculator;
+    private ObjectRepository|CategoryRepository $catRepo;
     private ManagerRegistry $doctrine;
     private ObjectRepository|TransactionRepository $trRepo;
 
@@ -28,6 +30,7 @@ class TransactionController extends AbstractController
     {
         $this->calculator = $calculator;
         $this->doctrine = $doctrine;
+        $this->catRepo = $this->doctrine->getRepository(Category::class);
         $this->trRepo = $doctrine->getRepository(Transaction::class);
     }
 
@@ -36,7 +39,7 @@ class TransactionController extends AbstractController
     {
         $c = null;
         if ($cid = $request->query->get('category')) {
-            $c = $this->doctrine->getRepository(Category::class)->findOneBy(['id' => $cid, 'user' => $this->getUser()]);
+            $c = $this->catRepo->findOneBy(['id' => $cid, 'user' => $this->getUser()]);
         }
 
         $t = new Transaction();
@@ -57,7 +60,7 @@ class TransactionController extends AbstractController
             return $this->redirectToRoute('dashboard_index');
         }
 
-        return $this->renderForm('transaction/add.html.twig', ['form' => $f]);
+        return $this->render('transaction/add.html.twig', ['form' => $f]);
     }
 
     // TODO: Try to get this to be a delete method.
@@ -90,7 +93,7 @@ class TransactionController extends AbstractController
             return $this->redirectToRoute('transaction_index');
         }
 
-        return $this->renderForm('transaction/edit.html.twig', [
+        return $this->render('transaction/edit.html.twig', [
             'form' => $f,
             'transaction' => $t,
         ]);
@@ -99,6 +102,10 @@ class TransactionController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(Request $request): Response
     {
+        $c = null;
+        if ($cid = $request->query->get('category')) {
+            $c = $this->catRepo->findOneBy(['id' => $cid, 'user' => $this->getUser()]);
+        }
         if ($from = $request->query->get('from')) {
             try {
                 $from = new DateTime($from);
@@ -114,11 +121,17 @@ class TransactionController extends AbstractController
             }
         }
 
+        $transactions = $this->trRepo->getFilteredTransactions($this->getUser(), $c, $from, $to);
+
         return $this->render('transaction/index.html.twig', [
+            'categories' => $this->catRepo->findBy(['user' => $this->getUser()]),
+            'filter' => [
+                'categoryId' => $cid,
+            ],
             'from' => $from,
-            'stats' => $this->calculator->getPeriodBalance($this->getUser(), $from, $to),
+            'stats' => $this->calculator->getTransactionsBalance($transactions),
             'to' => $to,
-            'transactions' => $this->trRepo->getTransactionsForPeriod($this->getUser(), $from, $to),
+            'transactions' => $transactions,
         ]);
     }
 
