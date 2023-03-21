@@ -3,6 +3,8 @@
 # Base image is also production.
 FROM php:8.2-fpm-alpine AS base
 
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
