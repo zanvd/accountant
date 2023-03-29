@@ -32,12 +32,12 @@ class ResetPasswordType extends AbstractType
                 ],
                 'first_options' => [
                     'attr' => ['placeholder' => 'Password'],
-                    'label' => 'Password',
+                    'label' => 'Password:',
                     'row_attr' => ['class' => 'form-group'],
                 ],
                 'second_options' => [
                     'attr' => ['placeholder' => 'Repeat password'],
-                    'label' => 'Repeat password',
+                    'label' => 'Repeat password:',
                     'row_attr' => ['class' => 'form-group'],
                 ],
                 // Instead of being set onto the object directly, this is read and hashed in the controller.
