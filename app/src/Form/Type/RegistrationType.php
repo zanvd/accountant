@@ -58,8 +58,8 @@ class RegistrationType extends AbstractType
                     'row_attr' => ['class' => 'form-group'],
                 ],
                 'second_options' => [
-                    'attr' => ['placeholder' => 'Repeate password'],
-                    'label' => 'Repeat password',
+                    'attr' => ['placeholder' => 'Repeat password'],
+                    'label' => 'Repeat password:',
                 ],
                 'type' => PasswordType::class,
             ])
