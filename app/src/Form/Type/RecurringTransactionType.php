@@ -26,13 +26,11 @@ class RecurringTransactionType extends AbstractType
             ->add('name', TextType::class, [
                 'attr' => ['placeholder' => 'Name'],
                 'label' => 'Name:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('category', EntityType::class, [
                 'choice_label' => 'name',
                 'class' => Category::class,
                 'label' => 'Category:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('amount', MoneyType::class, [
                 'attr' => [
@@ -43,36 +41,29 @@ class RecurringTransactionType extends AbstractType
                 'help' => 'User . (dot) as a decimal separator.',
                 'html5' => true,
                 'label' => 'Amount:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('summary', TextType::class, [
                 'attr' => ['placeholder' => 'Summary'],
                 'empty_data' => '',
                 'label' => 'Summary:',
                 'required' => false,
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('periodNum', NumberType::class, [
                 'attr' => [
                     'min' => 1,
-                    'style' => 'flex: 1; min-width: 0px;'
                 ],
                 'html5' => true,
                 'label' => 'Period num:',
-                'row_attr' => ['class' => 'form-group'],
                 'scale' => 0,
             ])
             ->add('periodType', EnumType::class, [
-                'attr' => ['style' => 'flex: 2;'],
                 'class' => RecurringPeriodType::class,
                 'label' => 'Period type:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('startDate', DateType::class, [
                 'format' => 'dd. MM. yyyy',
                 'html5' => false,
                 'label' => 'Starting on:',
-                'row_attr' => ['class' => 'form-group'],
                 'widget' => 'single_text',
             ])
             ->add('endDate', DateType::class, [
@@ -80,7 +71,6 @@ class RecurringTransactionType extends AbstractType
                 'help' => 'If left empty, it will repeat indefinitely.',
                 'html5' => false,
                 'label' => 'Ending on:',
-                'row_attr' => ['class' => 'form-group'],
                 'widget' => 'single_text',
             ])
             ->add(

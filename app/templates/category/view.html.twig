@@ -1,27 +1,46 @@
 {% extends 'base.html.twig' %}
 {% block title %}View Category | {{ parent() }}{% endblock %}
-{% block content %}
-<article>
-   {{ include('_heading.html.twig', {
-       actions: {
-           delete: 'category_delete',
-           edit: 'category_edit',
-           index: 'category_index'
+{% block headerText %}Category{% endblock %}
+{% block headerActions %}
+    {{ include('_actions.html.twig', {
+        actions: {
+            delete: 'category_delete',
+            edit: 'category_edit',
+            index: 'category_index'
         },
-       data: category,
-       title: "Category #{category.name}"
+        data: category
     }) }}
-   <section class="data-container">
-        <h2>{{ category.name }}</h2>
-        <p>
-            <b>Color:</b>
-            <span class="category-color-view pill" style="background-color: {{ category.color }};"></span>
-        </p>
-        <p>
-            <b>Text Color:</b>
-            <span class="category-color-view pill" style="background-color: {{ category.textColor }};"></span>
-        </p>
-        <p><b>Description:</b> {{ category.description }}</p>
-   </section>
-</article>
+{% endblock %}
+{% block content %}
+    <article class="min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <section class="w-full max-w-md space-y-8">
+            <div class="view-container">
+                <div class="px-4 py-5 sm:px-6">
+                    <h2 class="font-bold text-2xl">{{ category.name }}</h2>
+                </div>
+                <div class="view-data-container">
+                    <dl>
+                        <div>
+                            <dt>Color</dt>
+                            <dd>
+                                <span class="category-color-view pill ml-1"
+                                      style="background-color: {{ category.color }};"></span>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Text Color</dt>
+                            <dd>
+                                <span class="category-color-view pill ml-1"
+                                      style="background-color: {{ category.textColor }};"></span>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Description</dt>
+                            <dd>{{ category.description }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </section>
+    </article>
 {% endblock %}

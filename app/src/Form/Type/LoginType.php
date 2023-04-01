@@ -18,12 +18,10 @@ class LoginType extends AbstractType
             ->add('username', TextType::class, [
                 'attr' => ['placeholder' => 'Username'],
                 'label' => 'Username:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('password', PasswordType::class, [
                 'attr' => ['placeholder' => 'Password'],
                 'label' => 'Password:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('save', SubmitIconButtonType::class, [
                 'attr' => ['class' => 'btn btn-icon'],

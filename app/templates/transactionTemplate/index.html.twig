@@ -1,69 +1,71 @@
 {% extends 'base.html.twig' %}
 {% block title %}Transaction Template | {{ parent() }}{% endblock %}
+{% block headerText %}Transaction Template{% endblock %}
+{% block headerActions %}{{ include('_actions.html.twig', {actions: {add: 'transaction_template_add'}}) }}{% endblock %}
 {% block content %}
-<article>
-    {{ include('_heading.html.twig', {actions: {add: 'transaction_template_add'}, title: 'Transaction Templates'}) }}
-    <section>
-    {% if transactionTemplates %}
-        <table>
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Type</th>
-                <th>Position</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for tt in transactionTemplates %}
-                <tr>
-                    <td>{{ tt.name }}</td>
-                    <td>
-                        <span class="pill"
-                            style="background-color: {{ tt.Category.color }}; color: {{ tt.Category.textColor }};"
-                        >
-                            {{ tt.Category.name }}
-                        </span>
-                    </td>
-                    {% if tt.isIncome() == 'income' %}
-                        <td>
-                            <span class="pill income">Income</span>
-                        </td>
-                    {% else %}
-                        <td>
-                            <span class="pill outcome">Outcome</span>
-                        </td>
-                    {% endif %}
-                    <td>{{ tt.position }}</td>
-                    <td class="table-action-cell">
-                        <a class="btn btn-icon btn-edit" href="{{ url('transaction_template_edit', {'id': tt.id}) }}">
-                            <svg class="feather">
-                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#edit') }}"/>
-                            </svg>
-                        </a>
-                        <a class="btn btn-icon btn-view" href="{{ url('transaction_template_view', {'id': tt.id}) }}">
-                            <svg class="feather">
-                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#search') }}"/>
-                            </svg>
-                        </a>
-                        <a class="btn btn-icon btn-delete confirm-deletion"
-                            href="{{ url('transaction_template_delete', {'id': tt.id}) }}"
-                            data-deletion-name="{{ tt.name }}"
-                            data-deletion-title="Transaction template"
-                        >
-                            <svg class="feather">
-                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#trash') }}"/>
-                            </svg>
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No transaction templates.</p>
-    {% endif %}
-    </section>
-</article>
+    <article class="min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <section class="w-full max-w-md space-y-8 sm:max-w-7xl">
+            {% if transactionTemplates %}
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Type</th>
+                        <th>Position</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for tt in transactionTemplates %}
+                        <tr>
+                            <td>{{ tt.name }}</td>
+                            <td>
+                                <span class="pill"
+                                      style="background-color: {{ tt.Category.color }}; color: {{ tt.Category.textColor }};"
+                                >
+                                    {{ tt.Category.name }}
+                                </span>
+                            </td>
+                            <td class="mt-7 sm:mt-auto">
+                                {% if tt.isIncome() == 'income' %}
+                                    <span class="pill income">Income</span>
+
+                                {% else %}
+                                    <span class="pill outcome">Outcome</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ tt.position }}</td>
+                            <td class="table-action-cell">
+                                <a class="btn btn-icon btn-edit"
+                                   href="{{ url('transaction_template_edit', {'id': tt.id}) }}">
+                                    <svg class="feather">
+                                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#edit') }}"/>
+                                    </svg>
+                                </a>
+                                <a class="btn btn-icon btn-view"
+                                   href="{{ url('transaction_template_view', {'id': tt.id}) }}">
+                                    <svg class="feather">
+                                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#search') }}"/>
+                                    </svg>
+                                </a>
+                                <a class="btn btn-icon btn-delete confirm-deletion"
+                                   href="{{ url('transaction_template_delete', {'id': tt.id}) }}"
+                                   data-deletion-name="{{ tt.name }}"
+                                   data-deletion-title="Transaction template"
+                                >
+                                    <svg class="feather">
+                                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#trash') }}"/>
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No transaction templates.</p>
+            {% endif %}
+        </section>
+    </article>
 {% endblock %}

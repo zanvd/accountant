@@ -1,17 +1,19 @@
 {% extends 'base.html.twig' %}
 {% block title %}Edit Recurring Transaction | {{ parent() }}{% endblock %}
+{% block headerText %}Recurring Transaction{% endblock %}
+{% block headerActions %}
+    {{ include('_actions.html.twig', {
+        actions: {
+            delete: 'recurring_transaction_delete',
+            index: 'recurring_transaction_index',
+            view: 'recurring_transaction_view'
+        },
+        data: recurringTransaction
+    }) }}
+{% endblock %}
 {% block content %}
-    <article>
-        {{ include('_heading.html.twig', {
-            actions: {
-                delete: 'recurring_transaction_delete',
-                index: 'recurring_transaction_index',
-                view: 'recurring_transaction_view'
-            },
-            data: recurringTransaction,
-            title: "Recurring Transaction #{recurringTransaction.name}"
-        }) }}
-        <section>
+    <article class="min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <section class="w-full max-w-md space-y-8">
             {% for flash_error in app.flashes('rec_trans_error') %}
                 <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
             {% endfor %}
@@ -20,10 +22,10 @@
             {{ form_row(form.category) }}
             {{ form_row(form.amount) }}
             {{ form_row(form.summary) }}
-            <div class="form-group">
-                <label>Each:</label>
+            <div class="block">
+                <label class="text-gray-700">Each:</label>
                 <div class="inline-fields">
-                    {{ form_widget(form.periodNum) }}
+                    {{ form_widget(form.periodNum, {'attr': {'class': 'w-28'}}) }}
                     {{ form_widget(form.periodType) }}
                 </div>
             </div>

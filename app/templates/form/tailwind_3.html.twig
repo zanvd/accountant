@@ -1,0 +1,136 @@
+{% use 'form_div_layout.html.twig' %}
+
+{# Widgets #}
+
+{%- block choice_widget_collapsed -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' mt-0 w-full px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-defaultAccent')|trim}) %}
+    {{- parent() -}}
+{%- endblock choice_widget_collapsed -%}
+
+{# It outputs the input inside its label. #}
+{% block choice_widget_expanded %}
+<div {{ block('widget_container_attributes') }}>
+    {% for child in form %}
+        {% set child_label = child.vars.label %}
+        {% if child_label is not same as(false) %}
+            {% set child_id = child.vars.id %}
+            {% set child_compound = child.vars.compound %}
+            {% set child_label_attr = child.vars.label_attr %}
+            {% set child_label_html = child.vars.label_html %}
+            {% set child_required = child.vars.required %}
+            {% if not child_compound %}
+                {% set child_label_attr = child_label_attr|merge({'for': child_id}) %}
+            {% endif %}
+            {% if child_required %}
+                {% set child_label_attr = child_label_attr|merge({'class': (child_label_attr.class|default('') ~ ' required')|trim}) %}
+            {% endif %}
+            {% if child_label is empty %}
+                {% if label_format is not empty %}
+                    {% set child_label = label_format|replace({'%name%': name, '%id%': child_id}) %}
+                {% else %}
+                    {% set child_label = name|humanize %}
+                {% endif %}
+            {% endif %}
+            <{{ element|default('label') }}{% if child_label_attr %}{% with { attr: child_label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
+            {{ form_widget(child) }}
+            {% if choice_translation_domain is same as(false) %}
+                {% if child_label_html is same as(false) %}
+                    {{ child_label }}
+                {% else %}
+                    {{ child_label|raw }}
+                {% endif %}
+            {% else %}
+                {% if child_label_html is same as(false) %}
+                    {{ child_label|trans(label_translation_parameters, choice_translation_domain) }}
+                {% else %}
+                    {{ child_label|trans(label_translation_parameters, choice_translation_domain)|raw }}
+                {% endif %}
+            {% endif %}
+            </{{ element|default('label') }}>
+        {% else %}
+            {{ form_widget(child) }}
+        {% endif %}
+    {% endfor %}
+    </div>
+{% endblock choice_widget_expanded %}
+
+{%- block form_widget_simple -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' mt-0 block w-full px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-defaultAccent')|trim}) %}
+    {{- parent() -}}
+{%- endblock form_widget_simple -%}
+
+{%- block form_widget_compound -%}
+    {%- if form is rootform -%}
+        {{ form_errors(form) }}
+        {{- block('form_rows') -}}
+        {{- form_rest(form) -}}
+    {% else %}
+        <div {{ block('widget_container_attributes') }}>
+            {{- block('form_rows') -}}
+            {{- form_rest(form) -}}
+        </div>
+    {%- endif -%}
+{%- endblock form_widget_compound -%}
+
+{% block icon_button_widget %}
+    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>
+        <svg class="feather">
+            <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#' ~ icon|default('square')) }}"/>
+        </svg>
+    </button>
+{% endblock %}
+
+{% block reset_icon_button_widget %}
+    {% set icon = icon|default('x') %}
+    {% set type = type|default('reset') %}
+    {{ block('icon_button_widget') }}
+{% endblock %}
+
+{% block submit_icon_button_widget %}
+    {% set icon = icon|default('check') %}
+    {% set type = type|default('submit') %}
+    {{ block('icon_button_widget') }}
+{% endblock %}
+
+{# Rows #}
+
+{%- block button_row -%}
+    {% if row_attr is not empty %}
+        <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+            {{- form_widget(form) -}}
+        </div>
+    {% else %}
+        {{- form_widget(form) -}}
+    {% endif %}
+{%- endblock button_row -%}
+
+{%- block form_row -%}
+    {% if row_attr is not empty %}
+        <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+    {% endif %}
+    {% set widget_attr = {} %}
+    {% if help is not empty %}
+        {% set widget_attr = {attr: {'aria-describedby': id ~"_help"}} %}
+    {% endif %}
+    {% if label is not same as(false) -%}
+        {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' block')|trim}) %}
+        {% if not compound -%}
+            {% set label_attr = label_attr|merge({'for': id}) %}
+        {%- endif -%}
+        {% if required -%}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+        {%- endif -%}
+        <{{ element|default('label') }}{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
+        <span class="text-gray-700">{{- block('form_label_content') -}}</span>
+        {{- form_widget(form, widget_attr) -}}
+        {{- form_help(form) -}}
+        </{{ element|default('label') }}>
+    {% else %}
+        {{- form_errors(form) -}}
+        {{- form_widget(form, widget_attr) -}}
+        {{- form_help(form) -}}
+    {%- endif -%}
+    {% if row_attr is not empty %}
+        </div>
+    {%- endif -%}
+{%- endblock form_row -%}

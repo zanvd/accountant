@@ -1,15 +1,16 @@
 {% extends 'base.html.twig' %}
 {% block title %}Transaction | {{ parent() }}{% endblock %}
+{% block headerText %}Transaction{% endblock %}
+{% block headerActions %}{{ include('_actions.html.twig', {actions: {add: 'transaction_add'}}) }}{% endblock %}
 {% block content %}
-    <article>
-        {{ include('_heading.html.twig', {actions: {add: 'transaction_add'}, title: 'Transactions'}) }}
-        <section id="transactions-container">
-            <div id="transactions-table-container">
-                <div id="transactions-filter-container">
-                    <div id="transactions-filter-left-container">
-                        <div>
-                            <label for="transactions-filter-category">Category:</label>
-                            <select id="transactions-filter-category">
+    <article class="min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <section class="flex-col-reverse w-full max-w-md sm:grid sm:grid-cols-10 sm:space-y-8 sm:max-w-7xl">
+            <div class="mt-8 flex flex-col sm:mt-0 sm:col-span-9">
+                <div class="grid gap-y-8 sm:grid-cols-9 sm:gap-y-0">
+                    <div class="grid grid-cols-4 sm:col-start-1 sm:col-span-6 sm:max-w-sm">
+                        <div class="col-span-3 flex">
+                            <label for="transactions-filter-category" class="self-center">Category:</label>
+                            <select id="transactions-filter-category" class="ml-2 text-s">
                                 <option></option>
                                 {% for c in categories %}
                                     {% if c.id == filter.categoryId %}
@@ -20,13 +21,13 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <a id="transactions-filter-submit">
+                        <a id="transactions-filter-submit" class="justify-self-end self-center">
                             <svg class="feather">
                                 <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#search') }}"/>
                             </svg>
                         </a>
                     </div>
-                    <div id="transactions-month-selector">
+                    <div id="transactions-month-selector" class="flex justify-end sm:col-start-7 sm:col-span-3">
                         <a class="transactions-month-button"
                            href="{{ url('transaction_index') }}?from={{ from | date_modify('first day of previous month') | date('Y-m-d') }}&to={{ from | date_modify('last day of previous month') | date('Y-m-d') }}">
                             <svg class="feather">
@@ -45,7 +46,7 @@
                     </div>
                 </div>
                 {% if transactions %}
-                    <table>
+                    <table class="mt-8">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -58,7 +59,7 @@
                         <tbody>
                         {% for t in transactions %}
                             <tr>
-                                <td>{{ t.name }}</td>
+                                <td class="font-semibold sm:font-normal">{{ t.name }}</td>
                                 <td>{{ t.amount|number_format(2) }}</td>
                                 <td>
                                     <span class="pill"
@@ -94,22 +95,36 @@
                         </tbody>
                     </table>
                 {% else %}
-                    <p>No transactions.</p>
+                    <p class="mt-8">No transactions.</p>
                 {% endif %}
             </div>
-            <div id="transactions-balance-container">
-                <p>
-                    <strong>Income:</strong>
-                    {{ stats.income | default(0) }}€
-                </p>
-                <p>
-                    <strong>Outcome:</strong>
-                    {{ stats.outcome | default(0) }}€
-                </p>
-                <p>
-                    <strong>Savings:</strong>
-                    {{ stats.savings | default(0) }}€
-                </p>
+            <div class="sm:ml-5 sm:justify-self-end">
+                <dl class="grid grid-cols-3 justify-items-center sm:block">
+                    <div class="sm:grid sm:grid-cols-1 sm:gap-1">
+                        <dt class="font-medium text-gray-600 text-sm">
+                            Income
+                        </dt>
+                        <dd class="mt-2 sm:col-span-2 sm:mt-0">
+                            {{ stats.income | default(0) }}€
+                        </dd>
+                    </div>
+                    <div class="sm:mt-2 sm:pt-2 sm:border-t sm:border-t-gray-600 sm:grid sm:grid-cols-1 sm:gap-1">
+                        <dt class="font-medium text-gray-600 text-sm">
+                            Outcome
+                        </dt>
+                        <dd class="mt-2 sm:col-span-2 sm:mt-0">
+                            {{ stats.outcome | default(0) }}€
+                        </dd>
+                    </div>
+                    <div class="sm:mt-2 sm:pt-2 sm:border-t sm:border-t-gray-600 sm:grid sm:grid-cols-1 sm:gap-1">
+                        <dt class="font-medium text-gray-600 text-sm">
+                            Savings
+                        </dt>
+                        <dd class="mt-2 sm:col-span-2 sm:mt-0">
+                            {{ stats.savings | default(0) }}€
+                        </dd>
+                    </div>
+                </dl>
             </div>
         </section>
     </article>

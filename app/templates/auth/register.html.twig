@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 {% block title %}Register | {{ parent() }}{% endblock %}
+{% block headerText %}Register{% endblock %}
 {% block content %}
-<article>
-    {{ include('_heading.html.twig', {title: 'Register'}) }}
-    <section>
+<article class="min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <section class="w-full max-w-md space-y-8">
         {% for flash_error in app.flashes('verify_email_error') %}
             <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
         {% endfor %}

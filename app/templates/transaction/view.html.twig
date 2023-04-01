@@ -1,29 +1,50 @@
 {% extends 'base.html.twig' %}
 {% block title %}View Transaction | {{ parent() }}{% endblock %}
-{% block content %}
-<article>
-   {{ include('_heading.html.twig', {
-       actions: {
-           delete: 'transaction_delete',
-           edit: 'transaction_edit',
-           index: 'transaction_index'
+{% block headerText %}Transaction{% endblock %}
+{% block headerActions %}
+    {{ include('_actions.html.twig', {
+        actions: {
+            delete: 'transaction_delete',
+            edit: 'transaction_edit',
+            index: 'transaction_index'
         },
-       data: transaction,
-       title: "Transaction #{transaction.name}"
+        data: transaction
     }) }}
-   <section class="data-container">
-        <h2>{{ transaction.name }}</h2>
-        <p>
-            <b>Category:</b>
-            <span class="pill"
-                style="background-color: {{ transaction.Category.color }}; color: {{ transaction.Category.textColor }};"
-            >
-                {{ transaction.Category.name }}
-            </span>
-        </p>
-        <p><b>Amount:</b> {{ transaction.amount|number_format(2) }}</p>
-        <p><b>Transaction Date:</b> {{ transaction.transactionDate|date(format_date) }}</p>
-        <p><b>Summary:</b> {{ transaction.summary }}</p>
-   </section>
-</article>
+{% endblock %}
+{% block content %}
+    <article class="min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <section class="w-full max-w-md space-y-8">
+            <div class="view-container">
+                <div class="px-4 py-5 sm:px-6">
+                    <h2 class="font-bold text-2xl">{{ transaction.name }}</h2>
+                </div>
+                <div class="view-data-container">
+                    <dl>
+                        <div>
+                            <dt>Category</dt>
+                            <dd>
+                            <span class="pill ml-1"
+                                  style="background-color: {{ transaction.Category.color }}; color: {{ transaction.Category.textColor }};"
+                            >
+                                {{ transaction.Category.name }}
+                            </span>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Amount</dt>
+                            <dd>{{ transaction.amount|number_format(2) }}</dd>
+                        </div>
+                        <div>
+                            <dt>Transaction Date</dt>
+                            <dd>{{ transaction.transactionDate|date(format_date) }}</dd>
+                        </div>
+                        <div>
+                            <dt>Summary</dt>
+                            <dd>{{ transaction.summary }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </section>
+    </article>
 {% endblock %}

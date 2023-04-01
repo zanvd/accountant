@@ -3,8 +3,7 @@ twig:
     globals:
         format_date: 'd. m. Y'
     form_themes:
-        - 'form/custom_types.html.twig'
-
+        - 'form/tailwind_3.html.twig'
 when@test:
     twig:
         strict_variables: true

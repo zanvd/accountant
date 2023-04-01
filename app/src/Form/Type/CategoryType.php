@@ -21,22 +21,18 @@ class CategoryType extends AbstractType
             ->add('name', TextType::class, [
                 'attr' => ['placeholder' => 'Name'],
                 'label' => 'Name:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('color', ColorType::class, [
                 'label' => 'Color:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('textColor', ColorType::class, [
                 'label' => 'Text color:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('description', TextType::class, [
                 'attr' => ['placeholder' => 'Description'],
                 'empty_data' => '',
                 'label' => 'Description:',
                 'required' => false,
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add(
                 $builder->create('actions', FormType::class, [

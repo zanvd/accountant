@@ -1,29 +1,30 @@
 {% extends 'base.html.twig' %}
 {% block title %}Dashboard | {{ parent() }}{% endblock %}
+{% block headerText %}Dashboard{% endblock %}
+{% block headerActions %}{{ include('_actions.html.twig', {actions: {add: 'transaction_add'}}) }}{% endblock %}
 {% block content %}
-<article>
-    {{ include('_heading.html.twig', {title: 'Dashboard', actions: {add: 'transaction_add'}}) }}
-    <section id="dashboard-card-container">
-        {% if transactionTemplates %}
-            {% for tt in transactionTemplates %}
-                <div class="dashboard-card"
-                    data-transaction-category="{{ tt.Category.id }}"
-                    data-transaction-name="{{ tt.name }}"
-                    data-transaction-type="{{ tt.transactionType.value }}"
-                >
-                    <p>
-                        <b>{{ tt.name }}</b>
-                    </p>
-                    <p>
-                        <span class="pill"
-                            style="background-color: {{ tt.Category.color }}; color: {{ tt.Category.textColor }};"
-                        >
-                            {{ tt.Category.name }}
-                        </span>
-                    </p>
-                </div>
-            {% endfor %}
-        {% endif %}
-    </section>
-</article>
+    <article class="min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <section id="dashboard-card-container" class="w-full max-w-md sm:max-w-7xl">
+            {% if transactionTemplates %}
+                {% for tt in transactionTemplates %}
+                    <div class="dashboard-card"
+                         data-transaction-category="{{ tt.Category.id }}"
+                         data-transaction-name="{{ tt.name }}"
+                         data-transaction-type="{{ tt.transactionType.value }}"
+                    >
+                        <p>
+                            <b>{{ tt.name }}</b>
+                        </p>
+                        <p>
+                            <span class="pill"
+                                  style="background-color: {{ tt.Category.color }}; color: {{ tt.Category.textColor }};"
+                            >
+                                {{ tt.Category.name }}
+                            </span>
+                        </p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </section>
+    </article>
 {% endblock %}

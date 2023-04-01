@@ -20,7 +20,6 @@ class ForgotPasswordType extends AbstractType
                     'placeholder' => 'Username',
                 ],
                 'label' => 'Username:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('save', SubmitIconButtonType::class, [
                 'attr' => ['class' => 'btn btn-icon'],

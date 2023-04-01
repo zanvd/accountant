@@ -24,14 +24,12 @@ class TransactionType extends AbstractType
             ->add('name', TextType::class, [
                 'attr' => ['placeholder' => 'Name'],
                 'label' => 'Name:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('category', EntityType::class, [
                 'choice_label' => 'name',
                 'class' => Category::class,
                 'label' => 'Category:',
                 'query_builder' => fn(EntityRepository $er) => $er->createQueryBuilder('c')->orderBy('c.name', 'ASC'),
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('amount', MoneyType::class, [
                 'attr' => [
@@ -42,13 +40,11 @@ class TransactionType extends AbstractType
                 'help' => 'Use . (dot) as a decimal separator.',
                 'html5' => true,
                 'label' => 'Amount:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('transactionDate', DateType::class, [
                 'format' => 'dd. MM. yyyy',
                 'html5' => false,
                 'label' => 'Transaction date:',
-                'row_attr' => ['class' => 'form-group'],
                 'widget' => 'single_text',
             ])
             ->add('summary', TextType::class, [
@@ -56,7 +52,6 @@ class TransactionType extends AbstractType
                 'empty_data' => '',
                 'label' => 'Summary:',
                 'required' => false,
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add(
                 $builder->create('actions', FormType::class, [

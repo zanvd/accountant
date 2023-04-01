@@ -25,7 +25,6 @@ class RegistrationType extends AbstractType
                     'placeholder' => 'Username',
                 ],
                 'label' => 'Username:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('email', EmailType::class, [
                 'attr' => [
@@ -33,7 +32,6 @@ class RegistrationType extends AbstractType
                     'placeholder' => 'Email',
                 ],
                 'label' => 'Email:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('password', RepeatedType::class, [
                 'constraints' => [
@@ -55,7 +53,6 @@ class RegistrationType extends AbstractType
                 'mapped' => false,
                 'options' => [
                     'attr' => ['autocomplete' => 'new-password'],
-                    'row_attr' => ['class' => 'form-group'],
                 ],
                 'second_options' => [
                     'attr' => ['placeholder' => 'Repeat password'],

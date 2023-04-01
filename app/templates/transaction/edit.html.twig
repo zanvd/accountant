@@ -1,19 +1,21 @@
 {% extends 'base.html.twig' %}
 {% block title %}Edit Transaction | {{ parent() }}{% endblock %}
-{% block content %}
-<article>
-   {{ include('_heading.html.twig', {
-       actions: {
-           delete: 'transaction_delete',
-           index: 'transaction_index',
-           view: 'transaction_view'
+{% block headerText %}Transaction{% endblock %}
+{% block headerActions %}
+    {{ include('_actions.html.twig', {
+        actions: {
+            delete: 'transaction_delete',
+            index: 'transaction_index',
+            view: 'transaction_view'
         },
-       data: transaction,
-       title: "Transaction #{transaction.name}"
+        data: transaction
     }) }}
-   <section>
-         {{ form(form) }}
-         {{ include('_initDate.html.twig', {elementId: 'transaction_transactionDate'}) }}
-   </section>
-</article>
+{% endblock %}
+{% block content %}
+    <article class="min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <section class="w-full max-w-md space-y-8">
+            {{ form(form) }}
+            {{ include('_initDate.html.twig', {elementId: 'transaction_transactionDate'}) }}
+        </section>
+    </article>
 {% endblock %}

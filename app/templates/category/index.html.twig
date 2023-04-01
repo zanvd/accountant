@@ -1,55 +1,56 @@
 {% extends 'base.html.twig' %}
 {% block title %}Category | {{ parent() }}{% endblock %}
+{% block headerText %}Category{% endblock %}
+{% block headerActions %}{{ include('_actions.html.twig', {actions: {add: 'category_add'}}) }}{% endblock %}
 {% block content %}
-<article>
-    {{ include('_heading.html.twig', {actions: {add: 'category_add'}, title: 'Categories'}) }}
-    <section>
-    {% if categories %}
-        <table>
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for c in categories %}
-                <tr>
-                    <td>
-                        <span class="pill" style="background-color: {{ c.color }}; color: {{ c.textColor }};">
-                            {{ c.name }}
-                        </span>
-                    </td>
-                    <td>{{ c.description }}</td>
-                    <td class="table-action-cell">
-                        <a class="btn btn-icon btn-edit" href="{{ url('category_edit', {'id': c.id}) }}">
-                            <svg class="feather">
-                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#edit') }}"/>
-                            </svg>
-                        </a>
-                        <a class="btn btn-icon btn-view" href="{{ url('category_view', {'id': c.id}) }}">
-                            <svg class="feather">
-                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#search') }}"/>
-                            </svg>
-                        </a>
-                        <a class="btn btn-icon btn-delete confirm-deletion"
-                            href="{{ url('category_delete', {'id': c.id}) }}"
-                            data-deletion-name="{{ c.name }}"
-                            data-deletion-title="Category"
-                        >
-                            <svg class="feather">
-                                <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#trash') }}"/>
-                            </svg>
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No categories.</p>
-    {% endif %}
-    </section>
-</article>
+    <article class="min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <section class="w-full max-w-md space-y-8 sm:max-w-7xl">
+            {% if categories %}
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for c in categories %}
+                        <tr>
+                            <td>
+                                <span class="pill" style="background-color: {{ c.color }}; color: {{ c.textColor }};">
+                                    {{ c.name }}
+                                </span>
+                            </td>
+                            <td>{{ c.description }}</td>
+                            <td class="table-action-cell">
+                                <a class="btn btn-icon btn-edit" href="{{ url('category_edit', {'id': c.id}) }}">
+                                    <svg class="feather">
+                                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#edit') }}"/>
+                                    </svg>
+                                </a>
+                                <a class="btn btn-icon btn-view" href="{{ url('category_view', {'id': c.id}) }}">
+                                    <svg class="feather">
+                                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#search') }}"/>
+                                    </svg>
+                                </a>
+                                <a class="btn btn-icon btn-delete confirm-deletion"
+                                   href="{{ url('category_delete', {'id': c.id}) }}"
+                                   data-deletion-name="{{ c.name }}"
+                                   data-deletion-title="Category"
+                                >
+                                    <svg class="feather">
+                                        <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#trash') }}"/>
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No categories.</p>
+            {% endif %}
+        </section>
+    </article>
 {% endblock %}

@@ -1,0 +1,250 @@
+@tailwind base;
+@tailwind components;
+
+/*
+These components are probably defined in code and therefore not visible to the Tailwind's CLI,
+making them missing in the final build.
+Include them directly to have them present at all times.
+*/
+
+/* FORM */
+
+.form-actions {
+    @apply flex justify-evenly;
+}
+
+.help-text {
+    @apply text-gray-600 text-sm;
+}
+
+.inline-fields {
+    @apply flex;
+}
+
+.inline-fields :not(:last-child) {
+    margin-right: 10px;
+}
+
+.radio-container {
+    @apply flex justify-around pt-2;
+}
+
+@tailwind utilities;
+
+@layer base {
+    a {
+        @apply cursor-pointer no-underline outline-none text-defaultAccent hover:opacity-80;
+    }
+
+    article {
+        @apply flex flex-col;
+    }
+
+    section {
+        @apply flex flex-col justify-center;
+    }
+
+    form {
+        @apply p-10 bg-white space-y-8 rounded-md;
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    }
+
+    select {
+        @apply appearance-none
+        border-0
+        border-b-2
+        border-gray-200
+        mt-0
+        px-0.5
+        w-full
+        focus:ring-0
+        focus:border-defaultAccent;
+        background-image: url('/static/icons/chevron-down.svg');
+        background-position: right center;
+        background-repeat: no-repeat;
+    }
+
+    /* TABLE */
+    table {
+        @apply bg-white border-collapse
+        overflow-hidden
+        rounded-md
+        sm:w-full;
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    }
+
+    thead {
+        @apply hidden
+        sm:bg-slate-100
+        sm:table-header-group
+        sm:text-gray-900
+        sm:text-left;
+    }
+
+    th {
+        @apply font-medium py-3 px-4;
+    }
+
+    tbody > tr {
+        @apply hover:bg-slate-200 sm:even:bg-slate-50 sm:hover:bg-slate-200;
+    }
+
+    tr:not(:first-child) {
+        @apply border-t sm:border-none;
+    }
+
+    td {
+        @apply block
+        float-left
+        ml-2.5
+        mt-5
+        text-left
+        w-full
+        empty:m-0
+        sm:float-none
+        sm:m-auto
+        sm:py-3
+        sm:px-4
+        sm:table-cell
+        sm:w-auto
+        sm:empty:m-2.5;
+    }
+
+    .table-action-cell {
+        @apply mb-5
+        text-center
+        sm:w-[165px];
+    }
+}
+
+@layer components {
+    /* BUTTONS */
+    .btn {
+        @apply align-middle
+        bg-white
+        border-2
+        cursor-pointer
+        inline-block
+        leading-6
+        mb-0
+        outline-none
+        px-1.5
+        py-1
+        rounded-md
+        select-none
+        text-black
+        text-center
+        touch-manipulation
+        whitespace-nowrap
+        hover:bg-defaultAccent
+        hover:text-white;
+    }
+
+    .btn-icon {
+        @apply bg-transparent border-none leading-[1.15] p-[8px];
+    }
+
+    .btn-add {
+        @apply hover:bg-green-600;
+    }
+
+    .btn-cancel, .btn-delete {
+        @apply hover:bg-red-600;
+    }
+
+    .btn-edit {
+        @apply hover:bg-yellow-600;
+    }
+
+    .btn-list {
+        @apply hover:bg-blue-600;
+    }
+
+    .btn-view {
+        @apply hover:bg-gray-600;
+    }
+
+    /* DASHBOARD */
+    .dashboard-card {
+        @apply px-5 py-7 cursor-pointer rounded-md text-center hover:bg-slate-200;
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    }
+
+    .dashboard-card > p {
+        @apply last:mt-3;
+    }
+
+    #dashboard-card-container {
+        @apply gap-8 grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+
+    /* FEATHER ICONS */
+    .feather {
+        @apply w-[24px] h-[24px] stroke-current stroke-2 fill-none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    /* NAV */
+    .menu-link {
+        @apply nav-link block text-base;
+    }
+
+    .nav-link {
+        @apply font-medium
+        px-3
+        py-2
+        rounded-md
+        text-sm
+        text-gray-300
+        hover:bg-gray-700
+        hover:text-white;
+    }
+
+    /* PILL */
+    .pill {
+        @apply border-[1px] border-gray-600 px-[10px] py-[6px] rounded-lg;
+    }
+
+    .pill.income {
+        @apply border-none bg-pillInc text-white;
+    }
+
+    .pill.outcome {
+        @apply border-none bg-pillOut text-white;
+    }
+
+    /* VIEW */
+    .category-color-view {
+        @apply h-[20px] w-[100px] align-bottom inline-block p-0;
+    }
+
+    .view-container {
+        @apply bg-white rounded-lg;
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    }
+
+    .view-data-container {
+        @apply border-gray-200 border-t space-y-8
+    }
+
+    .view-data-container > dl > div {
+        @apply px-4
+        py-5
+        sm:grid
+        sm:grid-cols-3
+        sm:gap-4
+        sm:px-6
+        odd:bg-slate-50
+        last:rounded-b-lg;
+    }
+
+    .view-data-container > dl > div > dt {
+        @apply font-medium text-gray-500 text-sm;
+    }
+
+    .view-data-container > dl > div > dd {
+        @apply mt-2 sm:col-span-2 sm:mt-0;
+    }
+}

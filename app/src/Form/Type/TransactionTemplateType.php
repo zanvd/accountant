@@ -24,20 +24,17 @@ class TransactionTemplateType extends AbstractType
             ->add('name', TextType::class, [
                 'attr' => ['placeholder' => 'Name'],
                 'label' => 'Name:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('category', EntityType::class, [
                 'choice_label' => 'name',
                 'class' => Category::class,
                 'label' => 'Category:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add('transactionType', EnumType::class, [
                 'attr' => ['class' => 'radio-container'],
                 'class' => TransactionType::class,
                 'expanded' => true,
                 'label' => 'Type:',
-                'row_attr' => ['class' => 'form-group form-radio'],
             ])
             ->add('position', IntegerType::class, [
                 'attr' => [
@@ -45,7 +42,6 @@ class TransactionTemplateType extends AbstractType
                     'placeholder' => 'Position',
                 ],
                 'label' => 'Position:',
-                'row_attr' => ['class' => 'form-group'],
             ])
             ->add(
                 $builder->create('actions', FormType::class, [
