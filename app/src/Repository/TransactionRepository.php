@@ -53,7 +53,9 @@ class TransactionRepository extends ServiceEntityRepository
         ?DateTime $to = null
     ): array {
         $from ??= new DateTime('first day of this month');
+        $from->setTime(0, 0);
         $to ??= new DateTime('last day of this month');
+        $to->setTime(23, 59, 59);
 
         $qb = $this->createQueryBuilder('t');
         $qb->andWhere($qb->expr()->eq('t.user', ':user'))
