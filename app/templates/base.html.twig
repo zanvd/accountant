@@ -8,11 +8,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{{ absolute_url('/static/favicon/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ absolute_url('/static/favicon/favicon-16x16.png') }}">
     <link rel="manifest" href="{{ absolute_url('/static/favicon/site.webmanifest') }}">
-    {#    <link href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" rel="stylesheet"/> #}
     <link href="{{ absolute_url('/static/output.css') }}" rel="stylesheet">
-    {#    <link href="{{ absolute_url('/static/style.css') }}" rel="stylesheet"> #}
-    {#    <link href="{{ absolute_url('/static/desktop.css') }}" media="screen and (min-width: 750px)" rel="stylesheet"/> #}
-    {#    <link href="{{ absolute_url('/static/mobile.css') }}" media="screen and (max-width: 750px)" rel="stylesheet"/> #}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="{{ absolute_url('/static/script.js') }}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
@@ -104,26 +100,6 @@
         <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
             {% block content %}{% endblock %}
         </div>
-        {#        <div id="deletion-dialog-container" class="hidden">
-            <div id="deletion-dialog">
-                <h2 id="deletion-title"></h2>
-                <hr/>
-                <p id="deletion-text"></p>
-                <hr/>
-                <div class="dialog-actions">
-                    <button id="deletion-submit" class="btn btn-icon" type="submit">
-                        <svg class="feather">
-                            <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#check') }}"/>
-                        </svg>
-                    </button>
-                    <button id="deletion-cancel" class="btn btn-icon btn-cancel" type="button">
-                        <svg class="feather">
-                            <use xlink:href="{{ absolute_url('/static/icons/feather-sprite.svg#x') }}"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div> #}
         <div id="deletion-dialog-container" class="hidden relative z-10" aria-labelledby="deletion-title" role="dialog"
              aria-modal="true">
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75"></div>
