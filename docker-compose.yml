@@ -62,7 +62,7 @@ services:
     - "80:80"
     restart: always
     volumes:
-      - nginx_assets_vol:/var/www/accountant/assets
+      - nginx_assets_vol:/var/www/accountant/static
   redis:
     container_name: accountant_redis
     image: redis:alpine
@@ -76,7 +76,7 @@ volumes:
   nginx_assets_vol:
     driver: local
     driver_opts:
-      device: $PWD/app/public/assets
+      device: $PWD/app/public/static
       o: bind
       type: none
   redis_vol:

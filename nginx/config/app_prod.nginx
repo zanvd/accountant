@@ -28,7 +28,7 @@ server {
     }
 
     location /static/ {
-        alias /var/www/accountant/assets/;
+        alias /var/www/accountant/static/;
         try_files $uri =404;
     }
 

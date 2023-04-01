@@ -10,7 +10,7 @@ Run these commands from inside the `app`.
 
 Rebuild:
 ```shell
-docker run --rm -v ${PWD}:/var/www -w /var/www node:19-alpine npx tailwindcss -i ./tailwind-input.css -o ./public/assets/output.css
+docker run --rm -v ${PWD}:/var/www -w /var/www node:19-alpine npx tailwindcss -i ./tailwind-input.css -o ./public/static/output.css
 ```
 
 If not yet initialized:

@@ -5,7 +5,7 @@ server {
     server_name accountant.test www.accountant.test;
 
     location /static/ {
-        alias /var/www/accountant/assets/;
+        alias /var/www/accountant/static/;
         try_files $uri =404;
     }
 
