@@ -56,5 +56,3 @@ RUN echo "xdebug.client_host='host.docker.internal'" >> /usr/local/etc/php/conf.
     && composer install --no-progress \
     && composer clear-cache \
     && sync
-
-# && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
