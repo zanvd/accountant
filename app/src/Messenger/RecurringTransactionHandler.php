@@ -34,7 +34,7 @@ class RecurringTransactionHandler
         $this->msgSender = $msgSender;
         $this->logger = $logger;
         $this->recTrRepo = $doctrine->getRepository(RecurringTransaction::class);
-        $this->trRepo = $doctrine->getRepository(RecurringTransaction::class);
+        $this->trRepo = $doctrine->getRepository(Transaction::class);
     }
 
     /**
@@ -53,9 +53,9 @@ class RecurringTransactionHandler
         }
 
         if (!$this->shouldOccurToday($recTrans)) {
-            $this->log("Transactions should not occur today: {$recTrans->getId()}.");
+            $this->log("Transaction should not occur today: {$recTrans->getId()}.");
 
-            throw new UnrecoverableMessageHandlingException("Transactions should not occur today: {$recTrans->getId()}.");
+            throw new UnrecoverableMessageHandlingException("Transaction should not occur today: {$recTrans->getId()}.");
         }
 
         $trans = (new Transaction())
@@ -67,7 +67,7 @@ class RecurringTransactionHandler
             ->setUser($recTrans->getUser());
         $this->trRepo->add($trans, true);
 
-        $this->msgSender->sendAsyncMessage($recTrans);
+        $this->msgSender->sendAsyncMessage($recTrans, true);
     }
 
     private function shouldOccurToday(RecurringTransaction $recTrans): bool
@@ -78,7 +78,7 @@ class RecurringTransactionHandler
             $this->log("Failed to obtain end date: {$e->getMessage()}");
             return false;
         }
-        $today = new Datetime();
+        $today = (new Datetime())->setTime(0, 0);
         if ($today < $recTrans->getStartDate() || $today > $endDate) {
             return false;
         }
@@ -88,7 +88,7 @@ class RecurringTransactionHandler
                 $recTrans->getStartDate(),
                 new DateInterval("P{$recTrans->getPeriodNum()}{$recTrans->getPeriodType()->getIntervalSymbol()}"),
                 $endDate,
-                DatePeriod::EXCLUDE_START_DATE | DatePeriod::INCLUDE_END_DATE
+                DatePeriod::INCLUDE_END_DATE
             );
         } catch (Exception $e) {
             $this->log("Failed to create a period: {$e->getMessage()}");
@@ -107,6 +107,7 @@ class RecurringTransactionHandler
         return !is_null($recTrans->getEndDate())
             ? $recTrans->getEndDate()
             : (new DateTime())
+                ->setTime(0, 0)
                 ->modify("+{$recTrans->getPeriodNum()} {$recTrans->getPeriodType()->value}");
     }
 

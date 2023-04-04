@@ -47,6 +47,18 @@ services:
       - accountant_db_user
     volumes:
       - db_vol:/var/lib/mysql
+  # Messenger worker
+  messenger:
+    build:
+      context: ./app
+      target: messenger-dev
+    container_name: accountant_messenger
+    depends_on:
+      - app
+    image: accountant_messenger
+    networks:
+      - internal_net
+    restart: always
   # Nginx reverse proxy
   nginx:
     build:

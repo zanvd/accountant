@@ -16,6 +16,9 @@ services:
     volumes:
       - cert_challenge_vol:/var/www/cert
       - cert_vol:/etc/letsencrypt
+  messenger:
+    build:
+      target: messenger
   nginx:
     build:
       #args:

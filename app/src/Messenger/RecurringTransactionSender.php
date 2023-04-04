@@ -21,15 +21,16 @@ class RecurringTransactionSender
         $this->logger = $logger;
     }
 
-    public function sendAsyncMessage(RecurringTransaction $recTrans): bool
+    public function sendAsyncMessage(RecurringTransaction $recTrans, bool $handled = false): bool
     {
-        if (!is_null($nextDate = $this->getNextOccurrence($recTrans))) {
+        if (!is_null($nextDate = $this->getNextOccurrence($recTrans, $handled))) {
             $this->bus->dispatch(new Envelope(
                 new RecurringTransactionMessage($recTrans->getId()),
                 [
                     DelayStamp::delayUntil($nextDate)
                 ]
             ));
+            $this->logger->info("Dispatched recurring transaction {$recTrans->getId()} for {$nextDate->format('Y-m-d')}.");
 
             return true;
         }
@@ -39,10 +40,10 @@ class RecurringTransactionSender
         return false;
     }
 
-    private function getNextOccurrence(RecurringTransaction $recTrans): ?DateTimeInterface
+    private function getNextOccurrence(RecurringTransaction $recTrans, bool $handled): ?DateTimeInterface
     {
-        $today = new DateTime();
-        if ($recTrans->getStartDate() > $today) {
+        $today = (new DateTime())->setTime(0, 0);
+        if (!$handled && $recTrans->getStartDate() >= $today) {
             $next = $recTrans->getStartDate();
         } else {
             $next = $today->modify("+{$recTrans->getPeriodNum()} {$recTrans->getPeriodType()->value}");

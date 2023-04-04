@@ -56,3 +56,15 @@ RUN echo "xdebug.client_host='host.docker.internal'" >> /usr/local/etc/php/conf.
     && composer install --no-progress \
     && composer clear-cache \
     && sync
+
+# Messenger worker production image.
+
+FROM base AS messenger
+
+CMD ["bin/console", "messenger:consume", "-vv"]
+
+# Messenger worker development image.
+
+FROM dev AS messenger-dev
+
+CMD ["bin/console", "messenger:consume", "-vv"]

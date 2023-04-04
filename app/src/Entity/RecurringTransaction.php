@@ -36,7 +36,7 @@ class RecurringTransaction
     #[ORM\Column(type: 'string', length: 5, enumType: RecurringPeriodType::class)]
     private RecurringPeriodType $periodType;
 
-    #[Assert\GreaterThan('today')]
+    #[Assert\GreaterThanOrEqual('today')]
     #[Assert\LessThan(propertyPath: 'endDate')]
     #[ORM\Column(type: 'date', nullable: false)]
     private DateTimeInterface $startDate;
