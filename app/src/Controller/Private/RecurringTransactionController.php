@@ -47,7 +47,7 @@ class RecurringTransactionController extends AbstractController
             }
         }
 
-        return $this->renderForm('recurringTransaction/add.html.twig', ['form' => $f]);
+        return $this->render('recurringTransaction/add.html.twig', ['form' => $f]);
     }
 
     #[Route('/delete/{id}', name: 'delete', methods: ['GET'])]
@@ -83,7 +83,7 @@ class RecurringTransactionController extends AbstractController
             }
         }
 
-        return $this->renderForm('recurringTransaction/edit.html.twig', [
+        return $this->render('recurringTransaction/edit.html.twig', [
             'form' => $f,
             'recurringTransaction' => $rt,
         ]);

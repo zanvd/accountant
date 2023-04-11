@@ -12,6 +12,7 @@ use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use App\Security\ResetPassword;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +25,7 @@ use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 class AuthController extends AbstractController
 {
     private EmailVerifier $emailVerifier;
-    private UserRepository $userRepository;
+    private ObjectRepository|UserRepository $userRepository;
 
     public function __construct(ManagerRegistry $doctrine, EmailVerifier $emailVerifier)
     {
@@ -32,7 +33,7 @@ class AuthController extends AbstractController
         $this->userRepository = $doctrine->getRepository(User::class);
     }
 
-    #[Route('/forgot-password', methods: ['GET', 'POST'], name: 'forgot_password')]
+    #[Route('/forgot-password', name: 'forgot_password', methods: ['GET', 'POST'])]
     public function forgotPassword(Request $request, ResetPassword $resetPassword): Response
     {
         $f = $this->createForm(ForgotPasswordType::class);
@@ -49,25 +50,25 @@ class AuthController extends AbstractController
             }
         }
 
-        return $this->renderForm('auth/forgot-password.html.twig', ['form' => $f]);
+        return $this->render('auth/forgot-password.html.twig', ['form' => $f]);
     }
 
-    #[Route('/login', methods: ['GET', 'POST'], name: 'login')]
+    #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
     public function login(): Response
     {
         $u = new User();
         $f = $this->createForm(LoginType::class, $u);
         
-        return $this->renderForm('auth/login.html.twig', ['form' => $f]);
+        return $this->render('auth/login.html.twig', ['form' => $f]);
     }
 
-    #[Route('/logout', methods: ['GET'], name: 'logout')]
+    #[Route('/logout', name: 'logout', methods: ['GET'])]
     public function logout(): void
     {
         throw new Exception('Should not be called.');
     }
 
-    #[Route('/register', methods: ['GET', 'POST'], name: 'register')]
+    #[Route('/register', name: 'register', methods: ['GET', 'POST'])]
     public function register(UserPasswordHasherInterface $passHasher, Request $request): Response
     {
         $u = new User();
@@ -82,10 +83,10 @@ class AuthController extends AbstractController
             return $this->redirectToRoute('dashboard_index');
         }
 
-        return $this->renderForm('auth/register.html.twig', ['form' => $f]);
+        return $this->render('auth/register.html.twig', ['form' => $f]);
     }
 
-    #[Route('/reset-password', methods: ['GET', 'POST'], name: 'reset_password')]
+    #[Route('/reset-password', name: 'reset_password', methods: ['GET', 'POST'])]
     public function resetPassword(
         UserPasswordHasherInterface $passHasher,
         Request $request,
@@ -130,10 +131,10 @@ class AuthController extends AbstractController
             return $this->redirectToRoute('auth_login');
         }
 
-        return $this->renderForm('auth/reset-password.html.twig', ['form' => $f]);
+        return $this->render('auth/reset-password.html.twig', ['form' => $f]);
     }
 
-    #[Route('/verify-email', methods: ['GET'], name: 'verify_email')]
+    #[Route('/verify-email', name: 'verify_email', methods: ['GET'])]
     public function verifyUserEmail(Request $request): Response
     {
         $id = $request->get('id');

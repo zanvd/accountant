@@ -37,7 +37,7 @@ class TransactionTemplateController extends AbstractController
             return $this->redirectToRoute('transaction_template_index');
         }
 
-        return $this->renderForm('transactionTemplate/add.html.twig', ['form' => $f]);
+        return $this->render('transactionTemplate/add.html.twig', ['form' => $f]);
     }
 
     // TODO: Try to get this to be a delete method.
@@ -66,7 +66,7 @@ class TransactionTemplateController extends AbstractController
             return $this->redirectToRoute('transaction_template_index');
         }
 
-        return $this->renderForm('transactionTemplate/edit.html.twig', [
+        return $this->render('transactionTemplate/edit.html.twig', [
             'form' => $f,
             'transactionTemplate' => $tt,
         ]);

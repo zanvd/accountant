@@ -37,7 +37,7 @@ class CategoryController extends AbstractController
             return $this->redirectToRoute('category_index');
         }
 
-        return $this->renderForm('category/add.html.twig', ['form' => $f]);
+        return $this->render('category/add.html.twig', ['form' => $f]);
     }
 
     // TODO: Try to get this to be a delete method.
@@ -66,7 +66,7 @@ class CategoryController extends AbstractController
             return $this->redirectToRoute('category_index');
         }
 
-        return $this->renderForm('category/edit.html.twig', [
+        return $this->render('category/edit.html.twig', [
             'category' => $c,
             'form' => $f,
         ]);
