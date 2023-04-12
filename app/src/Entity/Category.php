@@ -6,6 +6,7 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ORM\Table(name: 'category')]
@@ -16,20 +17,24 @@ class Category
     #[ORM\Column(type: 'integer')]
     private int $id;
 
+    #[Assert\NotNull]
     #[ORM\Column(type: 'string', length: 7)]
-    private string $color = '';
+    private string $color = '#000000';
 
+    #[Assert\NotNull]
     #[ORM\Column(type: 'string', length: 150)]
     private string $description = '';
 
+    #[Assert\NotBlank(message: 'Name is required.')]
     #[ORM\Column(type: 'string', length: 30)]
     private string $name;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: RecurringTransaction::class)]
     private Collection $recurringTransactions;
 
+    #[Assert\NotNull]
     #[ORM\Column(type: 'string', length: 7)]
-    private string $textColor = '#000000';
+    private string $textColor = '#FFFFFF';
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Transaction::class)]
     private Collection $transactions;

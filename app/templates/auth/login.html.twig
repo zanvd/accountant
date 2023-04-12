@@ -7,6 +7,9 @@
             {{ form_start(form) }}
             {{ form_row(form.username) }}
             {{ form_row(form.password) }}
+            {% if error is not empty %}
+                <p class="text-red-600">{{ error.messageKey }}</p>
+            {% endif %}
             <div class="flex flex-col items-center space-y-2 sm:flex-row sm:justify-between sm:space-y-0">
                 <p>
                     <a href="{{ url('auth_register') }}">Create an account</a>

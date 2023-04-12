@@ -16,6 +16,7 @@ class RecurringTransaction
     #[ORM\Column(type: 'integer')]
     private int $id;
 
+    #[Assert\NotBlank(message: 'Amount is required.')]
     #[ORM\Column(type: 'decimal', precision: 19, scale: 4)]
     private string $amount;
 
@@ -23,13 +24,15 @@ class RecurringTransaction
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category;
 
-    // TODO Set GreaterThan validation?
     #[ORM\Column(type: 'date', nullable: true)]
     private ?DateTimeInterface $endDate = null;
 
+    #[Assert\NotBlank(message: 'Name is required.')]
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
 
+    #[Assert\GreaterThan(value: 0, message: 'Period should be greater than 0.')]
+    #[Assert\NotBlank(message: 'Period is required.')]
     #[ORM\Column(type: 'integer', nullable: false)]
     private int $periodNum;
 
@@ -37,12 +40,14 @@ class RecurringTransaction
     private RecurringPeriodType $periodType;
 
     #[Assert\GreaterThanOrEqual('today')]
+    #[Assert\NotBlank(message: 'Start date is required.')]
     #[Assert\LessThan(propertyPath: 'endDate')]
     #[ORM\Column(type: 'date', nullable: false)]
     private DateTimeInterface $startDate;
 
+    #[Assert\NotNull]
     #[ORM\Column(type: 'string', length: 255)]
-    private string $summary;
+    private string $summary = '';
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'recurringTransactions')]
     #[ORM\JoinColumn(nullable: false)]

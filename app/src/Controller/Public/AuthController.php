@@ -7,7 +7,6 @@ use App\Form\Type\ForgotPasswordType;
 use App\Form\Type\LoginType;
 use App\Form\Type\RegistrationType;
 use App\Form\Type\ResetPasswordType;
-use App\Mail\Mailer;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use App\Security\ResetPassword;
@@ -19,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 #[Route('/', name: 'auth_')]
@@ -37,13 +37,14 @@ class AuthController extends AbstractController
     public function forgotPassword(Request $request, ResetPassword $resetPassword): Response
     {
         $f = $this->createForm(ForgotPasswordType::class);
-        if ($request->isMethod('POST')) {
+        $f->handleRequest($request);
+        if ($f->isSubmitted() && $f->isValid()) {
             $u = $this->userRepository->findOneBy([
                 'username' => $request->request->all($f->getName())['username'] ?? ''
             ]);
             if ($u && $resetPassword->initPasswordReset($u)) {
                 $this->addFlash('success', 'We\'ve sent a password reset link to your email.');
-                
+
                 return $this->redirectToRoute('auth_forgot_password');
             } else {
                 $this->addFlash('error', 'Could not send a password reset link to your email. Please, try again.');
@@ -54,12 +55,15 @@ class AuthController extends AbstractController
     }
 
     #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
-    public function login(): Response
+    public function login(AuthenticationUtils $authUtils): Response
     {
         $u = new User();
         $f = $this->createForm(LoginType::class, $u);
-        
-        return $this->render('auth/login.html.twig', ['form' => $f]);
+
+        return $this->render('auth/login.html.twig', [
+            'error' => $authUtils->getLastAuthenticationError(),
+            'form' => $f,
+        ]);
     }
 
     #[Route('/logout', name: 'logout', methods: ['GET'])]
@@ -71,10 +75,10 @@ class AuthController extends AbstractController
     #[Route('/register', name: 'register', methods: ['GET', 'POST'])]
     public function register(UserPasswordHasherInterface $passHasher, Request $request): Response
     {
-        $u = new User();
-        $f = $this->createForm(RegistrationType::class, $u);
+        $f = $this->createForm(RegistrationType::class);
         $f->handleRequest($request);
         if ($f->isSubmitted() && $f->isValid()) {
+            $u = $f->getData();
             $u->setPassword($passHasher->hashPassword($u, $f->get('password')->getData()));
             $this->userRepository->add($u, true);
 
@@ -110,8 +114,7 @@ class AuthController extends AbstractController
 
         $f = $this->createForm(
             ResetPasswordType::class,
-            $u,
-            [
+            options: [
                 'action' => $this->generateUrl(
                     'auth_reset_password',
                     [
@@ -138,10 +141,14 @@ class AuthController extends AbstractController
     public function verifyUserEmail(Request $request): Response
     {
         $id = $request->get('id');
-        if (is_null($id)) return $this->redirectToRoute('auth_register');
+        if (is_null($id)) {
+            return $this->redirectToRoute('auth_register');
+        }
 
         $u = $this->userRepository->find($id);
-        if (!$u) return $this->redirectToRoute('auth_register');
+        if (!$u) {
+            return $this->redirectToRoute('auth_register');
+        }
 
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $u);

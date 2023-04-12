@@ -3,6 +3,7 @@
 namespace App\Form\Type;
 
 use App\Entity\User;
+use App\Enum\UserValidationType;
 use App\Form\Type\Element\SubmitIconButtonType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -29,6 +30,9 @@ class ForgotPasswordType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(['data_class' => User::class]);
+        $resolver->setDefaults([
+            'data_class' => User::class,
+            'validation_groups' => [UserValidationType::ForgotPassword->value],
+        ]);
     }
 }

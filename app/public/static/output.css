@@ -1152,6 +1152,14 @@ Include them directly to have them present at all times.
   padding-top: 0.5rem;
 }
 
+.required::after {
+  margin-left: 0.125rem;
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
+  --tw-content: '*';
+  content: var(--tw-content);
+}
+
 .fixed {
   position: fixed;
 }

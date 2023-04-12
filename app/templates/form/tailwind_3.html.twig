@@ -21,9 +21,6 @@
             {% if not child_compound %}
                 {% set child_label_attr = child_label_attr|merge({'for': child_id}) %}
             {% endif %}
-            {% if child_required %}
-                {% set child_label_attr = child_label_attr|merge({'class': (child_label_attr.class|default('') ~ ' required')|trim}) %}
-            {% endif %}
             {% if child_label is empty %}
                 {% if label_format is not empty %}
                     {% set child_label = label_format|replace({'%name%': name, '%id%': child_id}) %}
@@ -92,6 +89,18 @@
     {{ block('icon_button_widget') }}
 {% endblock %}
 
+{# Errors #}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <ul class="text-red-600">
+            {%- for error in errors -%}
+                <li>{{ error.message }}</li>
+            {%- endfor -%}
+        </ul>
+    {%- endif -%}
+{%- endblock form_errors -%}
+
 {# Rows #}
 
 {%- block button_row -%}
@@ -117,18 +126,21 @@
         {% if not compound -%}
             {% set label_attr = label_attr|merge({'for': id}) %}
         {%- endif -%}
-        {% if required -%}
-            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
-        {%- endif -%}
         <{{ element|default('label') }}{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
-        <span class="text-gray-700">{{- block('form_label_content') -}}</span>
+        {% set required_class = '' %}
+        {% if required -%}
+            {% set required_class = ' required' %}
+        {%- endif -%}
+        <span class="{{ 'text-gray-700' ~ required_class }}">{{- block('form_label_content') -}}</span>
         {{- form_widget(form, widget_attr) -}}
         {{- form_help(form) -}}
+        {{- form_errors(form) -}}
         </{{ element|default('label') }}>
     {% else %}
         {{- form_errors(form) -}}
         {{- form_widget(form, widget_attr) -}}
         {{- form_help(form) -}}
+        {{- form_errors(form) -}}
     {%- endif -%}
     {% if row_attr is not empty %}
         </div>

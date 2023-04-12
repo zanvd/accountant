@@ -23,11 +23,13 @@
             {{ form_row(form.amount) }}
             {{ form_row(form.summary) }}
             <div class="block">
-                <label class="text-gray-700">Each:</label>
+                <label class="text-gray-700 required">Each:</label>
                 <div class="inline-fields">
                     {{ form_widget(form.periodNum, {'attr': {'class': 'w-28'}}) }}
                     {{ form_widget(form.periodType) }}
                 </div>
+                {{ form_errors(form.periodNum) }}
+                {{ form_errors(form.periodType) }}
             </div>
             {{ form_row(form.startDate) }}
             {{ form_row(form.endDate) }}

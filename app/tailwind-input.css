@@ -29,6 +29,10 @@ Include them directly to have them present at all times.
     @apply flex justify-around pt-2;
 }
 
+.required {
+    @apply after:content-['*'] after:ml-0.5 after:text-red-500;
+}
+
 @tailwind utilities;
 
 @layer base {

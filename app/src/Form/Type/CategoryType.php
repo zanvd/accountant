@@ -5,7 +5,6 @@ namespace App\Form\Type;
 use App\Entity\Category;
 use App\Form\Type\Element\ResetIconButtonType;
 use App\Form\Type\Element\SubmitIconButtonType;
-use CapsuleType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;

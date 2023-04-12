@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TransactionRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TransactionRepository::class)]
 class Transaction
@@ -14,6 +15,7 @@ class Transaction
     #[ORM\Column(type: 'integer')]
     private int $id;
 
+    #[Assert\NotBlank(message: 'Amount is required.')]
     #[ORM\Column(type: 'decimal', precision: 19, scale: 4)]
     private string $amount;
 
@@ -21,12 +23,15 @@ class Transaction
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category;
 
+    #[Assert\NotBlank(message: 'Name is required')]
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
 
+    #[Assert\NotNull]
     #[ORM\Column(type: 'string', length: 255)]
-    private string $summary;
+    private string $summary = '';
 
+    #[Assert\NotBlank(message: 'Transaction date is required.')]
     #[ORM\Column(type: 'date')]
     private DateTimeInterface $transactionDate;
 

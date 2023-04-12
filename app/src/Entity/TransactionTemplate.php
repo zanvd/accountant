@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Enum\TransactionType;
 use App\Repository\TransactionTemplateRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TransactionTemplateRepository::class)]
 class TransactionTemplate
@@ -17,12 +18,16 @@ class TransactionTemplate
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'transactionTemplates')]
     private Category $category;
 
+    #[Assert\NotBlank(message: 'Name is required.')]
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
 
+    #[Assert\GreaterThanOrEqual(value: 0, message: 'Position should be greater than or equal to 0.')]
+    #[Assert\NotBlank(message: 'Position is required.')]
     #[ORM\Column(type: 'integer')]
     private int $position;
 
+    #[Assert\NotBlank(message: 'Type is required.')]
     #[ORM\Column(type: 'string', length: 7, enumType: TransactionType::class)]
     private TransactionType $transactionType;
 

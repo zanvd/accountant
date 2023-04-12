@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\UserValidationType;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -9,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
@@ -19,18 +21,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer')]
     private int $id;
 
+    #[Assert\NotBlank(message: 'Email is required.', groups: [UserValidationType::Register->value])]
     #[ORM\Column(type: 'string', length: 255)]
     private string $email;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isVerified = false;
 
+    #[Assert\Length(
+        min: 6,
+        max: 4096, // Max length allowed by Symfony for security reasons.
+        minMessage: 'Your password should have at least {{ limit }} characters.',
+        maxMessage: 'Password cannot have more than {{ limit }} characters.',
+        groups: [UserValidationType::Register->value, UserValidationType::Reset->value]
+    )]
+    #[Assert\NotBlank(
+        message: 'Password is required.',
+        groups: [
+            UserValidationType::Login->value,
+            UserValidationType::Register->value,
+            UserValidationType::Reset->value,
+        ],
+    )]
     #[ORM\Column(type: 'string')]
     private string $password;
 
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
+    #[Assert\NotBlank(
+        message: 'Username is required.',
+        groups: [
+            UserValidationType::Login->value,
+            UserValidationType::ForgotPassword->value,
+            UserValidationType::Register->value,
+        ],
+    )]
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     private string $username;
 
