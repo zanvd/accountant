@@ -22,9 +22,38 @@
                             <dt>Savings</dt>
                             <dd>{{ stats.savings }}</dd>
                         </div>
+                        <div>
+                            <canvas id="cat-stats"></canvas>
+                        </div>
                     </dl>
                 </div>
             </div>
         </section>
     </article>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer>
+        const ctx = document.getElementById('cat-stats');
+        {% set amounts = [] %}
+        {% set colors = [] %}
+        {% set names = [] %}
+        new Chart(ctx, {
+            data: {
+                labels: {{ catStats|map(v => v.name)|merge(names)|json_encode(constant('JSON_HEX_TAG'))|raw }},
+                datasets: [{
+                    backgroundColor: {{ catStats|map(v => v.color)|merge(colors)|json_encode(constant('JSON_HEX_TAG'))|raw }},
+                    borderWidth: 1,
+                    data: {{ catStats|map(v => v.amount)|merge(amounts)|json_encode(constant('JSON_HEX_TAG'))|raw }},
+                    label: 'Amount',
+                }],
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                }
+            },
+            type: 'bar',
+        });
+    </script>
 {% endblock %}
