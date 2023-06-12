@@ -52,6 +52,12 @@ class RecurringTransactionHandler
             );
         }
 
+        if ($recTrans->getModifiedAt() != $message->getModifiedAt()) {
+            $this->log("Discarding modified message: {$recTrans->getId()}.", 'info');
+
+            return;
+        }
+
         if (!$this->shouldOccurToday($recTrans)) {
             $this->log("Transaction should not occur today: {$recTrans->getId()}.");
 

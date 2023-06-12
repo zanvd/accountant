@@ -4,11 +4,14 @@ namespace App\Entity;
 
 use App\Enum\RecurringPeriodType;
 use App\Repository\RecurringTransactionRepository;
+use ContainerI02yXV4\getTwig_Runtime_HttpkernelService;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: RecurringTransactionRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class RecurringTransaction
 {
     #[ORM\Id]
@@ -26,6 +29,9 @@ class RecurringTransaction
 
     #[ORM\Column(type: 'date', nullable: true)]
     private ?DateTimeInterface $endDate = null;
+
+    #[ORM\Column(type: 'datetime')]
+    private ?DateTimeInterface $modifiedAt = null;
 
     #[Assert\NotBlank(message: 'Name is required.')]
     #[ORM\Column(type: 'string', length: 255)]
@@ -87,6 +93,17 @@ class RecurringTransaction
     public function setEndDate(?DateTimeInterface $endDate = null): self
     {
         $this->endDate = $endDate;
+        return $this;
+    }
+
+    public function getModifiedAt(): ?DateTimeInterface
+    {
+        return $this->modifiedAt;
+    }
+
+    public function setModifiedAt(?DateTimeInterface $modifiedAt = null): self
+    {
+        $this->modifiedAt = $modifiedAt;
         return $this;
     }
 
@@ -154,5 +171,12 @@ class RecurringTransaction
     {
         $this->user = $user;
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function onUpdate(): void
+    {
+        $this->setModifiedAt(new DateTime('now'));
     }
 }

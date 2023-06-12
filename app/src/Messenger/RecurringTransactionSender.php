@@ -25,7 +25,7 @@ class RecurringTransactionSender
     {
         if (!is_null($nextDate = $this->getNextOccurrence($recTrans, $handled))) {
             $this->bus->dispatch(new Envelope(
-                new RecurringTransactionMessage($recTrans->getId()),
+                new RecurringTransactionMessage($recTrans->getModifiedAt(), $recTrans->getId()),
                 [
                     DelayStamp::delayUntil($nextDate)
                 ]
