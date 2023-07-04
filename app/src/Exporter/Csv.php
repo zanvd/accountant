@@ -19,18 +19,14 @@ class Csv implements ExporterInterface
 
     public function export(): string
     {
-        $transactions = $this->trRepo->findAll();
-
-        $encoder = new CsvEncoder();
-
-        return $encoder->encode(
+        return (new CsvEncoder())->encode(
             array_map(fn(Transaction $t) => [
                 'name' => $t->getName(),
                 'category' => $t->getCategory()->getName(),
                 'amount' => $t->getAmount(),
                 'date' => $t->getTransactionDate()->format('d/m/Y'),
                 'summary' => $t->getSummary(),
-            ], $transactions),
+            ], $this->trRepo->findAll()),
             'csv'
         );
     }
