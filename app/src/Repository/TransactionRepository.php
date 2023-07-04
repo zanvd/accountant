@@ -6,7 +6,6 @@ use App\Entity\Category;
 use App\Entity\Transaction;
 use App\Filter\DateTimeFilter;
 use App\Filter\EntityFilter;
-use App\Filter\TransactionFilter;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;

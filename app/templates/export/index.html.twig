@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% block title %}Export | {{ parent() }}{% endblock %}
+{% block headerText %}Export{% endblock %}
+{% block content %}
+    <article class="min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <section class="w-full max-w-md space-y-8 sm:max-w-7xl">
+            <p>
+                Click the button below to initiate a new export.
+                A CSV file is going to be generated and downloaded to your computer.
+            </p>
+            <p class="w-full text-center">
+                <a class="btn btn-add" href="{{ url('export_add') }}">Export</a>
+            </p>
+        </section>
+    </article>
+{% endblock %}

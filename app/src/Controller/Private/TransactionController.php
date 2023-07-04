@@ -31,7 +31,7 @@ class TransactionController extends AbstractController
         $this->calculator = $calculator;
         $this->doctrine = $doctrine;
         $this->catRepo = $this->doctrine->getRepository(Category::class);
-        $this->trRepo = $doctrine->getRepository(Transaction::class);
+        $this->trRepo = $this->doctrine->getRepository(Transaction::class);
     }
 
     #[Route('/add', name: 'add', methods: ['GET', 'POST'])]
