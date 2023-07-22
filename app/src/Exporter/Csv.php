@@ -21,11 +21,10 @@ class Csv implements ExporterInterface
     {
         return (new CsvEncoder())->encode(
             array_map(fn(Transaction $t) => [
-                'name' => $t->getName(),
+                'name' => "{$t->getName()} ({$t->getSummary()})",
                 'category' => $t->getCategory()->getName(),
                 'amount' => $t->getAmount(),
                 'date' => $t->getTransactionDate()->format('d/m/Y'),
-                'summary' => $t->getSummary(),
             ], $this->trRepo->findAll()),
             'csv'
         );
