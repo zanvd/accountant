@@ -21,7 +21,7 @@ class Csv implements ExporterInterface
     {
         return (new CsvEncoder())->encode(
             array_map(fn(Transaction $t) => [
-                'name' => "{$t->getName()} ({$t->getSummary()})",
+                'name' => empty($t->getSummary()) ? $t->getName() : "{$t->getName()} ({$t->getSummary()})",
                 'category' => $t->getCategory()->getName(),
                 'amount' => $t->getAmount(),
                 'date' => $t->getTransactionDate()->format('d/m/Y'),
